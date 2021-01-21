@@ -94,9 +94,18 @@ DriveSubsystem::DriveSubsystem(Logger& log)
     SmartDashboard::PutNumber("kd", ModuleConstants::kD_ModuleTurningController);
     SmartDashboard::PutNumber("kI", 0.000);
 
+    SmartDashboard::PutNumber("kTestRotationP", DriveConstants::kRotationP);
+    SmartDashboard::PutNumber("kRotationI", DriveConstants::kRotationI);
+    SmartDashboard::PutNumber("kRotationD", DriveConstants::kRotationD);
+
     SmartDashboard::PutNumber("kP drive", ModuleConstants::kPModuleDriveController);
 
     SmartDashboard::PutNumber("Tolerance", 0.1);
+
+    m_previousTurnRate = 0;
+
+    m_rotationPIDController.SetTolerance(DriveConstants::kAbsoluteRotationTolerance);
+    m_rotationPIDController.SetIntegratorRange(0, DriveConstants::kRotationIMaxRange);
 }
 
 void DriveSubsystem::Periodic()
@@ -122,16 +131,55 @@ void DriveSubsystem::Periodic()
 }
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, double xRot, double yRot, bool fieldRelative) {
-    radian_t rotPosition = radian_t(atan2f(yRot, xRot));
-    double rotDifference = rotPosition.to<double>() - GetHeadingAsRot2d().Radians().to<double>();
-    double theta = rotDifference;
-    if (theta > wpi::math::pi)
-        theta -= 2 * wpi::math::pi;
-    else if (theta < -1.0 * wpi::math::pi)
-        theta += 2 * wpi::math::pi;
     
-    SmartDashboard::PutNumber("TEST_Rotation Difference", theta);
-    Drive(xSpeed, ySpeed, radians_per_second_t(theta * 0.5), fieldRelative);
+    if (xRot != 0 || yRot != 0) {
+        double  rotPosition = atan2f(yRot, xRot);
+
+        double error = rotPosition - GetHeadingAsRot2d().Radians().to<double>();
+        double desiredSet = SwerveModule::NegPiToPiRads(error);
+
+        double P = SmartDashboard::GetNumber("kTestRotationP", 0);
+        double I = SmartDashboard::GetNumber("kRotationI", 0);
+        double D = SmartDashboard::GetNumber("kRotationD", 0);
+
+        m_rotationPIDController.SetP(P);
+        m_rotationPIDController.SetI(I);
+        m_rotationPIDController.SetD(D);
+
+        double turnRate = m_rotationPIDController.Calculate(0, desiredSet);
+
+        // Prevent sharp turning if already fast going in a direction
+        SmartDashboard::PutNumber("TEST_Turn Rate", m_previousTurnRate);
+        if ((abs(m_previousTurnRate) >= DriveConstants::kMaxAbsoluteTurnableSpeed) && (signbit(turnRate) != signbit(m_previousTurnRate))) {
+            turnRate *= -1.0;
+        }
+
+        // Power limiting
+        if (abs(turnRate) > DriveConstants::kMaxAbsoluteRotationSpeed) {
+            turnRate = signbit(turnRate) ? DriveConstants::kMaxAbsoluteRotationSpeed * -1.0 : DriveConstants::kMaxAbsoluteRotationSpeed;
+        }
+        
+        SmartDashboard::PutNumber("TEST_Rotation Difference", desiredSet);
+        SmartDashboard::PutNumber("TEST_Rotation Power (-1 -> 1)", turnRate);
+
+        Drive(xSpeed, ySpeed, radians_per_second_t(turnRate), fieldRelative);
+    }
+    else {
+        Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
+    }
+    
+
+    /*
+    // Prevent sharp turning if already fast going in a direction
+    SmartDashboard::PutNumber("TEST_Turn Rate", m_previousTurnRate);
+    if (abs(m_previousTurnRate) >= DriveConstants::kMaxAbsoluteTurnableSpeed && (signbit(turnRate) != signbit(m_previousTurnRate))) {
+        turnRate *= -1.0;
+    }
+    */
+
+
+
+    //m_previousTurnRate = turnRate;
 }
 
 void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative)
@@ -230,7 +278,7 @@ void DriveSubsystem::ZeroHeading()
 
 double DriveSubsystem::GetTurnRate()
 {
-    return 0.0; //m_gyro.GetRate() * (kGyroReversed ? -1. : 1.);
+    return 0; //m_gyro.GetRate() * (kGyroReversed ? -1. : 1.);
 }
 
 frc::Pose2d DriveSubsystem::GetPose()

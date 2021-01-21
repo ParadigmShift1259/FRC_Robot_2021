@@ -101,8 +101,8 @@ RobotContainer::RobotContainer(Logger& log)
             auto xInput = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
             auto yInput = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
             auto rotInput = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
-            auto xRot = Deadzone(m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
-            auto yRot = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+            auto xRot = Deadzone(m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneAbsRot);
+            auto yRot = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneAbsRot);
 
 #endif
 

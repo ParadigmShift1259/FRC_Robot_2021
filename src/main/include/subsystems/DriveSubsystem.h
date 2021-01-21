@@ -129,4 +129,11 @@ private:
     PigeonIMU m_gyro;
     // Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
+
+    frc2::PIDController m_rotationPIDController{
+        DriveConstants::kRotationP,
+        DriveConstants::kRotationI,
+        DriveConstants::kRotationD
+    };
+    double m_previousTurnRate;
 };

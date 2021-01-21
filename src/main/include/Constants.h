@@ -97,6 +97,16 @@ namespace DriveConstants
     //constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec
     //constexpr double kDriveGearRatio = 6.86;                //!< MK3 swerve modules w/NEOs 14.4 ft/sec
     constexpr double kTurnMotorRevsPerWheelRev = 18.0;
+
+    // Rotation PID Controller, converts between radians angle error to radians per second turn
+    constexpr double kRotationP = 2;
+    constexpr double kRotationI = 0.06;
+    constexpr double kRotationIMaxRange = 0.30;
+    constexpr double kRotationD = 0.6;
+
+    constexpr double kMaxAbsoluteRotationSpeed = 2.0;
+    constexpr double kMaxAbsoluteTurnableSpeed = 1.0;
+    constexpr double kAbsoluteRotationTolerance = 0.05;
 }  // namespace DriveConstants
 
 namespace ModuleConstants
@@ -138,5 +148,6 @@ namespace OIConstants
     constexpr double kDeadzoneX = 0.10;
     constexpr double kDeadzoneY = 0.10;
     constexpr double kDeadzoneRot = 0.10;
+    constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kDriverControllerPort = 0;
 }  // namespace OIConstants

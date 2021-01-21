@@ -194,15 +194,15 @@ public:
 
     void ResetEncoders();
 
+    // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
+    static double ZeroTo2PiRads(double theta);
+
+    // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
+    static double NegPiToPiRads(double theta);
+
 private:
     double VoltageToRadians(double Voltage, double Offset);
     double VoltageToDegrees(double Voltage, double Offset);
-
-    // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
-    double ZeroTo2PiRads(double theta);
-
-    // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
-    double NegPiToPiRads(double theta);
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 
