@@ -8,6 +8,8 @@
 #include "subsystems/DriveSubsystem.h"
 
 #include <frc/geometry/Rotation2d.h>
+#include <units/units.h>
+#include <wpi/math>
 
 #include "Constants.h"
 #include <iostream>
@@ -20,7 +22,7 @@ using namespace frc;
 
 DriveSubsystem::DriveSubsystem(Logger& log)
     : m_log(log)
-    , m_logData(c_headerNamesDriveSubsystem, false, "")
+    , m_logData(c_headerNamesDriveSubsystem, true, "")
     , m_frontLeft
       {
           kFrontLeftDriveMotorPort
@@ -76,7 +78,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
     , m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
-    //SmartDashboard::PutBoolean("GetInputFromNetTable", false);
+    SmartDashboard::PutBoolean("GetInputFromNetTable", true);
 
     SmartDashboard::PutNumber("FrontLeft", 0.0);
     SmartDashboard::PutNumber("FrontRight", 0.0);
@@ -116,11 +118,11 @@ void DriveSubsystem::Periodic()
                     , m_rearRight.GetState());
    
     auto pose = m_odometry.GetPose();
-     
+
     m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
-    m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
+    m_log.logData<EDriveSubSystemLogData>("DriveSubsystem::Periodic", __LINE__, m_logData);
 
     m_frontLeft.Periodic();
     m_frontRight.Periodic();
@@ -205,32 +207,32 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpee
     kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
     
     //if (SmartDashboard::GetBoolean("GetInputFromNetTable", false))
-    // if (false)
-    // {
-    //     double angle = SmartDashboard::GetNumber("FrontLeft", 0.0);
-    //     states[eFrontLeft].angle = frc::Rotation2d(radian_t(angle));
+    if (false)
+    {
+        double angle = SmartDashboard::GetNumber("FrontLeft", 0.0);
+        states[eFrontLeft].angle = frc::Rotation2d(radian_t(angle));
 
-    //     angle = SmartDashboard::GetNumber("FrontRight", 0.0);
-    //     states[eFrontRight].angle = frc::Rotation2d(radian_t(angle));
+        angle = SmartDashboard::GetNumber("FrontRight", 0.0);
+        states[eFrontRight].angle = frc::Rotation2d(radian_t(angle));
 
-    //     angle = SmartDashboard::GetNumber("RearLeft", 0.0);
-    //     states[eRearLeft].angle = frc::Rotation2d(radian_t(angle));
+        angle = SmartDashboard::GetNumber("RearLeft", 0.0);
+        states[eRearLeft].angle = frc::Rotation2d(radian_t(angle));
 
-    //     angle = SmartDashboard::GetNumber("RearRight", 0.0);
-    //     states[eRearRight].angle = frc::Rotation2d(radian_t(angle));
+        angle = SmartDashboard::GetNumber("RearRight", 0.0);
+        states[eRearRight].angle = frc::Rotation2d(radian_t(angle));
 
-    //     double speed = SmartDashboard::GetNumber("FrontLeftV", 0.0);
-    //     states[eFrontLeft].speed = meters_per_second_t(speed);
+        double speed = SmartDashboard::GetNumber("FrontLeftV", 0.0);
+        states[eFrontLeft].speed = meters_per_second_t(speed);
 
-    //     speed = SmartDashboard::GetNumber("FrontRightV", 0.0);
-    //     states[eFrontLeft].speed = meters_per_second_t(speed);
+        speed = SmartDashboard::GetNumber("FrontRightV", 0.0);
+        states[eFrontLeft].speed = meters_per_second_t(speed);
 
-    //     speed = SmartDashboard::GetNumber("RearLeftV", 0.0);
-    //     states[eFrontLeft].speed = meters_per_second_t(speed);
+        speed = SmartDashboard::GetNumber("RearLeftV", 0.0);
+        states[eFrontLeft].speed = meters_per_second_t(speed);
 
-    //     speed = SmartDashboard::GetNumber("RearRightV", 0.0);
-    //     states[eFrontLeft].speed = meters_per_second_t(speed);
-    // }
+        speed = SmartDashboard::GetNumber("RearRightV", 0.0);
+        states[eFrontLeft].speed = meters_per_second_t(speed);
+    }
 
     m_frontLeft.SetDesiredState(states[eFrontLeft]);
     m_frontRight.SetDesiredState(states[eFrontRight]);
@@ -276,12 +278,11 @@ void DriveSubsystem::ZeroHeading()
 
 double DriveSubsystem::GetTurnRate()
 {
-    return 0.0; //m_gyro.GetRate() * (kGyroReversed ? -1. : 1.);
+    return 0; //m_gyro.GetRate() * (kGyroReversed ? -1. : 1.);
 }
 
 frc::Pose2d DriveSubsystem::GetPose()
 {
-    // TODO needed? m_odometry.UpdateWithTime(m_timer.Get(), m_angle, getCurrentWheelSpeeds());
     return m_odometry.GetPose();
 }
 

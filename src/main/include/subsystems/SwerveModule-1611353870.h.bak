@@ -194,8 +194,6 @@ public:
 
     void ResetEncoders();
 
-    void ResetLog() { m_logData.ResetHeaderLogged(); }
-
     // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
     static double ZeroTo2PiRads(double theta);
 

@@ -24,14 +24,14 @@ SwerveModule::SwerveModule(int driveMotorChannel,
                            double offset,
                            const std::string& name,
                            Logger& log)
-    : m_offset(offset)
-    , m_name(name)
-    , m_driveMotor(driveMotorChannel, CANSparkMax::MotorType::kBrushless)
+    : m_driveMotor(driveMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_driveEncoder(m_driveMotor)
     , m_turnNeoEncoder(m_turningMotor)
     , m_turningEncoder(turningEncoderPort)
-    , m_logData(c_headerNamesSwerveModule, false, name)
+    , m_offset(offset)
+    , m_name(name)
+    , m_logData(c_headerNamesSwerveModule, true, name)
     , m_log(log)
 {
     m_driveMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
@@ -68,16 +68,20 @@ frc::SwerveModuleState SwerveModule::GetState()
 {
     double angle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
     return {meters_per_second_t{m_driveEncoder.GetVelocity()}, frc::Rotation2d(radian_t(angle))};
+
+    
 }
 
 void SwerveModule::Periodic()
 {
     double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
     SmartDashboard::PutNumber(m_name, absAngle);
+    
 }
 
 void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 {
+
     // Retrieving turn PID values from SmartDashboard
     m_drivePidParams.LoadFromNetworkTable(m_drivePIDController);
     m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
@@ -129,7 +133,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 #endif
     }
 
-    const std::string FuncModule = "Swerve" + m_name;
+    static const std::string FuncModule = "SwerveModule::SetDesiredState" + m_name;
     m_logData[ESwerveModuleLogData::eDesiredAngle] = state.angle.Radians().to<double>();
     m_logData[ESwerveModuleLogData::eTurnEncVolts] = m_turningEncoder.GetVoltage();
     m_logData[ESwerveModuleLogData::eTurnEncAngle] = absAngle;
@@ -140,7 +144,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     m_logData[ESwerveModuleLogData::eDrivePidRefSpeed] = state.speed.to<double>();
     m_logData[ESwerveModuleLogData::eDriveEncVelocity] = m_driveEncoder.GetVelocity();
     m_logData[ESwerveModuleLogData::eDriveOutputDutyCyc] = m_driveMotor.GetAppliedOutput();
-    m_log.logData<ESwerveModuleLogData>(FuncModule.c_str(), m_logData);
+    m_log.logData<ESwerveModuleLogData>(FuncModule.c_str(), __LINE__, m_logData);
 }
 
 void SwerveModule::ResetEncoders()
@@ -184,7 +188,7 @@ double SwerveModule::NegPiToPiRads(double theta)
         theta -= 2 * wpi::math::pi;
     else if (theta < -1.0 * wpi::math::pi)
         theta += 2 * wpi::math::pi;
-        
+    
     return theta;
 }
 
