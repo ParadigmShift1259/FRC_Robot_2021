@@ -145,6 +145,9 @@ private:
     SwerveModule m_rearLeft;
 
     PigeonIMU m_gyro;
+
+
+    
     // Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
 

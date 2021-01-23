@@ -201,6 +201,14 @@ void RobotContainer::ConfigureButtonBindings()
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+            frc2::InstantCommand(    
+            [this] {
+                m_drive.ZeroHeading();
+            },
+            {&m_drive}
+        )
+    );
 }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
