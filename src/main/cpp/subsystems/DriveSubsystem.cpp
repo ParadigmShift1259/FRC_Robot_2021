@@ -121,7 +121,7 @@ void DriveSubsystem::Periodic()
     m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
     m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetGyroRotRate();
+    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
     m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
     m_frontLeft.Periodic();
