@@ -1,0 +1,4 @@
+.deploy_cfg
+.installer_config
+pip_cache
+.vscode
