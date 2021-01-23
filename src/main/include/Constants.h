@@ -80,18 +80,25 @@ namespace DriveConstants
     // Record values, enter below, then redeploy
     // All gears should face outwards
 
-    constexpr double kFrontLeftOffset   = 3.142; //6.412;           //3.142;         // 3.14;
-    constexpr double kFrontRightOffset  = 5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
-    constexpr double kRearLeftOffset    = 1.6292; //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
-    constexpr double kRearRightOffset   = 0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
+    // constexpr double kFrontLeftOffset   = 3.142; //6.412;           //3.142;         // 3.14;
+    // constexpr double kFrontRightOffset  = 5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
+    // constexpr double kRearLeftOffset    = 1.6292; //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
+    // constexpr double kRearRightOffset   = 0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 
     // constexpr double kFrontLeftOffset   = 3.142;
     // constexpr double kFrontRightOffset  = 5.105 - wpi::math::pi;
     // constexpr double kRearLeftOffset    = 1.8292;
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
-    constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / 4.93;    // Absolute encoder runs 0 to 4.93V
-    constexpr double KTurnVoltageToDegrees = 360 / 4.93;
+    // Mk3 swerve module
+    constexpr double kFrontLeftOffset   = 0.180;
+    constexpr double kFrontRightOffset  = 0.403;
+    constexpr double kRearLeftOffset    = 0.402;
+    constexpr double kRearRightOffset   = 0.342;
+
+    constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
+    constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
+    constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
      // Rotation PID Controller, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
@@ -115,9 +122,6 @@ namespace ModuleConstants
     constexpr double kTurnMotorRevsPerWheelRev = 18.0;
    // Assumes the encoders are directly mounted on the wheel shafts
     constexpr double kDriveEncoderMetersPerSec = (kWheelDiameterMeters * wpi::math::pi * kDriveGearRatio) / static_cast<double>(kEncoderCPR);
-
-    // Assumes the encoders are directly mounted on the wheel shafts
-    //constexpr double kTurningEncoderDistancePerPulse = (wpi::math::pi * 2) / static_cast<double>(kEncoderCPR);
 
     constexpr double kP_ModuleTurningController = 1.1;
     constexpr double kD_ModuleTurningController = 0.03;

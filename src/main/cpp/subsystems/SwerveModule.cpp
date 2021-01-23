@@ -11,7 +11,7 @@
 #include <frc/shuffleboard/ShuffleboardWidget.h>
 #include <frc/geometry/Rotation2d.h>
 #include <wpi/math>
-#include <iostream>
+//#include <iostream>
 
 #include "Constants.h"
 
@@ -88,15 +88,10 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     // Calculate new turn position given current Neo position, current absolute encoder position, and desired state position
     bool bOutputReverse = false;
-#define USE_ABS_ENC
-#ifdef USE_ABS_ENC
     double minTurnRads = MinTurnRads(absAngle, state.angle.Radians().to<double>(), bOutputReverse);
-#else
-    double minTurnRads = MinTurnRads(currentPosition, state.angle.Radians().to<double>(), bOutputReverse);
-#endif
     double direction = 1.0;
-    if (bOutputReverse)
-        direction = -1.0;
+    // if (bOutputReverse)
+    //     direction = -1.0;
     // m_driveMotor.SetInverted(bOutputReverse);
 
     // Set position reference of turnPIDController
