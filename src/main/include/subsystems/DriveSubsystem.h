@@ -37,9 +37,11 @@ enum class EDriveSubSystemLogData : int
   , eOdoY
   , eOdoRot
   , eLastDouble
+  , eGyroRot
+  , eGyroRotRate
 };
 
-const std::vector<std::string> c_headerNamesDriveSubsystem{ "InputX", "InputY", "InputRot", "OdoX", "OdoY", "OdoRot"};
+const std::vector<std::string> c_headerNamesDriveSubsystem{ "InputX", "InputY", "InputRot", "OdoX", "OdoY", "OdoRot", "eGyroRot", "eGyroRotRate"};
 
 class DriveSubsystem : public frc2::SubsystemBase
 {
