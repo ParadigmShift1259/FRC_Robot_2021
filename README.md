@@ -11,16 +11,16 @@ Requirements:
 
 
 #### 1. RobotPy on your Computer
-Make sure you're connected to the internet
-Install robotpy and its third party components for computer development. Enter each separately and wait for them to finish
+Make sure you're connected to the internet.
+Install robotpy and its third party components for computer development. Enter each separately and wait for them to finish.
 ```sh
 py -3 -m pip install robotpy
 pip3 install -U robotpy[all]
 ```
 
 #### 2. Python + RobotPy to the roboRIO
-Make sure you're connected to the internet
-Download python, robotpy, and its components for your roboRIO
+Make sure you're connected to the internet.
+Download python, robotpy, and its components for your roboRIO.
 ```sh
 py -3 -m robotpy_installer download-python
 py -3 -m robotpy_installer download robotpy
@@ -33,10 +33,10 @@ py -3 -m robotpy_installer install robotpy
 py -3 -m robotpy_installer install robotpy[all]
 ```
 #### 3. Deploying to the Robot
-Make sure you run this command in terminal in this project
-Make sure you're connected to your robot's radio
-While deploying, you should see the robot code turn red, then back green again
-The console should output you with any print() or errors in your project
+Make sure you run this command in terminal in this project.
+Make sure you're connected to your robot's radio.
+While deploying, you should see the robot code turn red, then back green again.
+The console should output you with any print() or errors in your project.
 ```
 py -3 robot.py deploy --nc
 ```
