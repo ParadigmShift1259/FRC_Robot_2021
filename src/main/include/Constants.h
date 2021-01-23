@@ -100,6 +100,8 @@ namespace DriveConstants
     //constexpr double kDriveGearRatio = 6.86;                //!< MK3 swerve modules w/NEOs 14.4 ft/sec
     constexpr double kTurnMotorRevsPerWheelRev = 18.0;
 
+    constexpr double kTurnValidationDistance = 0.35;
+
     // Rotation PID Controller, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
     constexpr double kRotationI = 0;

@@ -121,7 +121,8 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     }
     
     // Let the turn complete before we activate the motor
-    if (fabs(currentPosition - newPosition) < 0.35)
+    // 1/22/21
+    if (fabs(currentPosition - newPosition) < DriveConstants::kTurnValidationDistance)
     {
         // Set velocity reference of drivePIDController
 #ifndef TUNE_ABS_ENC
