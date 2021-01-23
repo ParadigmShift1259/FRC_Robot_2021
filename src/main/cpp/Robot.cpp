@@ -83,6 +83,12 @@ void Robot::TeleopInit()
         m_autonomousCommand->Cancel();
         m_autonomousCommand = nullptr;
     }
+
+    SmartDashboard::PutNumber("kRotationP", DriveConstants::kRotationP);
+    SmartDashboard::PutNumber("kRotationI", DriveConstants::kRotationI);
+    SmartDashboard::PutNumber("kRotationD", DriveConstants::kRotationD);
+    SmartDashboard::PutNumber("kMaxRotation", DriveConstants::kMaxAbsoluteRotationSpeed);
+    SmartDashboard::PutNumber("kMaxRotationSpeed", DriveConstants::kMaxAbsoluteTurnableSpeed);
 }
 
 /**

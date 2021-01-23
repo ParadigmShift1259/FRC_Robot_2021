@@ -158,5 +158,4 @@ private:
         DriveConstants::kRotationI,
         DriveConstants::kRotationD
     };
-    double m_previousTurnRate;
 };

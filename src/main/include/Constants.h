@@ -102,13 +102,13 @@ namespace DriveConstants
 
     // Rotation PID Controller, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
-    constexpr double kRotationI = 0.06;
+    constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0.30;
-    constexpr double kRotationD = 0.6;
+    constexpr double kRotationD = 0.05;
 
-    constexpr double kMaxAbsoluteRotationSpeed = 2.0;
-    constexpr double kMaxAbsoluteTurnableSpeed = 1.0;
-    constexpr double kAbsoluteRotationTolerance = 0.05;
+    constexpr double kMaxAbsoluteRotationSpeed = 2.5;
+    constexpr double kMaxAbsoluteTurnableSpeed = 1.5;
+    constexpr double kAbsoluteRotationTolerance = 0.04;
 }  // namespace DriveConstants
 
 namespace ModuleConstants
