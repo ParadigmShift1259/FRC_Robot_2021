@@ -17,6 +17,13 @@
 #include <vector>
 #include <string>
 
+const std::string c_logFileBasePath = "/tmp/logfile";
+const std::string c_logFileExtension = ".csv";
+
+// Use c_bHeader and c_bData in the bHeader argument of Logger::logMsg
+constexpr bool c_bHeader = true;
+constexpr bool c_bData = false;
+
 enum ELogLevel
 {
       eDebug
@@ -38,8 +45,8 @@ class LogDataT
 public:
   LogDataT(const std::vector<std::string>& headerNames, bool bAddToDashboard, const std::string& dashboardPrefix)
     : m_headerNames(headerNames)
-    , m_bAddToDashboard(bAddToDashboard)
     , m_dashboardPrefix(dashboardPrefix)
+    , m_bAddToDashboard(bAddToDashboard)
   {
     ShuffleboardTab& tab = Shuffleboard::GetTab("LogShadow");
 
@@ -117,6 +124,7 @@ public:
 
   bool LoggedHeader() const { return m_bLoggedHeader; }
   void SetHeaderLogged() { m_bLoggedHeader = true; }
+  void ResetHeaderLogged() { m_bLoggedHeader = false; }
 
 private:
   std::vector<std::string> m_headerNames;
@@ -133,36 +141,19 @@ class Logger
     FILE* m_fd = nullptr;
     Timer m_timer;
     bool m_console_echo = false;
-    string m_path;
 
   public:
-    Logger(const char *path, bool console_echo);
+    Logger(bool console_echo);
     ~Logger();
 
     void openLog();
     void closeLog();
+    std::string FindNextLogFileNumber();
 
-    void logMsg(ELogLevel level, const char* func, const int line, const char* msg, const char* msg2 = nullptr);
-    void logData(const char* func, const int line, const vector<double*>& data);
-    void logData(const char* func, const int line, const vector<int*>& data);
-    void logData(const char* func, const int line, const vector<int*>& dataInt, const vector<double*>& dataDouble);
+    void logMsg(ELogLevel level, const char* source, const char* msg, const char* msg2 = nullptr, bool bHeader = c_bData);
 
     template <typename E>
-    void logHeader(const char* func, const int line, const LogDataT<E>& data)
-    {
-      std::string out;
-      auto& header = data.GetHeaderNames();
-      out.reserve(header.size() * 20);
-      for (auto& hn : header)
-      {
-        out += hn + ',';
-      }
-      out.erase(out.size() - 1, 1);           // Remove the trailing comma
-      logMsg(eInfo, func, line, out.c_str());
-    }
-    
-    template <typename E>
-    void logData(const char* func, const int line, LogDataT<E>& data)
+    void logData(const char* source, LogDataT<E>& data)
     {
       m_formattedIntData.clear();
       m_formattedDoubleData.clear();
@@ -182,20 +173,20 @@ class Logger
       if (!data.LoggedHeader())
       {
           data.SetHeaderLogged();
-          logHeader(func, line, data);
+          logHeader(source, data);
       }
 
       if (!ints.empty() && !doubles.empty())
       {
-        logMsg(eInfo, func, line, m_formattedIntData.c_str(), m_formattedDoubleData.c_str());
+        logMsg(eInfo, source, m_formattedIntData.c_str(), m_formattedDoubleData.c_str());
       }
       else if (!ints.empty())
       {
-        logMsg(eInfo, func, line, m_formattedIntData.c_str());
+        logMsg(eInfo, source, m_formattedIntData.c_str());
       }
       else
       {
-        logMsg(eInfo, func, line, m_formattedDoubleData.c_str());
+        logMsg(eInfo, source, m_formattedDoubleData.c_str());
       }
       
       // Only update the dashboard once a second
@@ -206,10 +197,23 @@ class Logger
     }
 
   protected:
-    void formatData(const vector<double*>& data);
+    template <typename E>
+    void logHeader(const char* source, const LogDataT<E>& data)
+    {
+      std::string out;
+      auto& header = data.GetHeaderNames();
+      out.reserve(header.size() * 20);
+      for (auto& hn : header)
+      {
+        out += hn + ',';
+      }
+      out.erase(out.size() - 1, 1);           // Remove the trailing comma
+      logMsg(eInfo, source, out.c_str(), nullptr, c_bHeader);
+    }
+
     void formatData(const vector<double>& data);
-    void formatData(const vector<int*>& data);
     void formatData(const vector<int>& data);
+
     string m_formattedIntData;
     string m_formattedDoubleData;
 };

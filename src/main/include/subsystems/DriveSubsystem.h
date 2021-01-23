@@ -37,9 +37,11 @@ enum class EDriveSubSystemLogData : int
   , eOdoY
   , eOdoRot
   , eLastDouble
+  , eGyroRot
+  , eGyroRotRate
 };
 
-const std::vector<std::string> c_headerNamesDriveSubsystem{ "InputX", "InputY", "InputRot", "OdoX", "OdoY", "OdoRot"};
+const std::vector<std::string> c_headerNamesDriveSubsystem{ "InputX", "InputY", "InputRot", "OdoX", "OdoY", "OdoRot", "eGyroRot", "eGyroRotRate"};
 
 class DriveSubsystem : public frc2::SubsystemBase
 {
@@ -106,6 +108,15 @@ public:
     /// @param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
 
+    void ResetLog()
+    { 
+        m_logData.ResetHeaderLogged();
+        m_frontLeft.ResetLog();
+        m_frontRight.ResetLog();
+        m_rearRight.ResetLog();
+        m_rearLeft.ResetLog();
+    }
+
     meter_t kTrackWidth = 21.5_in; // Distance between centers of right and left wheels on robot
     meter_t kWheelBase = 23.5_in;  // Distance between centers of front and back wheels on robot
 
@@ -116,6 +127,15 @@ public:
         frc::Translation2d(-kWheelBase / 2, -kTrackWidth / 2)};   // -x, -y RR
 
 private:    
+    SwerveModuleStates getCurrentWheelSpeeds()
+    {
+        SwerveModuleStates sms;
+        sms[0] = m_frontLeft.GetState();
+        sms[1] = m_frontRight.GetState();
+        sms[2] = m_rearRight.GetState();
+        sms[3] = m_rearLeft.GetState();
+        return sms;
+    }
     using LogData = LogDataT<EDriveSubSystemLogData>;
 
     Logger& m_log;
@@ -127,6 +147,7 @@ private:
     SwerveModule m_rearLeft;
 
     PigeonIMU m_gyro;
+
     // Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
 
@@ -135,5 +156,4 @@ private:
         DriveConstants::kRotationI,
         DriveConstants::kRotationD
     };
-    double m_previousTurnRate;
 };

@@ -8,7 +8,9 @@
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/trajectory/TrapezoidProfile.h>
-#include <units/units.h>
+#include <units/time.h>
+#include <units/velocity.h>
+#include <units/acceleration.h>
 #include <wpi/math>
 
 #pragma once
@@ -101,14 +103,23 @@ namespace DriveConstants
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
      // Rotation PID Controller, converts between radians angle error to radians per second turn
-    constexpr double kRotationP = 2;
-    constexpr double kRotationI = 0.06;
-    constexpr double kRotationIMaxRange = 0.30;
-    constexpr double kRotationD = 0.6;
 
-    constexpr double kMaxAbsoluteRotationSpeed = 2.0;
-    constexpr double kMaxAbsoluteTurnableSpeed = 1.0;
-    constexpr double kAbsoluteRotationTolerance = 0.05;
+    constexpr double kTurnValidationDistance = 0.35;
+
+    // Turn PID Controller for Swerve Modules
+    constexpr double kTurnP = 0.1; // 0.35
+    constexpr double kTurnI = 0; //1e-4;
+    constexpr double kTurnD = 1; // 1.85
+
+    // Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
+    constexpr double kRotationP = 2;
+    constexpr double kRotationI = 0;
+    constexpr double kRotationIMaxRange = 0.30;
+    constexpr double kRotationD = 0.05;
+
+    constexpr double kMaxAbsoluteRotationSpeed = 2.5;
+    constexpr double kMaxAbsoluteTurnableSpeed = 1.5;
+    constexpr double kAbsoluteRotationTolerance = 0.04;
 }  // namespace DriveConstants
 
 namespace ModuleConstants

@@ -32,9 +32,9 @@ using namespace ctre::phoenix::motorcontrol;
 
 class TurnPidParams
 {
-    double m_p = 0.1;
-    double m_i = 0.0;//1e-4;
-    double m_d = 1.0;
+    double m_p = DriveConstants::kTurnP;
+    double m_i = DriveConstants::kTurnI;
+    double m_d = DriveConstants::kTurnD;
     double m_iz = 0.0;
     double m_ff = 0.0;
     double m_max = 1.0;
@@ -196,6 +196,8 @@ public:
 
     void ResetEncoders();
 
+    void ResetLog() { m_logData.ResetHeaderLogged(); }
+
     // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
     static double ZeroTo2PiRads(double theta);
 
@@ -203,8 +205,8 @@ public:
     static double NegPiToPiRads(double theta);
 
 private:
-    double VoltageToRadians(double Voltage, double Offset);
-    double VoltageToDegrees(double Voltage, double Offset);
+    double VoltageToRadians(double voltage, double Offset);
+    double VoltageToDegrees(double voltage, double Offset);
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 
@@ -232,6 +234,7 @@ private:
     CANEncoder m_turnNeoEncoder = m_turningMotor.GetEncoder();
 
     nt::NetworkTableEntry m_nteAbsEncTuningOffset;
+    nt::NetworkTableEntry m_nteAbsEncTuningVoltage;
 
     using LogData = LogDataT<ESwerveModuleLogData>;
     LogData m_logData;

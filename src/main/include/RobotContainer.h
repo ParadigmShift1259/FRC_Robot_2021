@@ -35,6 +35,8 @@ public:
 
     frc2::Command *GetAutonomousCommand();
 
+    void ResetLog() { m_drive.ResetLog(); }
+
 private:
     double Deadzone(double inputValue, double deadzone)
     {
@@ -68,10 +70,9 @@ private:
     nt::NetworkTableEntry m_inputYentry;
     nt::NetworkTableEntry m_inputRotentry;
 
-
     void ConfigureButtonBindings();
 
-    bool m_fieldRelative;
+    bool m_fieldRelative = false;
 
     frc2::InstantCommand m_enableFieldRelative{[this] () { m_fieldRelative = true; }};
     frc2::InstantCommand m_disableFieldRelative{[this] () { m_fieldRelative = false; }};

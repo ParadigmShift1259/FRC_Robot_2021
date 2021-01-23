@@ -11,7 +11,7 @@
 #include <frc2/command/CommandScheduler.h>
 
 Robot::Robot()
-    : m_log("/tmp/logfile.csv", false)
+    : m_log(false)
     , m_container(m_log)
 {
 }
@@ -40,7 +40,7 @@ void Robot::RobotPeriodic()
  */
 void Robot::DisabledInit()
 {
-    m_log.logMsg(eInfo, __func__, __LINE__, "Disabling");
+    m_log.logMsg(eInfo, __func__, "Disabling");
     m_log.closeLog();
 }
 
@@ -54,8 +54,9 @@ void Robot::DisabledPeriodic()
  */
 void Robot::AutonomousInit()
 {
+    m_container.ResetLog();
     m_log.openLog();
-    m_log.logMsg(eInfo, __func__, __LINE__, "Starting Autonomous");
+    m_log.logMsg(eInfo, __func__, "Starting Autonomous");
 
     m_autonomousCommand = m_container.GetAutonomousCommand();
 
@@ -70,8 +71,9 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    m_container.ResetLog();
     m_log.openLog();
-    m_log.logMsg(eInfo, __func__, __LINE__, "Starting Teleop");
+    m_log.logMsg(eInfo, __func__, "Starting Teleop");
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -81,6 +83,20 @@ void Robot::TeleopInit()
         m_autonomousCommand->Cancel();
         m_autonomousCommand = nullptr;
     }
+
+    /* Used for Debugging RotationDrive PID and SwerveModule Turn PID
+
+    SmartDashboard::PutNumber("kRotationP", DriveConstants::kRotationP);
+    SmartDashboard::PutNumber("kRotationI", DriveConstants::kRotationI);
+    SmartDashboard::PutNumber("kRotationD", DriveConstants::kRotationD);
+    SmartDashboard::PutNumber("kMaxRotation", DriveConstants::kMaxAbsoluteRotationSpeed);
+    SmartDashboard::PutNumber("kMaxRotationSpeed", DriveConstants::kMaxAbsoluteTurnableSpeed);
+    
+    SmartDashboard::PutNumber("TEST_TurnP", DriveConstants::kTurnP);
+    SmartDashboard::PutNumber("TEST_TurnI", DriveConstants::kTurnI);
+    SmartDashboard::PutNumber("TEST_TurnD", DriveConstants::kTurnD);
+
+    */
 }
 
 /**

@@ -24,11 +24,11 @@ SwerveModule::SwerveModule(int driveMotorChannel,
                            double offset,
                            const std::string& name,
                            Logger& log)
-    : m_driveMotor(driveMotorChannel)
+    : m_offset(offset)
+    , m_name(name)
+    , m_driveMotor(driveMotorChannel)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_turnNeoEncoder(m_turningMotor)
-    , m_offset(offset)
-    , m_name(name)
     , m_logData(c_headerNamesSwerveModule, true, name)
     , m_log(log)
 {
@@ -62,6 +62,10 @@ SwerveModule::SwerveModule(int driveMotorChannel,
                                     .WithWidget(frc::BuiltInWidgets::kNumberSlider)
                                     .WithProperties(sliderPropMap)
                                     .GetEntry();
+    nteName = m_name + " voltage";
+    m_nteAbsEncTuningVoltage    = tab.Add(nteName, m_turningMotor.GetAnalog().GetVoltage())
+                                    .WithWidget(frc::BuiltInWidgets::kVoltageView)
+                                    .GetEntry();
 }
 
 frc::SwerveModuleState SwerveModule::GetState()
@@ -74,6 +78,16 @@ void SwerveModule::Periodic()
 {
     double absAngle = VoltageToRadians(m_turningMotor.GetAnalog().GetVoltage(), m_offset);
     SmartDashboard::PutNumber(m_name, absAngle);
+
+    /* Used for tuning SwerveModule Turn PID
+    double P = SmartDashboard::GetNumber("TEST_TurnP", 0);
+    double I = SmartDashboard::GetNumber("TEST_TurnI", 0);
+    double D = SmartDashboard::GetNumber("TEST_TurnD", 0);
+
+    m_turnPIDController.SetP(P);
+    m_turnPIDController.SetI(I);
+    m_turnPIDController.SetD(D);
+    */
 }
 
 void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
@@ -116,7 +130,8 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     }
     
     // Let the turn complete before we activate the motor
-    if (fabs(currentPosition - newPosition) < 0.35)
+    // 1/22/21
+    if (fabs(currentPosition - newPosition) < DriveConstants::kTurnValidationDistance)
     {
         // Set velocity reference of drivePIDController
 #ifndef TUNE_ABS_ENC
@@ -124,7 +139,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 #endif
     }
 
-    static const std::string FuncModule = "SwerveModule::SetDesiredState" + m_name;
+    const std::string FuncModule = "Swerve" + m_name;
     m_logData[ESwerveModuleLogData::eDesiredAngle] = state.angle.Radians().to<double>();
     m_logData[ESwerveModuleLogData::eTurnEncVolts] = m_turningMotor.GetAnalog().GetVoltage();
     m_logData[ESwerveModuleLogData::eTurnEncAngle] = absAngle;
@@ -135,7 +150,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     m_logData[ESwerveModuleLogData::eDrivePidRefSpeed] = state.speed.to<double>();
     m_logData[ESwerveModuleLogData::eDriveEncVelocity] = CalcMetersPerSec().to<double>();
     m_logData[ESwerveModuleLogData::eDriveOutputDutyCyc] = m_driveMotor.GetMotorOutputVoltage();
-    m_log.logData<ESwerveModuleLogData>(FuncModule.c_str(), __LINE__, m_logData);
+    m_log.logData<ESwerveModuleLogData>(FuncModule.c_str(), m_logData);
 }
 
 void SwerveModule::ResetEncoders()
@@ -143,12 +158,13 @@ void SwerveModule::ResetEncoders()
     m_driveMotor.SetSelectedSensorPosition(0.0); 
 }
 
-double SwerveModule::VoltageToRadians(double Voltage, double offset)
+double SwerveModule::VoltageToRadians(double voltage, double offset)
 {
 #ifdef TUNE_ABS_ENC
     offset = m_nteAbsEncTuningOffset.GetDouble(m_offset);
 #endif
-    double angle = fmod(Voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    m_nteAbsEncTuningVoltage.SetDouble(voltage);
+    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
 
     return angle;
