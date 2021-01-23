@@ -32,9 +32,9 @@ using namespace units;
 
 class TurnPidParams
 {
-    double m_p = 0.1;
-    double m_i = 0.0;//1e-4;
-    double m_d = 1.0;
+    double m_p = DriveConstants::kTurnP;
+    double m_i = DriveConstants::kTurnI;
+    double m_d = DriveConstants::kTurnD;
     double m_iz = 0.0;
     double m_ff = 0.0;
     double m_max = 1.0;

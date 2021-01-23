@@ -102,7 +102,12 @@ namespace DriveConstants
 
     constexpr double kTurnValidationDistance = 0.35;
 
-    // Rotation PID Controller, converts between radians angle error to radians per second turn
+    // Turn PID Controller for Swerve Modules
+    constexpr double kTurnP = 0.1; // 0.35
+    constexpr double kTurnI = 0; //1e-4;
+    constexpr double kTurnD = 1; // 1.85
+
+    // Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0.30;

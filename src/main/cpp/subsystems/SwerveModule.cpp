@@ -74,6 +74,16 @@ void SwerveModule::Periodic()
 {
     double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
     SmartDashboard::PutNumber(m_name, absAngle);
+
+    /* Used for tuning SwerveModule Turn PID
+    double P = SmartDashboard::GetNumber("TEST_TurnP", 0);
+    double I = SmartDashboard::GetNumber("TEST_TurnI", 0);
+    double D = SmartDashboard::GetNumber("TEST_TurnD", 0);
+
+    m_turnPIDController.SetP(P);
+    m_turnPIDController.SetI(I);
+    m_turnPIDController.SetD(D);
+    */
 }
 
 void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)

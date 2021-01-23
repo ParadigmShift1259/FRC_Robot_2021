@@ -92,11 +92,13 @@ DriveSubsystem::DriveSubsystem(Logger& log)
     SmartDashboard::PutNumber("kd", ModuleConstants::kD_ModuleTurningController);
     SmartDashboard::PutNumber("kI", 0.000);
 
+    /*
     SmartDashboard::PutNumber("kMaxRotation", DriveConstants::kMaxAbsoluteRotationSpeed);
     SmartDashboard::PutNumber("kMaxRotationSpeed", DriveConstants::kMaxAbsoluteTurnableSpeed);
     SmartDashboard::PutNumber("kRotationP", DriveConstants::kRotationP);
     SmartDashboard::PutNumber("kRotationI", DriveConstants::kRotationI);
     SmartDashboard::PutNumber("kRotationD", DriveConstants::kRotationD);
+    */
 
     SmartDashboard::PutNumber("kP drive", ModuleConstants::kPModuleDriveController);
 
@@ -138,28 +140,33 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second
         double error = rotPosition - GetHeadingAsRot2d().Radians().to<double>();
         double desiredSet = SwerveModule::NegPiToPiRads(error);
 
+        /*
         SmartDashboard::PutNumber("TEST_error", error);
         SmartDashboard::PutNumber("TEST_yRot", yRot);
         SmartDashboard::PutNumber("TEST_xRot", xRot);
         SmartDashboard::PutNumber("TEST_RotationPosition", rotPosition);
         SmartDashboard::PutNumber("TEST_ActualPosition", GetHeadingAsRot2d().Radians().to<double>());
+        */
 
-        double max = SmartDashboard::GetNumber("kMaxRotation", 0);
-        double maxTurn = SmartDashboard::GetNumber("kMaxRotationSpeed", 0);
-        double P = SmartDashboard::GetNumber("kRotationP", 0);
-        double I = SmartDashboard::GetNumber("kRotationI", 0);
-        double D = SmartDashboard::GetNumber("kRotationD", 0);
+                                                                    // Used for tuning RotationDrive PID
+        double max = DriveConstants::kMaxAbsoluteRotationSpeed;     //SmartDashboard::GetNumber("kMaxRotation", 0);
+        double maxTurn = DriveConstants::kMaxAbsoluteTurnableSpeed; //SmartDashboard::GetNumber("kMaxRotationSpeed", 0);
+        double P = DriveConstants::kRotationP;                      //SmartDashboard::GetNumber("kRotationP", 0);
+        double I = DriveConstants::kRotationI;                      //SmartDashboard::GetNumber("kRotationI", 0);
+        double D = DriveConstants::kRotationD;                      //SmartDashboard::GetNumber("kRotationD", 0);
 
+        /* Used for tuning RotationDrive PID
         m_rotationPIDController.SetP(P);
         m_rotationPIDController.SetI(I);
         m_rotationPIDController.SetD(D);
+        */
 
         double desiredTurnRate = m_rotationPIDController.Calculate(0, desiredSet);
 
         double currentTurnRate = GetTurnRate() * wpi::math::pi / 180;
 
         // Prevent sharp turning if already fast going in a direction
-        SmartDashboard::PutNumber("TEST_Turn Rate", currentTurnRate);
+        //SmartDashboard::PutNumber("TEST_Turn Rate", currentTurnRate);
         if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate))) {
             desiredTurnRate *= -1.0;
         }
@@ -169,8 +176,8 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second
             desiredTurnRate = signbit(desiredTurnRate) ? max * -1.0 : max;
         }
         
-        SmartDashboard::PutNumber("TEST_Rotation Difference", desiredSet);
-        SmartDashboard::PutNumber("TEST_Rotation Power (-1 -> 1)", desiredTurnRate);
+        //SmartDashboard::PutNumber("TEST_Rotation Difference", desiredSet);
+        //SmartDashboard::PutNumber("TEST_Rotation Power (-1 -> 1)", desiredTurnRate);
 
         if (!m_rotationPIDController.AtSetpoint()) {
             Drive(xSpeed, ySpeed, radians_per_second_t(desiredTurnRate), fieldRelative);
