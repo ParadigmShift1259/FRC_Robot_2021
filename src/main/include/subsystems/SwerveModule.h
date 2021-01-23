@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <frc/AnalogInput.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Rotation2d.h>
@@ -15,11 +14,12 @@
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/SmartDashboard/SmartDashboard.h>
 #include <networktables/NetworkTableEntry.h>
+#include <wpi/math>
 
 #include <rev\CANSparkMax.h>
 #include <rev\CANEncoder.h>
 
-#include <wpi/math>
+#include <ctre\Phoenix.h>
 
 #include <string>
 
@@ -28,7 +28,7 @@
 
 using namespace rev;
 using namespace units;
-
+using namespace ctre::phoenix::motorcontrol;
 
 class TurnPidParams
 {
@@ -94,13 +94,14 @@ class DrivePidParams
     double m_min = -1.0;
 
 public:
-   void Load(CANPIDController& drivePIDController)
+   void Load(TalonFX& driveMotor)
     {
-        drivePIDController.SetP(m_p);
-        // drivePIDController.SetI(m_i);
-        drivePIDController.SetD(m_d);
-        drivePIDController.SetFF(m_ff);
-        drivePIDController.SetOutputRange(m_min, m_max);
+        driveMotor.Config_kP(0, m_p);
+        // driveMotor.Config_kI(0, m_i);
+        driveMotor.Config_kD(0, m_d);
+        driveMotor.Config_kF(0, m_ff);
+        driveMotor.ConfigPeakOutputForward(m_max);
+        driveMotor.ConfigPeakOutputReverse(m_min);
         frc::SmartDashboard::PutNumber("Drive P Gain", m_p);
         //frc::SmartDashboard::PutNumber("Drive I Gain", m_i);
         frc::SmartDashboard::PutNumber("Drive D Gain", m_d);
@@ -109,7 +110,7 @@ public:
         frc::SmartDashboard::PutNumber("Drive Min Output", m_min);
     }
 
-    void LoadFromNetworkTable(CANPIDController& drivePIDController)
+    void LoadFromNetworkTable(TalonFX& driveMotor)
     {
         // Retrieving drive PID values from SmartDashboard
         double p = frc::SmartDashboard::GetNumber("Drive P Gain", 0.0);
@@ -120,16 +121,17 @@ public:
         double min = frc::SmartDashboard::GetNumber("Drive Min Output", 0.0);
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
-        if ((p != m_p)) { drivePIDController.SetP(p); m_p = p; }
-        //if ((i != m_i)) { drivePIDController.SetI(i); m_i = i; }
-        if ((d != m_d)) { drivePIDController.SetD(d); m_d = d; }
-        if ((ff != m_ff)) { drivePIDController.SetFF(ff); m_ff = ff; }
+        if ((p != m_p)) { driveMotor.Config_kP(0, p); m_p = p; }
+        //if ((i != m_i)) { driveMotor.Config_kI(0, i); m_i = i; }
+        if ((d != m_d)) { driveMotor.Config_kD(0, d); m_d = d; }
+        if ((ff != m_ff)) { driveMotor.Config_kF(0, ff); m_ff = ff; }
         
         if ((max != m_max) || (min != m_min))
         { 
-            drivePIDController.SetOutputRange(min, max);
             m_min = min;
             m_max = max; 
+            driveMotor.ConfigPeakOutputForward(m_max);
+            driveMotor.ConfigPeakOutputReverse(m_min);
         }
     }
 };
@@ -208,6 +210,7 @@ private:
     // result in an angle equivalent (but not necessarily equal) to final angle. 
     // All angles in radians
     double MinTurnRads(double init, double final, bool& bOutputReverse);
+    meters_per_second_t CalcMetersPerSec();
 
     // We have to use meters here instead of radians due to the fact that
     // ProfiledPIDController's constraints only take in meters per second and
@@ -218,18 +221,15 @@ private:
     double m_offset;
     std::string m_name;
 
-    CANSparkMax m_driveMotor;
+    TalonFX m_driveMotor;
     CANSparkMax m_turningMotor;
 
-    CANPIDController m_drivePIDController = m_driveMotor.GetPIDController();
     CANPIDController m_turnPIDController = m_turningMotor.GetPIDController();
 
     DrivePidParams   m_drivePidParams;
     TurnPidParams   m_turnPidParams;
 
-    CANEncoder m_driveEncoder;
     CANEncoder m_turnNeoEncoder = m_turningMotor.GetEncoder();
-    frc::AnalogInput m_turningEncoder;
 
     nt::NetworkTableEntry m_nteAbsEncTuningOffset;
 

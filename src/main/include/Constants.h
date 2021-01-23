@@ -93,12 +93,7 @@ namespace DriveConstants
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / 4.93;    // Absolute encoder runs 0 to 4.93V
     constexpr double KTurnVoltageToDegrees = 360 / 4.93;
 
-    constexpr double kDriveGearRatio = 8.31;                //!< MK2 swerve modules 11.9 ft/sec
-    //constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec
-    //constexpr double kDriveGearRatio = 6.86;                //!< MK3 swerve modules w/NEOs 14.4 ft/sec
-    constexpr double kTurnMotorRevsPerWheelRev = 18.0;
-
-    // Rotation PID Controller, converts between radians angle error to radians per second turn
+     // Rotation PID Controller, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
     constexpr double kRotationI = 0.06;
     constexpr double kRotationIMaxRange = 0.30;
@@ -111,10 +106,15 @@ namespace DriveConstants
 
 namespace ModuleConstants
 {
-    constexpr int kEncoderCPR = 1024;
-    constexpr double kWheelDiameterMeters = .1016;    // 4"
-    // Assumes the encoders are directly mounted on the wheel shafts
-    constexpr double kDriveEncoderDistancePerPulse = (kWheelDiameterMeters * wpi::math::pi) / static_cast<double>(kEncoderCPR);
+    constexpr int kEncoderCPR = 2048;
+    constexpr int kEncoderTicksPerSec = 10;                 //!< TalonFX::GetSelectedSensorVelocity() returns ticks/100ms = 10 ticks/sec
+    constexpr double kWheelDiameterMeters = .1016;          //!< 4"
+    //constexpr double kDriveGearRatio = 8.31;              //!< MK2 swerve modules 11.9 ft/sec
+    constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec w/Falcon 13.6 ft/sec
+    //constexpr double kDriveGearRatio = 6.86;              //!< MK3 swerve modules w/NEOs 14.4 ft/sec
+    constexpr double kTurnMotorRevsPerWheelRev = 18.0;
+   // Assumes the encoders are directly mounted on the wheel shafts
+    constexpr double kDriveEncoderMetersPerSec = (kWheelDiameterMeters * wpi::math::pi * kDriveGearRatio) / static_cast<double>(kEncoderCPR);
 
     // Assumes the encoders are directly mounted on the wheel shafts
     //constexpr double kTurningEncoderDistancePerPulse = (wpi::math::pi * 2) / static_cast<double>(kEncoderCPR);
