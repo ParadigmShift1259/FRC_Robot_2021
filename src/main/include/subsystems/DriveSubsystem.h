@@ -41,7 +41,16 @@ enum class EDriveSubSystemLogData : int
   , eGyroRotRate
 };
 
-const std::vector<std::string> c_headerNamesDriveSubsystem{ "InputX", "InputY", "InputRot", "OdoX", "OdoY", "OdoRot", "eGyroRot", "eGyroRotRate"};
+const std::vector<std::string> c_headerNamesDriveSubsystem{
+       "InputX"
+     , "InputY"
+     , "InputRot"
+     , "OdoX"
+     , "OdoY"
+     , "OdoRot"
+     , "eGyroRot"
+     , "eGyroRotRate"
+};
 
 class DriveSubsystem : public frc2::SubsystemBase
 {
@@ -117,8 +126,8 @@ public:
         m_rearLeft.ResetLog();
     }
 
-    meter_t kTrackWidth = 21.5_in; // Distance between centers of right and left wheels on robot
-    meter_t kWheelBase = 23.5_in;  // Distance between centers of front and back wheels on robot
+    const meter_t kTrackWidth = 23.5_in; // Distance between centers of right and left wheels on robot
+    const meter_t kWheelBase = 23.5_in;  // Distance between centers of front and back wheels on robot
 
     frc::SwerveDriveKinematics<DriveConstants::kNumSwerveModules> kDriveKinematics{
         frc::Translation2d( kWheelBase / 2,  kTrackWidth / 2),    // +x, +y FL

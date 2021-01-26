@@ -17,10 +17,7 @@
 
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
-                           const int driveEncoderPort,
-                           const int turningEncoderPort,
                            bool driveMotorReversed,
-                           bool turningEncoderReversed,
                            double offset,
                            const std::string& name,
                            Logger& log)

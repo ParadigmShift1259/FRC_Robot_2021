@@ -180,10 +180,7 @@ class SwerveModule
 public:
     SwerveModule( int driveMotorChannel
                 , int turningMotorChannel
-                , const int driveEncoderPort
-                , const int turningEncoderPort
                 , bool driveEncoderReversed
-                , bool turningEncoderReversed
                 , double offSet
                 , const std::string& name
                 , Logger& log);

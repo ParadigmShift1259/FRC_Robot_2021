@@ -10,7 +10,7 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include "Constants.h"
-#include <iostream>
+// #include <iostream>
 #include <frc/SmartDashBoard/SmartDashboard.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 
@@ -25,10 +25,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
-        , kFrontLeftDriveEncoderPort
-        , kFrontLeftTurningEncoderPort
         , kFrontLeftDriveMotorReversed
-        , kFrontLeftTurningEncoderReversed
         , kFrontLeftOffset
         , std::string("FrontLeft")
         , log
@@ -38,10 +35,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
-        , kFrontRightDriveEncoderPort
-        , kFrontRightTurningEncoderPort
         , kFrontRightDriveMotorReversed
-        , kFrontRightTurningEncoderReversed
         , kFrontRightOffset
         , std::string("FrontRight")
         , log
@@ -51,10 +45,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
-        , kRearRightDriveEncoderPort
-        , kRearRightTurningEncoderPort
         , kRearRightDriveMotorReversed
-        , kRearRightTurningEncoderReversed
         , kRearRightOffset
         , std::string("RearRight")
         , log
@@ -64,10 +55,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
-        , kRearLeftDriveEncoderPort
-        , kRearLeftTurningEncoderPort
         , kRearLeftDriveMotorReversed
-        , kRearLeftTurningEncoderReversed
         , kRearLeftOffset
         , std::string("RearLeft")
         , log
@@ -132,8 +120,12 @@ void DriveSubsystem::Periodic()
     m_rearLeft.Periodic();
 }
 
-void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, double xRot, double yRot, bool fieldRelative) {
-    
+void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
+                                , meters_per_second_t ySpeed
+                                , double xRot
+                                , double yRot
+                                , bool fieldRelative) 
+{  
     if (xRot != 0 || yRot != 0) {
         double  rotPosition = atan2f(yRot, xRot);
 
@@ -191,19 +183,14 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second
     }
 }
 
-void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative)
+void DriveSubsystem::Drive(meters_per_second_t xSpeed
+                        , meters_per_second_t ySpeed
+                        , radians_per_second_t rot
+                        , bool fieldRelative)
 {
     m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
     m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
     m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
-
-    // if (xSpeed.to<double>() == 0.0 && ySpeed.to<double>() == 0.0 && rot.to<double>() == 0.0)
-    // {
-    //     states[eFrontLeft].angle = frc::Rotation2d(radian_t(0.0));
-    //     states[eFrontRight].angle = frc::Rotation2d(radian_t(0.0));
-    //     states[eRearLeft].angle = frc::Rotation2d(radian_t(0.0));
-    //     states[eRearRight].angle = frc::Rotation2d(radian_t(0.0));
-    // }
 
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)

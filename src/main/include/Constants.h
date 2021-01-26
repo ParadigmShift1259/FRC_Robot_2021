@@ -28,7 +28,10 @@ namespace DriveConstants
 {
     constexpr int kNumSwerveModules = 4;
 
-    constexpr int kFrontLeftDriveMotorPort    = 1;
+    /// \defgroup CanIds
+    /// @{
+    /// CAN IDs for swerve modules
+    constexpr int kFrontLeftDriveMotorPort    = 1;          
     constexpr int kFrontLeftTurningMotorPort  = 2;
 
     constexpr int kFrontRightDriveMotorPort   = 3;
@@ -39,21 +42,7 @@ namespace DriveConstants
 
     constexpr int kRearLeftDriveMotorPort     = 7;
     constexpr int kRearLeftTurningMotorPort   = 8;
-
-    constexpr int kFrontLeftTurningEncoderPort  = 0;
-    constexpr int kFrontRightTurningEncoderPort = 1;
-    constexpr int kRearRightTurningEncoderPort  = 2;
-    constexpr int kRearLeftTurningEncoderPort   = 3;
-
-    constexpr bool kFrontLeftTurningEncoderReversed  = false;
-    constexpr bool kRearLeftTurningEncoderReversed   = true;
-    constexpr bool kFrontRightTurningEncoderReversed = false;
-    constexpr bool kRearRightTurningEncoderReversed  = true;
-
-    constexpr int kFrontLeftDriveEncoderPort  = 1;
-    constexpr int kRearLeftDriveEncoderPort   = 3;
-    constexpr int kFrontRightDriveEncoderPort = 5;
-    constexpr int kRearRightDriveEncoderPort  = 7;
+    ///@}
 
     constexpr bool kFrontLeftDriveMotorReversed  = false;
     constexpr bool kRearLeftDriveMotorReversed   = false;
@@ -104,22 +93,26 @@ namespace DriveConstants
 
      // Rotation PID Controller, converts between radians angle error to radians per second turn
 
+    /// Used to regulate PID on turning (especially field relative turning)
     constexpr double kTurnValidationDistance = 0.35;
 
-    // Turn PID Controller for Swerve Modules
+    /// Turn PID Controller for Swerve Modules
     constexpr double kTurnP = 0.1; // 0.35
     constexpr double kTurnI = 0; //1e-4;
     constexpr double kTurnD = 1; // 1.85
 
-    // Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
+    /// @{
+    /// Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0.30;
     constexpr double kRotationD = 0.05;
+    /// @}
 
     constexpr double kMaxAbsoluteRotationSpeed = 2.5;
     constexpr double kMaxAbsoluteTurnableSpeed = 1.5;
     constexpr double kAbsoluteRotationTolerance = 0.04;
+
 }  // namespace DriveConstants
 
 namespace ModuleConstants
