@@ -19,6 +19,13 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
+#include "AutoNavBarrel.h"
+#include "AutoNavBounce.h"
+#include "AutoNavSlalom.h"
+#include "GSLayout1Path1.h"
+#include "GSLayout1Path2.h"
+#include "GSLayout2Path1.h"
+#include "GSLayout2Path2.h"
 
 #include "commands/DriveForward.h"
 
@@ -168,7 +175,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     // Add kinematics to ensure max speed is actually obeyed
     config.SetKinematics(m_drive.kDriveKinematics);
 
-//*
+/*
     // An example trajectory to follow.  All units in meters.
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         // Start at the origin facing the +X direction
@@ -180,20 +187,16 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         // Pass the config
         config
     );
-//*/
+*/
 
-/*
+///*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        // Start at the origin facing the +X direction
-        frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        {frc::Translation2d(1_m, 0_m), frc::Translation2d(2_m, 0_m)},
-        // End 2 meters straight ahead of where we started, facing forward
-        frc::Pose2d(3_m, 0_m, frc::Rotation2d(0_deg)),
-        // Pass the config
+        frc::Pose2d(1.143_m, 320.583_m, frc::Rotation2d(0_deg)),
+        AutoNavSlalom,
+        frc::Pose2d(1.524_m, 320.583_m, frc::Rotation2d(0_deg)),
         config
     );
-*/
+//*/
 
     frc::ProfiledPIDController<units::radians> thetaController{
         AutoConstants::kPThetaController, 0, 0,
