@@ -219,6 +219,21 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     // Choose the smallest angle and determine reverse flag
     //TODO: FINISHED ROBOT TUNING
     // Eventually prefer angle 1 always during high speed to prevent 180s
+    
+    SmartDashboard::PutNumber("kTestSpeed", GetState().speed.to<double>());
+
+    if (GetState().speed.to<double>() > DriveConstants::kMinTurnPrioritySpeed)
+    {
+        bOutputReverse = false;
+
+        return angle1;
+    }
+    if (GetState().speed.to<double>() < -1.0 * DriveConstants::kMinTurnPrioritySpeed)
+    {
+        bOutputReverse = true;
+
+        return angle2;
+    }
     if (fabs(angle1) <= 2 * fabs(angle2))
     {
         bOutputReverse = false;
@@ -228,6 +243,7 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     else
     {
         bOutputReverse = true;
+
         return angle2;
     }
 }

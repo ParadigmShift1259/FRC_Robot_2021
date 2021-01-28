@@ -100,7 +100,7 @@ namespace DriveConstants
     //constexpr double kDriveGearRatio = 6.86;                //!< MK3 swerve modules w/NEOs 14.4 ft/sec
     constexpr double kTurnMotorRevsPerWheelRev = 18.0;
 
-    constexpr double kTurnValidationDistance = 0.35;
+    constexpr double kTurnValidationDistance = 0.5;
 
     // Turn PID Controller for Swerve Modules
     constexpr double kTurnP = 0.1; // 0.35
@@ -116,6 +116,9 @@ namespace DriveConstants
     constexpr double kMaxAbsoluteRotationSpeed = 2.5;
     constexpr double kMaxAbsoluteTurnableSpeed = 1.5;
     constexpr double kAbsoluteRotationTolerance = 0.04;
+
+    constexpr double kMinTurnPrioritySpeed = 0.4;
+
 }  // namespace DriveConstants
 
 namespace ModuleConstants
