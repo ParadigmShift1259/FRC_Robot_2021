@@ -84,7 +84,7 @@ namespace DriveConstants
 
     constexpr double kFrontLeftOffset   = 3.142; //6.412;           //3.142;         // 3.14;
     constexpr double kFrontRightOffset  = 5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
-    constexpr double kRearLeftOffset    = 1.6292; //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
+    constexpr double kRearLeftOffset    = 5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
     constexpr double kRearRightOffset   = 0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 
     // constexpr double kFrontLeftOffset   = 3.142;
