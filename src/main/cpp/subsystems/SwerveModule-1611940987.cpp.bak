@@ -11,6 +11,7 @@
 #include <frc/shuffleboard/ShuffleboardWidget.h>
 #include <frc/geometry/Rotation2d.h>
 #include <wpi/math>
+//#include <iostream>
 
 #include "Constants.h"
 
@@ -224,7 +225,6 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     else
     {
         bOutputReverse = true;
-
         return angle2;
     }
 }

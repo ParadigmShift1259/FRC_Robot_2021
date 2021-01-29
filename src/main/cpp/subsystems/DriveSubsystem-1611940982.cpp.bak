@@ -10,6 +10,7 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include "Constants.h"
+// #include <iostream>
 #include <frc/SmartDashBoard/SmartDashboard.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 
@@ -125,9 +126,8 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
                                 , double yRot
                                 , bool fieldRelative) 
 {  
-    if (xRot != 0 || yRot != 0)
-	{
-        double rotPosition = atan2f(yRot, xRot);
+    if (xRot != 0 || yRot != 0) {
+        double  rotPosition = atan2f(yRot, xRot);
 
         double error = rotPosition - GetHeadingAsRot2d().Radians().to<double>();
         double desiredSet = SwerveModule::NegPiToPiRads(error);
@@ -159,31 +159,26 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
 
         // Prevent sharp turning if already fast going in a direction
         //SmartDashboard::PutNumber("TEST_Turn Rate", currentTurnRate);
-        if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate)))
-        {
+        if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate))) {
             desiredTurnRate *= -1.0;
         }
 
         // Power limiting
-        if (abs(desiredTurnRate) > max)
-        {
+        if (abs(desiredTurnRate) > max) {
             desiredTurnRate = signbit(desiredTurnRate) ? max * -1.0 : max;
         }
         
         //SmartDashboard::PutNumber("TEST_Rotation Difference", desiredSet);
         //SmartDashboard::PutNumber("TEST_Rotation Power (-1 -> 1)", desiredTurnRate);
 
-        if (!m_rotationPIDController.AtSetpoint())
-		{
+        if (!m_rotationPIDController.AtSetpoint()) {
             Drive(xSpeed, ySpeed, radians_per_second_t(desiredTurnRate), fieldRelative);
-        }
-        else
-		{
-            Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
-        }
     }
-    else
-    {
+    else {
+        Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
+    }
+    }
+    else {
         Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
     }
 }
