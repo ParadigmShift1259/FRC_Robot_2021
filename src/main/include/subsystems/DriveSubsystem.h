@@ -41,7 +41,16 @@ enum class EDriveSubSystemLogData : int
   , eGyroRotRate
 };
 
-const std::vector<std::string> c_headerNamesDriveSubsystem{ "InputX", "InputY", "InputRot", "OdoX", "OdoY", "OdoRot", "eGyroRot", "eGyroRotRate"};
+const std::vector<std::string> c_headerNamesDriveSubsystem{
+       "InputX"
+     , "InputY"
+     , "InputRot"
+     , "OdoX"
+     , "OdoY"
+     , "OdoRot"
+     , "eGyroRot"
+     , "eGyroRotRate"
+};
 
 class DriveSubsystem : public frc2::SubsystemBase
 {
@@ -64,32 +73,33 @@ public:
     /// Drives the robot at given x, y and theta speeds. Speeds range from [-1, 1]
     /// and the linear speeds have no effect on the angular speed.
     ///
-    /// @param xSpeed        Speed of the robot in the x direction
+    /// \param xSpeed        Speed of the robot in the x direction
     ///                      (forward/backwards).
-    /// @param ySpeed        Speed of the robot in the y direction (sideways).
-    /// @param rot           Angular rate of the robot.
-    /// @param fieldRelative Whether the provided x and y speeds are relative to the field.
+    /// \param ySpeed        Speed of the robot in the y direction (sideways).
+    /// \param rot           Angular rate of the robot.
+    /// \param fieldRelative Whether the provided x and y speeds are relative to the field.
     void Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative);
 
     // Drives the robot with the right stick controlling the position angle of the robot
     ///
-    /// @param xSpeed        Speed of the robot in the x direction
+    /// \param xSpeed        Speed of the robot in the x direction
     ///                      (forward/backwards).
-    /// @param ySpeed        Speed of the robot in the y direction (sideways).
-    /// @param xRot          Angle of the robot on the x axis
-    /// @param yRot          Angle of the robot on the y axis
-    /// @param fieldRelative Whether the provided translational speeds are relative to the field.
+    /// \param ySpeed        Speed of the robot in the y direction (sideways).
+    /// \param xRot          Angle of the robot on the x axis
+    /// \param yRot          Angle of the robot on the y axis
+    /// \param fieldRelative Whether the provided translational speeds are relative to the field.
     void RotationDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, double xRot, double yRot, bool fieldRelative);
 
     /// Resets the drive encoders to currently read a position of 0.
     void ResetEncoders();
 
-    /// Sets the drive SpeedControllers to a power from -1 to 1.
+    /// Readable alias for array of swerve modules
     using SwerveModuleStates = std::array<frc::SwerveModuleState, DriveConstants::kNumSwerveModules>;
+    /// Sets the drive SpeedControllers to a power from -1 to 1.
     void SetModuleStates(SwerveModuleStates desiredStates);
 
     /// Returns the heading of the robot.
-    /// @return the robot's heading in degrees, from -180 to 180
+    /// \return the robot's heading in degrees, from -180 to 180
     double GetHeading();
     frc::Rotation2d GetHeadingAsRot2d() { return frc::Rotation2d(degree_t(GetHeading())); }
 
@@ -97,17 +107,18 @@ public:
     void ZeroHeading();
 
     /// Returns the turn rate of the robot.
-    /// @return The turn rate of the robot, in degrees per second
+    /// \return The turn rate of the robot, in degrees per second
     double GetTurnRate();
 
     /// Returns the currently-estimated pose of the robot.
-    /// @return The pose.
+    /// \return The pose.
     frc::Pose2d GetPose();
 
     /// Resets the odometry to the specified pose.
-    /// @param pose The pose to which to set the odometry.
+    /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
 
+    /// The log header flag must be reset everyt time the robot is enabled
     void ResetLog()
     { 
         m_logData.ResetHeaderLogged();
@@ -117,9 +128,10 @@ public:
         m_rearLeft.ResetLog();
     }
 
-    meter_t kTrackWidth = 21.5_in; // Distance between centers of right and left wheels on robot
-    meter_t kWheelBase = 23.5_in;  // Distance between centers of front and back wheels on robot
+    meter_t kTrackWidth = 21.5_in; //!< Distance between centers of right and left wheels on robot
+    meter_t kWheelBase = 23.5_in;  //!< Distance between centers of front and back wheels on robot
 
+    /// The kinematics object converts inputs into 4 individual swerve module turn angle and wheel speeds
     frc::SwerveDriveKinematics<DriveConstants::kNumSwerveModules> kDriveKinematics{
         frc::Translation2d( kWheelBase / 2,  kTrackWidth / 2),    // +x, +y FL
         frc::Translation2d( kWheelBase / 2, -kTrackWidth / 2),    // +x, -y FR
@@ -127,6 +139,7 @@ public:
         frc::Translation2d(-kWheelBase / 2, -kTrackWidth / 2)};   // -x, -y RR
 
 private:    
+    /// Get all 4 swerve module wheel speed to update the odometry with
     SwerveModuleStates getCurrentWheelSpeeds()
     {
         SwerveModuleStates sms;
@@ -136,23 +149,30 @@ private:
         sms[3] = m_rearLeft.GetState();
         return sms;
     }
-    using LogData = LogDataT<EDriveSubSystemLogData>;
 
+    /// \name Logging helpers
+    /// Log important data to a file on the Roborio
+    ///@{
+    using LogData = LogDataT<EDriveSubSystemLogData>;
     Logger& m_log;
     LogData m_logData;
+    ///@}
 
+    /// \name Swerve Modules
+    /// The drive subsystem owns all 4 swerve modules
+    ///@{
     SwerveModule m_frontLeft;
     SwerveModule m_frontRight;
     SwerveModule m_rearRight;
     SwerveModule m_rearLeft;
+    ///@}
 
-    PigeonIMU m_gyro;
+    PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
 
-
-    
-    // Odometry class for tracking robot pose
+    /// Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
 
+    /// PID to control overall robot chassis rotation 
     frc2::PIDController m_rotationPIDController{
         DriveConstants::kRotationP,
         DriveConstants::kRotationI,

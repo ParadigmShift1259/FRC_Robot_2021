@@ -28,7 +28,10 @@ namespace DriveConstants
 {
     constexpr int kNumSwerveModules = 4;
 
-    constexpr int kFrontLeftDriveMotorPort    = 1;
+    /// \name CAN bus IDs
+    ///@{
+    /// CAN IDs for swerve modules
+    constexpr int kFrontLeftDriveMotorPort    = 1;          
     constexpr int kFrontLeftTurningMotorPort  = 2;
 
     constexpr int kFrontRightDriveMotorPort   = 3;
@@ -39,26 +42,25 @@ namespace DriveConstants
 
     constexpr int kRearLeftDriveMotorPort     = 7;
     constexpr int kRearLeftTurningMotorPort   = 8;
+    ///@}
 
+    /// \name Roborio analog input channels
+    ///@{
+    /// Roborio analog input channels for Mk2 absolute encoders
     constexpr int kFrontLeftTurningEncoderPort  = 0;
     constexpr int kFrontRightTurningEncoderPort = 1;
     constexpr int kRearRightTurningEncoderPort  = 2;
     constexpr int kRearLeftTurningEncoderPort   = 3;
+    ///@}
 
-    constexpr bool kFrontLeftTurningEncoderReversed  = false;
-    constexpr bool kRearLeftTurningEncoderReversed   = true;
-    constexpr bool kFrontRightTurningEncoderReversed = false;
-    constexpr bool kRearRightTurningEncoderReversed  = true;
-
-    constexpr int kFrontLeftDriveEncoderPort  = 1;
-    constexpr int kRearLeftDriveEncoderPort   = 3;
-    constexpr int kFrontRightDriveEncoderPort = 5;
-    constexpr int kRearRightDriveEncoderPort  = 7;
-
+    /// \name Drive wheel reversal (inverting) flags
+    ///@{
+    /// To keep the swerve module bevel gear facing inwards we need to reverse the right side
     constexpr bool kFrontLeftDriveMotorReversed  = false;
     constexpr bool kRearLeftDriveMotorReversed   = false;
     constexpr bool kFrontRightDriveMotorReversed = true;
     constexpr bool kRearRightDriveMotorReversed  = true;
+    ///@}
 
     constexpr bool kGyroReversed = false;
 
@@ -92,26 +94,32 @@ namespace DriveConstants
     // constexpr double kRearLeftOffset    = 1.8292;
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
-    constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / 4.93;    // Absolute encoder runs 0 to 4.93V
-    constexpr double KTurnVoltageToDegrees = 360 / 4.93;
+    // Mk3 swerve module
+    //constexpr double kFrontLeftOffset   = 0.180;
+    //constexpr double kFrontRightOffset  = 0.403;
+    //constexpr double kRearLeftOffset    = 0.402;
+    //constexpr double kRearRightOffset   = 0.342;
 
-    constexpr double kDriveGearRatio = 8.31;                //!< MK2 swerve modules 11.9 ft/sec
-    //constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec
-    //constexpr double kDriveGearRatio = 6.86;                //!< MK3 swerve modules w/NEOs 14.4 ft/sec
-    constexpr double kTurnMotorRevsPerWheelRev = 18.0;
+    constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
+    constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
+    constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
+    /// Used to regulate PID on turning (especially field relative turning)
     constexpr double kTurnValidationDistance = 0.5;
 
-    // Turn PID Controller for Swerve Modules
+    /// Turn PID Controller for Swerve Modules
     constexpr double kTurnP = 0.1; // 0.35
     constexpr double kTurnI = 0; //1e-4;
     constexpr double kTurnD = 1; // 1.85
 
-    // Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
+    /// \name Robot Rotation PID Controller
+    ///@{
+    /// Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
     constexpr double kRotationP = 2;
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0.30;
     constexpr double kRotationD = 0.05;
+    ///@}
 
     constexpr double kMaxAbsoluteRotationSpeed = 2.5;
     constexpr double kMaxAbsoluteTurnableSpeed = 1.5;
@@ -124,12 +132,14 @@ namespace DriveConstants
 namespace ModuleConstants
 {
     constexpr int kEncoderCPR = 1024;
-    constexpr double kWheelDiameterMeters = .1016;    // 4"
-    // Assumes the encoders are directly mounted on the wheel shafts
+    constexpr int kEncoderTicksPerSec = 10;                 //!< TalonFX::GetSelectedSensorVelocity() returns ticks/100ms = 10 ticks/sec
+    constexpr double kWheelDiameterMeters = .1016;          //!< 4"
+    //constexpr double kDriveGearRatio = 8.31;              //!< MK2 swerve modules 11.9 ft/sec
+    constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec w/Falcon 13.6 ft/sec
+    //constexpr double kDriveGearRatio = 6.86;              //!< MK3 swerve modules w/NEOs 14.4 ft/sec
+    constexpr double kTurnMotorRevsPerWheelRev = 18.0;
+    /// Assumes the encoders are directly mounted on the wheel shafts
     constexpr double kDriveEncoderDistancePerPulse = (kWheelDiameterMeters * wpi::math::pi) / static_cast<double>(kEncoderCPR);
-
-    // Assumes the encoders are directly mounted on the wheel shafts
-    //constexpr double kTurningEncoderDistancePerPulse = (wpi::math::pi * 2) / static_cast<double>(kEncoderCPR);
 
     constexpr double kP_ModuleTurningController = 1.1;
     constexpr double kD_ModuleTurningController = 0.03;
