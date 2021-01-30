@@ -251,3 +251,11 @@ namespace TurretConstants
     // initial configured angle of the turret relative to the turret, in degrees
     constexpr double kStartingPositionDegrees = 135;
 }
+
+/// Hood subsystem constants
+namespace HoodConstants
+{
+    /// PWM Port for hood servo
+    constexpr int kPWMPort = 0;
+
+}

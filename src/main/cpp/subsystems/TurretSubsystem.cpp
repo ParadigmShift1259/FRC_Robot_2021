@@ -58,19 +58,17 @@ void TurretSubsystem::TurnToField(double desiredAngle, double gyroAngle)
     desiredAngle = Util::ZeroTo360Degs(desiredAngle);
     gyroAngle = Util::ZeroTo360Degs(gyroAngle);
     // The difference between the field and robot is the desired angle to set relative to the robot
-    double angle = gyroAngle - desiredAngle;
+    double angle = desiredAngle - gyroAngle;
     TurnToRobot(Util::ZeroTo360Degs(angle));
 }
 
 void TurretSubsystem::TurnToRelative(double angle)
-{
-    /* Task
-        Finish the TurnToRelative function
-        This function takes in an angle (in degrees) that you should add to the current position
-        Keep in mind that there are conversions between Degrees and Ticks, handled by TicksToDegrees / DegreesToTicks
-        call TurnTo to reduce redundancy
-    */
-    // Hint: TicksToDegrees(m_turretmotor.GetSelectedSensorPosition())
+{   
+    double desiredAngle = TicksToDegrees(m_turretmotor.GetSelectedSensorPosition());
+    angle = Util::ZeroTo360Degs(angle);
+    desiredAngle += angle;
+    desiredAngle = Util::ZeroTo360Degs(desiredAngle);
+    TurnTo(desiredAngle);
 }
 
 bool TurretSubsystem::isAtSetpoint()

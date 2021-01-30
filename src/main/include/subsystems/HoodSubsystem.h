@@ -1,13 +1,25 @@
 
 #pragma once
 
-/* Task:
+#include <frc2/command/SubsystemBase.h>
+#include <frc/Servo.h>
 
-Create the HoodSubsystem class
-This class will contain a servo
-This class will also require a function to be able to set the servo to a certain value
+#include "Constants.h"
+#include "SwerveModule.h"
 
-You can find 2020's code on the hood here:
-https://github.com/ParadigmShift1259/FRC_ROBOT_2020/blob/master/src/main/cpp/Turret.cpp
-https://github.com/ParadigmShift1259/FRC_ROBOT_2020/blob/master/src/main/h/Turret.h
-*/
+class HoodSubsystem : public frc2::SubsystemBase
+{
+public:
+
+    HoodSubsystem();
+
+    /// Will be called periodically whenever the CommandScheduler runs.
+    void Periodic() override;
+
+    /// Set hood to certain position
+    /// \param speed         Servo rotation, ranging from [0, 1]
+    void Set(double speed);
+
+private:    
+    frc::Servo m_servo;
+};
