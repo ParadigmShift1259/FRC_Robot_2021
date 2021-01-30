@@ -11,16 +11,13 @@
 #include <frc/shuffleboard/ShuffleboardWidget.h>
 #include <frc/geometry/Rotation2d.h>
 #include <wpi/math>
-#include <iostream>
 
 #include "Constants.h"
 
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
-                           const int driveEncoderPort,
                            const int turningEncoderPort,
                            bool driveMotorReversed,
-                           bool turningEncoderReversed,
                            double offset,
                            const std::string& name,
                            Logger& log)
@@ -38,8 +35,8 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_turningMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
 
     // Set up GetVelocity() to return meters per sec instead of RPM
-    m_driveEncoder.SetVelocityConversionFactor(wpi::math::pi * ModuleConstants::kWheelDiameterMeters / (DriveConstants::kDriveGearRatio * 60.0));
-    m_turnNeoEncoder.SetPositionConversionFactor(2 * wpi::math::pi / DriveConstants::kTurnMotorRevsPerWheelRev);
+    m_driveEncoder.SetVelocityConversionFactor(wpi::math::pi * ModuleConstants::kWheelDiameterMeters / (ModuleConstants::kDriveGearRatio * 60.0));
+    m_turnNeoEncoder.SetPositionConversionFactor(2 * wpi::math::pi / ModuleConstants::kTurnMotorRevsPerWheelRev);
     
     m_driveMotor.SetInverted(driveMotorReversed);
     m_turningMotor.SetInverted(false);
@@ -61,6 +58,10 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_nteAbsEncTuningOffset    = tab.Add(nteName, m_offset)
                                     .WithWidget(frc::BuiltInWidgets::kNumberSlider)
                                     .WithProperties(sliderPropMap)
+                                    .GetEntry();
+    nteName = m_name + " voltage";
+    m_nteAbsEncTuningVoltage    = tab.Add(nteName, m_turningMotor.GetAnalog().GetVoltage())
+                                    .WithWidget(frc::BuiltInWidgets::kVoltageView)
                                     .GetEntry();
 }
 
@@ -98,15 +99,10 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     // Calculate new turn position given current Neo position, current absolute encoder position, and desired state position
     bool bOutputReverse = false;
-#define USE_ABS_ENC
-#ifdef USE_ABS_ENC
     double minTurnRads = MinTurnRads(absAngle, state.angle.Radians().to<double>(), bOutputReverse);
-#else
-    double minTurnRads = MinTurnRads(currentPosition, state.angle.Radians().to<double>(), bOutputReverse);
-#endif
     double direction = 1.0;
-    if (bOutputReverse)
-        direction = -1.0;
+    // if (bOutputReverse)
+    //     direction = -1.0;
     // m_driveMotor.SetInverted(bOutputReverse);
 
     // Set position reference of turnPIDController
@@ -159,12 +155,13 @@ void SwerveModule::ResetEncoders()
     m_driveEncoder.SetPosition(0.0); 
 }
 
-double SwerveModule::VoltageToRadians(double Voltage, double offset)
+double SwerveModule::VoltageToRadians(double voltage, double offset)
 {
 #ifdef TUNE_ABS_ENC
     offset = m_nteAbsEncTuningOffset.GetDouble(m_offset);
 #endif
-    double angle = fmod(Voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    m_nteAbsEncTuningVoltage.SetDouble(voltage);
+    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
 
     return angle;
@@ -195,7 +192,7 @@ double SwerveModule::NegPiToPiRads(double theta)
         theta -= 2 * wpi::math::pi;
     else if (theta < -1.0 * wpi::math::pi)
         theta += 2 * wpi::math::pi;
-        
+    
     return theta;
 }
 
@@ -219,6 +216,21 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     // Choose the smallest angle and determine reverse flag
     //TODO: FINISHED ROBOT TUNING
     // Eventually prefer angle 1 always during high speed to prevent 180s
+    
+    SmartDashboard::PutNumber("kTestSpeed", GetState().speed.to<double>());
+
+    if (GetState().speed.to<double>() > DriveConstants::kMinTurnPrioritySpeed)
+    {
+        bOutputReverse = false;
+
+        return angle1;
+    }
+    if (GetState().speed.to<double>() < -1.0 * DriveConstants::kMinTurnPrioritySpeed)
+    {
+        bOutputReverse = true;
+
+        return angle2;
+    }
     if (fabs(angle1) <= 2 * fabs(angle2))
     {
         bOutputReverse = false;
@@ -228,6 +240,7 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     else
     {
         bOutputReverse = true;
+
         return angle2;
     }
 }

@@ -10,7 +10,6 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include "Constants.h"
-#include <iostream>
 #include <frc/SmartDashBoard/SmartDashboard.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 
@@ -25,10 +24,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
-        , kFrontLeftDriveEncoderPort
         , kFrontLeftTurningEncoderPort
         , kFrontLeftDriveMotorReversed
-        , kFrontLeftTurningEncoderReversed
         , kFrontLeftOffset
         , std::string("FrontLeft")
         , log
@@ -38,10 +35,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
-        , kFrontRightDriveEncoderPort
         , kFrontRightTurningEncoderPort
         , kFrontRightDriveMotorReversed
-        , kFrontRightTurningEncoderReversed
         , kFrontRightOffset
         , std::string("FrontRight")
         , log
@@ -51,10 +46,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
-        , kRearRightDriveEncoderPort
         , kRearRightTurningEncoderPort
         , kRearRightDriveMotorReversed
-        , kRearRightTurningEncoderReversed
         , kRearRightOffset
         , std::string("RearRight")
         , log
@@ -64,10 +57,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
-        , kRearLeftDriveEncoderPort
         , kRearLeftTurningEncoderPort
         , kRearLeftDriveMotorReversed
-        , kRearLeftTurningEncoderReversed
         , kRearLeftOffset
         , std::string("RearLeft")
         , log
@@ -118,7 +109,7 @@ void DriveSubsystem::Periodic()
                     , m_rearRight.GetState());
    
     auto pose = m_odometry.GetPose();
-     
+
     m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
@@ -132,9 +123,14 @@ void DriveSubsystem::Periodic()
     m_rearLeft.Periodic();
 }
 
-void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, double xRot, double yRot, bool fieldRelative) {
-    
-    if (xRot != 0 || yRot != 0) {
+void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
+                                , meters_per_second_t ySpeed
+                                , double xRot
+                                , double yRot
+                                , bool fieldRelative) 
+{  
+    if (xRot != 0 || yRot != 0)
+	{
         double rotPosition = atan2f(yRot, xRot);
 
         double error = rotPosition - GetHeadingAsRot2d().Radians().to<double>();
@@ -167,43 +163,43 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed, meters_per_second
 
         // Prevent sharp turning if already fast going in a direction
         //SmartDashboard::PutNumber("TEST_Turn Rate", currentTurnRate);
-        if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate))) {
+        if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate)))
+        {
             desiredTurnRate *= -1.0;
         }
 
         // Power limiting
-        if (abs(desiredTurnRate) > max) {
+        if (abs(desiredTurnRate) > max)
+        {
             desiredTurnRate = signbit(desiredTurnRate) ? max * -1.0 : max;
         }
         
         //SmartDashboard::PutNumber("TEST_Rotation Difference", desiredSet);
         //SmartDashboard::PutNumber("TEST_Rotation Power (-1 -> 1)", desiredTurnRate);
 
-        if (!m_rotationPIDController.AtSetpoint()) {
+        if (!m_rotationPIDController.AtSetpoint())
+		{
             Drive(xSpeed, ySpeed, radians_per_second_t(desiredTurnRate), fieldRelative);
         }
-        else {
+        else
+		{
             Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
         }
     }
-    else {
+    else
+    {
         Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
     }
 }
 
-void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative)
+void DriveSubsystem::Drive(meters_per_second_t xSpeed
+                        , meters_per_second_t ySpeed
+                        , radians_per_second_t rot
+                        , bool fieldRelative)
 {
     m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
     m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
     m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
-
-    // if (xSpeed.to<double>() == 0.0 && ySpeed.to<double>() == 0.0 && rot.to<double>() == 0.0)
-    // {
-    //     states[eFrontLeft].angle = frc::Rotation2d(radian_t(0.0));
-    //     states[eFrontRight].angle = frc::Rotation2d(radian_t(0.0));
-    //     states[eRearLeft].angle = frc::Rotation2d(radian_t(0.0));
-    //     states[eRearRight].angle = frc::Rotation2d(radian_t(0.0));
-    // }
 
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)

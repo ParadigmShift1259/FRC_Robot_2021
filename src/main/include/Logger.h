@@ -149,7 +149,7 @@ class Logger
     void openLog();
     void closeLog();
     std::string FindNextLogFileNumber();
-    
+
     void logMsg(ELogLevel level, const char* source, const char* msg, const char* msg2 = nullptr, bool bHeader = c_bData);
 
     template <typename E>
@@ -210,7 +210,7 @@ class Logger
       out.erase(out.size() - 1, 1);           // Remove the trailing comma
       logMsg(eInfo, source, out.c_str(), nullptr, c_bHeader);
     }
-    
+
     void formatData(const vector<double>& data);
     void formatData(const vector<int>& data);
 

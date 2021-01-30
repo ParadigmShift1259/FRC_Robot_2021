@@ -15,6 +15,7 @@
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/SmartDashboard/SmartDashboard.h>
 #include <networktables/NetworkTableEntry.h>
+#include <wpi/math>
 
 #include <rev\CANSparkMax.h>
 #include <rev\CANEncoder.h>
@@ -178,10 +179,8 @@ class SwerveModule
 public:
     SwerveModule( int driveMotorChannel
                 , int turningMotorChannel
-                , const int driveEncoderPort
                 , const int turningEncoderPort
                 , bool driveEncoderReversed
-                , bool turningEncoderReversed
                 , double offSet
                 , const std::string& name
                 , Logger& log);
@@ -203,8 +202,8 @@ public:
     static double NegPiToPiRads(double theta);
 
 private:
-    double VoltageToRadians(double Voltage, double Offset);
-    double VoltageToDegrees(double Voltage, double Offset);
+    double VoltageToRadians(double voltage, double Offset);
+    double VoltageToDegrees(double voltage, double Offset);
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 
@@ -234,6 +233,7 @@ private:
     frc::AnalogInput m_turningEncoder;
 
     nt::NetworkTableEntry m_nteAbsEncTuningOffset;
+    nt::NetworkTableEntry m_nteAbsEncTuningVoltage;
 
     using LogData = LogDataT<ESwerveModuleLogData>;
     LogData m_logData;
