@@ -28,10 +28,16 @@ public:
     /// Sets the flywheel to a desired rpm
     void SetRPM(double rpm);
 
+    /// Returns whether or not the flywheel is at the desired RPM
+    bool isAtRPM();
+
 private:
     CANSparkMax m_flywheelmotor;
     CANPIDController m_flywheelPID;
     CANEncoder m_flywheelencoder;
 
     SimpleMotorFeedforward<units::meters> m_flywheelFF;
+
+    // Current desired setpoint of the flywheel in RPM
+    double m_setpoint;
 };

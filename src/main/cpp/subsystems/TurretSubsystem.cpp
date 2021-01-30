@@ -56,7 +56,7 @@ void TurretSubsystem::TurnToField(double desiredAngle, double gyroAngle)
 {
     // safeguard
     desiredAngle = Util::ZeroTo360Degs(desiredAngle);
-    gyroAngle = Util::ZeroTo360Degs(gyroAngle;
+    gyroAngle = Util::ZeroTo360Degs(gyroAngle);
     // The difference between the field and robot is the desired angle to set relative to the robot
     double angle = gyroAngle - desiredAngle;
     TurnToRobot(Util::ZeroTo360Degs(angle));

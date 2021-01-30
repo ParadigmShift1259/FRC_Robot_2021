@@ -192,6 +192,8 @@ namespace FlywheelConstants
     constexpr double kMotorPort = 1;
 
     constexpr double kRampRate = 0.1;
+    // Total error allowed for the flywheel, in RPM
+    constexpr double kAllowedError = 20;
 
     constexpr double kP = 0;
     constexpr double kI = 0;
@@ -239,7 +241,6 @@ namespace TurretConstants
     constexpr double kTicksPerRev = 4096.0;
     constexpr double kDegreesPerRev = 360.0;
     constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
-    constexpr double kMetersPerRev = wpi::math::pi * kWheelDiameter;
 
     // Offset of origin point of turret angle and robot angle, in degrees. Robot 0 is forward
     constexpr double kTurretToRobotAngleOffset = -45;
@@ -249,5 +250,4 @@ namespace TurretConstants
 
     // initial configured angle of the turret relative to the turret, in degrees
     constexpr double kStartingPositionDegrees = 135;
-
 }

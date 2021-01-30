@@ -24,6 +24,8 @@ FlywheelSubsystem::FlywheelSubsystem()
     m_flywheelPID.SetI(FlywheelConstants::kI, 0);
     m_flywheelPID.SetD(FlywheelConstants::kD, 0);
     m_flywheelPID.SetOutputRange(FlywheelConstants::kMinOut, FlywheelConstants::kMaxOut);
+
+    m_setpoint = 0;
 }
 
 void FlywheelSubsystem::Periodic()
@@ -36,5 +38,10 @@ void FlywheelSubsystem::SetRPM(double rpm)
     double FF = m_flywheelFF.Calculate(rpm * FlywheelConstants::kMPSPerRPM * 1_mps).to<double>();
     m_flywheelPID.SetFF(0);
 
-    m_flywheelPID.SetReference(rpm, ControlType::kVelocity, 0, FF);
+    m_setpoint = rpm;
+    m_flywheelPID.SetReference(m_setpoint, ControlType::kVelocity, 0, FF);
+}
+
+bool FlywheelSubsystem::isAtRPM() {
+    return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) >= FlywheelConstants::kAllowedError;
 }
