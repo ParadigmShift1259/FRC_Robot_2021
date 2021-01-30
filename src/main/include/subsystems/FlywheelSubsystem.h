@@ -1,0 +1,34 @@
+
+#pragma once
+
+#include <frc2/command/SubsystemBase.h>
+
+#include <rev\CANSparkMax.h>
+#include <rev\CANEncoder.h>
+#include <rev\CANPIDController.h>
+
+#include <units\units.h>
+#include <frc\controller\SimpleMotorFeedforward.h>
+
+#include "Constants.h"
+
+using namespace rev;
+using namespace std;
+using namespace frc;
+
+class FlywheelSubsystem : public frc2::SubsystemBase
+{
+public:
+
+    FlywheelSubsystem();
+
+    /// Will be called periodically whenever the CommandScheduler runs.
+    void Periodic() override;
+
+private:    
+    CANSparkMax m_flywheelmotor;
+    CANPIDController m_flywheelPID;
+    CANEncoder m_flywheelencoder;
+
+    SimpleMotorFeedforward<units::meters> m_flywheelFF;
+};

@@ -173,3 +173,67 @@ namespace OIConstants
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kDriverControllerPort = 0;
 }  // namespace OIConstants
+
+// Intake Subsystem constants
+namespace IntakeConstants
+{
+    constexpr double kMotorPort = 0;
+    constexpr double kMotorReverseConstant = 1;
+
+    constexpr double kIngestLow = 0.3;
+    constexpr double kIngestHigh = 0.6;
+    constexpr double kReleaseLow = -0.3;
+    constexpr double kReleaseHigh = -0.6;
+}
+
+// Flywheel Subsystem constants
+namespace FlywheelConstants
+{
+    constexpr double kMotorPort = 1;
+
+    constexpr double kRampRate = 0.1;
+
+    constexpr double kP = 0;
+    constexpr double kI = 0;
+    constexpr double kD = 0;
+
+    constexpr double kMinOut = 0;
+    constexpr double kMaxOut = 1.0;
+
+    constexpr double kS = 0;
+    constexpr double kV = 0;
+    constexpr double kA = 0;
+}
+
+// Turret Subsystem Constants
+namespace TurretConstants
+{
+    constexpr double kMotorPort = 2;
+
+    constexpr double kP = 0;
+    constexpr double kI = 0;
+    constexpr double kD = 0;
+
+    constexpr double kMinOut = 0;
+    constexpr double kMaxOut = 0.175;
+
+    constexpr double kTimeout = 30;
+    constexpr double kInverted = true;
+    constexpr double kSensorPhase = true;
+
+    constexpr double kDegreeStopRange = 0.125;
+
+    // Diameter is in meters
+    constexpr double kWheelDiameter = 0.1524;
+    constexpr double kPulley = 2.7305;
+    constexpr double kSpinner = 29.845;
+
+    // The motor on the turret drives a pulley, while drives the turret
+    // MotorRev indicates the revolution of the motor, while Rev indicates the revolution of the turret
+    constexpr double kMotorRevPerRev = kPulley / kSpinner;
+    constexpr double kTicksPerRev = 4096.0;
+    constexpr double kDegreesPerRev = 360.0;
+    constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
+    constexpr double kMetersPerRev = wpi::math::pi * kWheelDiameter;
+
+}
