@@ -64,7 +64,13 @@ void TurretSubsystem::TurnToField(double desiredAngle, double gyroAngle)
 
 void TurretSubsystem::TurnToRelative(double angle)
 {
-    // TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()
+    /* Task
+        Finish the TurnToRelative function
+        This function takes in an angle (in degrees) that you should add to the current position
+        Keep in mind that there are conversions between Degrees and Ticks, handled by TicksToDegrees / DegreesToTicks
+        call TurnTo to reduce redundancy
+    */
+    // Hint: TicksToDegrees(m_turretmotor.GetSelectedSensorPosition())
 }
 
 bool TurretSubsystem::isAtSetpoint()

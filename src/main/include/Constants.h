@@ -203,6 +203,13 @@ namespace FlywheelConstants
     constexpr double kS = 0;
     constexpr double kV = 0;
     constexpr double kA = 0;
+
+    // Diameter is in meters
+    constexpr double kWheelDiameter = 0.1524;
+    constexpr double kSecondsPerMinute = 60;
+    constexpr double kWheelMetersPerRev = kWheelDiameter * wpi::math::pi;
+    // Meters per second to Revolutions per minute
+    constexpr double kMPSPerRPM = kWheelMetersPerRev / kSecondsPerMinute;
 }
 
 // Turret Subsystem Constants
@@ -223,8 +230,6 @@ namespace TurretConstants
 
     constexpr double kDegreeStopRange = 0.125;
 
-    // Diameter is in meters
-    constexpr double kWheelDiameter = 0.1524;
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
 

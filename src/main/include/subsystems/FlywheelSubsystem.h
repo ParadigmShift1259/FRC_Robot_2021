@@ -25,6 +25,9 @@ public:
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
 
+    /// Sets the flywheel to a desired rpm
+    void SetRPM(double rpm);
+
 private:
     CANSparkMax m_flywheelmotor;
     CANPIDController m_flywheelPID;

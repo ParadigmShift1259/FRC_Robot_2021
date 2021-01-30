@@ -44,7 +44,6 @@ public:
     bool isAtSetpoint();
 
 protected:
-
     /// Converts motor ticks into turret rotation, in degrees
     /// \param ticks        Number of ticks to be converted
     double TicksToDegrees(double ticks);
