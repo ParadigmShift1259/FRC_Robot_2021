@@ -236,4 +236,13 @@ namespace TurretConstants
     constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
     constexpr double kMetersPerRev = wpi::math::pi * kWheelDiameter;
 
+    // Offset of origin point of turret angle and robot angle, in degrees. Robot 0 is forward
+    constexpr double kTurretToRobotAngleOffset = -45;
+    // Maximum rotation of the turret relative to the turret, in degrees
+    constexpr double kMinAngle = 0;
+    constexpr double kMaxAngle = 270;
+
+    // initial configured angle of the turret relative to the turret, in degrees
+    constexpr double kStartingPositionDegrees = 135;
+
 }

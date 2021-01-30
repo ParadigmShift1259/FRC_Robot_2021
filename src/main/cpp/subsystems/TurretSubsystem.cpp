@@ -23,11 +23,53 @@ TurretSubsystem::TurretSubsystem()
     m_turretmotor.ConfigNominalOutputReverse(TurretConstants::kMinOut * -1.0, TurretConstants::kTimeout);
     m_turretmotor.ConfigPeakOutputForward(TurretConstants::kMaxOut, TurretConstants::kTimeout);
     m_turretmotor.ConfigPeakOutputReverse(TurretConstants::kMaxOut * -1.0, TurretConstants::kTimeout);
-     m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(TurretConstants::kDegreeStopRange), TurretConstants::kTimeout);
+    //m_turretmotor.ConfigClosedloopRamp()
+    m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(TurretConstants::kDegreeStopRange), TurretConstants::kTimeout);
+
+    m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(TurretConstants::kStartingPositionDegrees), 0, TurretConstants::kTimeout);
 }
 
 void TurretSubsystem::Periodic()
 {
+    SmartDashboard::PutNumber("Turret Current Angle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
+    SmartDashboard::PutNumber("Turret Desired Angle", m_turretmotor.GetClosedLoopTarget());   
+}
+
+void TurretSubsystem::TurnTo(double angle)
+{
+    // safeguard
+    angle = Util::ZeroTo360Degs(angle);
+    // Turret is not set if desired angle is within the deadzone area
+    if (angle >= TurretConstants::kMinAngle && angle <= TurretConstants::kMaxAngle)
+    {
+        m_turretmotor.Set(ControlMode::Position, DegreesToTicks(angle));
+    }
+}
+
+void TurretSubsystem::TurnToRobot(double robotAngle)
+{
+    double angle = robotAngle - TurretConstants::kTurretToRobotAngleOffset;
+    TurnTo(Util::ZeroTo360Degs(angle));
+}
+
+void TurretSubsystem::TurnToField(double desiredAngle, double gyroAngle)
+{
+    // safeguard
+    desiredAngle = Util::ZeroTo360Degs(desiredAngle);
+    gyroAngle = Util::ZeroTo360Degs(gyroAngle;
+    // The difference between the field and robot is the desired angle to set relative to the robot
+    double angle = gyroAngle - desiredAngle;
+    TurnToRobot(Util::ZeroTo360Degs(angle));
+}
+
+void TurretSubsystem::TurnToRelative(double angle)
+{
+    // TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()
+}
+
+bool TurretSubsystem::isAtSetpoint()
+{
+    return fabs(m_turretmotor.GetClosedLoopError()) <= DegreesToTicks(TurretConstants::kDegreeStopRange);
 }
 
 double TurretSubsystem::TicksToDegrees(double ticks)

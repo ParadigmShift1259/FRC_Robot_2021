@@ -1,6 +1,4 @@
 
-#pragma once
-
 #include "commands/IntakeIngest.h"
 
 IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem) : m_intake(subsystem) {
