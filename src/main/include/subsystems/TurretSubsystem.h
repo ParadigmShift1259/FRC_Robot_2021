@@ -15,7 +15,6 @@ using namespace frc;
 class TurretSubsystem : public frc2::SubsystemBase
 {
 public:
-
     TurretSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.

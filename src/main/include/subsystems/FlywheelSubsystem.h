@@ -25,7 +25,7 @@ public:
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
 
-private:    
+private:
     CANSparkMax m_flywheelmotor;
     CANPIDController m_flywheelPID;
     CANEncoder m_flywheelencoder;
