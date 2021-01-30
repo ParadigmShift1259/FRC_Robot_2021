@@ -20,6 +20,18 @@
 #include "Constants.h"
 #include "Logger.h"
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/FlywheelSubsystem.h"
+#include "subsystems/TurretSubsystem.h"
+#include "subsystems/IntakeSubsystem.h"
+#include "subsystems/HoodSubsystem.h"
+
+#include "commands/DriveForward.h"
+#include "commands/FlywheelIdle.h"
+#include "commands/FlywheelRamp.h"
+#include "commands/HoodRaise.h"
+#include "commands/IntakeIngest.h"
+#include "commands/IntakeRelease.h"
+#include "commands/TurretControl.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -59,6 +71,9 @@ private:
 
     // The robot's subsystems
     DriveSubsystem m_drive;
+    HoodSubsystem m_hood;
+    FlywheelSubsystem m_flywheel;
+
     // m_units::meters_per_second_t m_xInput;      //!< Last x input value
     // units::meters_per_second_t m_yInput;        //!< Last y input value
     // units::radians_per_second_t m_rotInput;     //!< Last rotation input value

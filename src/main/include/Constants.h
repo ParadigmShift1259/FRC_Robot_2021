@@ -212,6 +212,10 @@ namespace FlywheelConstants
     constexpr double kWheelMetersPerRev = kWheelDiameter * wpi::math::pi;
     // Meters per second to Revolutions per minute
     constexpr double kMPSPerRPM = kWheelMetersPerRev / kSecondsPerMinute;
+
+    /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
+    constexpr double kIdleRPM = 10; 
+    constexpr double kRampRPM = 15;
 }
 
 // Turret Subsystem Constants
@@ -248,6 +252,8 @@ namespace TurretConstants
     constexpr double kMinAngle = 0;
     constexpr double kMaxAngle = 270;
 
+    constexpr double kAddedAngle = 10;
+
     // initial configured angle of the turret relative to the turret, in degrees
     constexpr double kStartingPositionDegrees = 135;
 }
@@ -257,5 +263,6 @@ namespace HoodConstants
 {
     /// PWM Port for hood servo
     constexpr int kPWMPort = 0;
+    constexpr double kTestServoSpeed = 0.14;
 
 }

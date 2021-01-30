@@ -19,6 +19,10 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/FlywheelSubsystem.h"
+#include "subsystems/TurretSubsystem.h"
+#include "subsystems/IntakeSubsystem.h"
+#include "subsystems/HoodSubsystem.h"
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
 #include "AutoNavSlalom.h"
@@ -28,12 +32,20 @@
 #include "GSLayout2Path2.h"
 
 #include "commands/DriveForward.h"
+#include "commands/FlywheelIdle.h"
+#include "commands/FlywheelRamp.h"
+#include "commands/HoodRaise.h"
+#include "commands/IntakeIngest.h"
+#include "commands/IntakeRelease.h"
+#include "commands/TurretControl.h"
+#include "commands/Shoot.h"
 
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
+    , m_hood()
 {
     // Initialize all of your commands and subsystems here
 
@@ -161,6 +173,16 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         )
+    );
+    
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenPressed(
+        HoodRaise(&m_hood)
+    );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
+        FlywheelIdle(&m_flywheel)
+    );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
+        FlywheelRamp(&m_flywheel)
     );
 }
 

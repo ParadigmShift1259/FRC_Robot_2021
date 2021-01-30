@@ -1,5 +1,8 @@
 
 #include "commands/IntakeIngest.h"
+#include "Constants.h"
+
+using namespace IntakeConstants;
 
 IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem) : m_intake(subsystem) {
   AddRequirements({subsystem});
