@@ -101,9 +101,9 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     bool bOutputReverse = false;
     double minTurnRads = MinTurnRads(absAngle, state.angle.Radians().to<double>(), bOutputReverse);
     double direction = 1.0;
-    // if (bOutputReverse)
-    //     direction = -1.0;
-    // m_driveMotor.SetInverted(bOutputReverse);
+    // Inverts the drive motor if going in the "backwards" direction on the swerve module
+    if (bOutputReverse)
+        direction = -1.0;
 
     // Set position reference of turnPIDController
     double newPosition = currentPosition + minTurnRads;
@@ -225,12 +225,14 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
 
         return angle1;
     }
+    else
     if (GetState().speed.to<double>() < -1.0 * DriveConstants::kMinTurnPrioritySpeed)
     {
         bOutputReverse = true;
 
         return angle2;
     }
+
     if (fabs(angle1) <= 2 * fabs(angle2))
     {
         bOutputReverse = false;

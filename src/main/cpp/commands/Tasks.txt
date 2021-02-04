@@ -1,0 +1,17 @@
+Command resources here: https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html
+Some examples, but the ones in the code (HoodSubsystem, TurretSubsystem) are easier, since you have to completely build these ground up
+
+New commands (probably) needed (Also just good for practice for now)
+- IntakeRelease
+- FlywheelIdle
+    Requires flywheel
+    RunCommand that maintains the flywheel at a constant kIdleRPM
+- FlywheelRamp
+    Requires flywheel
+    RunCommand that maintains the flywheel at a higher constant kRampRPM
+- Shoot
+    Requires flywheel, turret, and hood
+    RunCommand that runs the flywheel at a designated speed (put constant for now) for a time constant kShootTime
+- TurretControl
+    Requires turret
+    RunCommand that accepts an X and Y input (for rotation), converts it into rotation, and calls turret.TurnToRelative() 
