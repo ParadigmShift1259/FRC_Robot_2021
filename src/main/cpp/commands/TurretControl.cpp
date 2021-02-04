@@ -4,7 +4,7 @@
 
 using namespace TurretConstants;
 
-TurretControl::TurretControl(DriveSubsystem* subsystem) : m_turret(subsystem) {
+TurretControl::TurretControl(TurretSubsystem* subsystem) : m_turret(subsystem) {
   AddRequirements({subsystem});
 }
 

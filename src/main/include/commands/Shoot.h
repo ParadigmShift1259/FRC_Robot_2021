@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include <frc2/command/CommandBase.h>
@@ -20,3 +21,4 @@ class Shoot : public frc2::CommandHelper<frc2::CommandBase, Shoot> {
   HoodSubsystem* m_hood;
   TurretSubsystem* m_turret;
 };
+*/
