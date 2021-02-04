@@ -108,9 +108,9 @@ namespace DriveConstants
     constexpr double kTurnValidationDistance = 0.5;
 
     /// Turn PID Controller for Swerve Modules
-    constexpr double kTurnP = 0.1; // 0.35
+    constexpr double kTurnP = 0.35; // 0.35 // 0.1
     constexpr double kTurnI = 0; //1e-4;
-    constexpr double kTurnD = 1; // 1.85
+    constexpr double kTurnD = 1.85; // 1.85 // 1
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -173,3 +173,96 @@ namespace OIConstants
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kDriverControllerPort = 0;
 }  // namespace OIConstants
+
+// Intake Subsystem constants
+namespace IntakeConstants
+{
+    constexpr double kMotorPort = 15;
+    constexpr double kMotorReverseConstant = 1;
+
+    constexpr double kIngestLow = 0.3;
+    constexpr double kIngestHigh = 0.6;
+    constexpr double kReleaseLow = -0.3;
+    constexpr double kReleaseHigh = -0.6;
+}
+
+// Flywheel Subsystem constants
+namespace FlywheelConstants
+{
+    constexpr double kMotorPort = 14;
+
+    constexpr double kRampRate = 0.1;
+    // Total error allowed for the flywheel, in RPM
+    constexpr double kAllowedError = 20;
+
+    constexpr double kP = 0;
+    constexpr double kI = 0;
+    constexpr double kD = 0;
+
+    constexpr double kMinOut = 0;
+    constexpr double kMaxOut = 1.0;
+
+    constexpr double kS = 0;
+    constexpr double kV = 0;
+    constexpr double kA = 0;
+
+    // Diameter is in meters
+    constexpr double kWheelDiameter = 0.1524;
+    constexpr double kSecondsPerMinute = 60;
+    constexpr double kWheelMetersPerRev = kWheelDiameter * wpi::math::pi;
+    // Meters per second to Revolutions per minute
+    constexpr double kMPSPerRPM = kWheelMetersPerRev / kSecondsPerMinute;
+
+    /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
+    constexpr double kIdleRPM = 10; 
+    constexpr double kRampRPM = 15;
+}
+
+// Turret Subsystem Constants
+namespace TurretConstants
+{
+    constexpr double kMotorPort = 12;
+
+    constexpr double kP = 0;
+    constexpr double kI = 0;
+    constexpr double kD = 0;
+
+    constexpr double kMinOut = 0;
+    constexpr double kMaxOut = 0.175;
+
+    constexpr double kTimeout = 30;
+    constexpr double kInverted = true;
+    constexpr double kSensorPhase = true;
+
+    constexpr double kDegreeStopRange = 0.125;
+
+    constexpr double kPulley = 2.7305;
+    constexpr double kSpinner = 29.845;
+
+    // The motor on the turret drives a pulley, while drives the turret
+    // MotorRev indicates the revolution of the motor, while Rev indicates the revolution of the turret
+    constexpr double kMotorRevPerRev = kPulley / kSpinner;
+    constexpr double kTicksPerRev = 4096.0;
+    constexpr double kDegreesPerRev = 360.0;
+    constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
+
+    // Offset of origin point of turret angle and robot angle, in degrees. Robot 0 is forward
+    constexpr double kTurretToRobotAngleOffset = -45;
+    // Maximum rotation of the turret relative to the turret, in degrees
+    constexpr double kMinAngle = 0;
+    constexpr double kMaxAngle = 270;
+
+    constexpr double kAddedAngle = 10;
+
+    // initial configured angle of the turret relative to the turret, in degrees
+    constexpr double kStartingPositionDegrees = 135;
+}
+
+/// Hood subsystem constants
+namespace HoodConstants
+{
+    /// PWM Port for hood servo
+    constexpr int kPWMPort = 13;
+    constexpr double kTestServoSpeed = 0.14;
+
+}
