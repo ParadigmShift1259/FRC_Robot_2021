@@ -366,6 +366,6 @@ std::vector<frc::Translation2d> AutoNavSlalom =
   frc::Translation2d(1.1494866634177998_m, 177.72027423109026_m),
   frc::Translation2d(1.147728418646678_m, 177.71884060835174_m),
   frc::Translation2d(1.1460861030538263_m, 177.71729244492454_m),
-{;
+};
 
-frc::Pose2d AutoNavSlalomFinalPt(1.1429999999999993_m, 177.714_m frc::Rotation2d(0_deg));
+frc::Pose2d AutoNavSlalomFinalPt(1.1429999999999993_m, 177.714_m, frc::Rotation2d(0_deg));

@@ -437,6 +437,6 @@ std::vector<frc::Translation2d> AutoNavBounce =
   frc::Translation2d(8.088384387821351_m, 177.6813796118155_m),
   frc::Translation2d(8.177127209086496_m, 177.6621036117395_m),
   frc::Translation2d(8.266709430531245_m, 177.6479742357597_m),
-{;
+};
 
-frc::Pose2d AutoNavBounceFinalPt(8.35671944856021_m, 177.63668569219868_m frc::Rotation2d(0_deg));
+frc::Pose2d AutoNavBounceFinalPt(8.35671944856021_m, 177.63668569219868_m, frc::Rotation2d(0_deg));

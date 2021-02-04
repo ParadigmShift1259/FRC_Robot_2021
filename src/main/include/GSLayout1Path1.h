@@ -218,6 +218,6 @@ std::vector<frc::Translation2d> GSLayout1Path1 =
   frc::Translation2d(8.381717220585053_m, 179.2377521862293_m),
   frc::Translation2d(8.381783726941041_m, 179.23780168220173_m),
   frc::Translation2d(8.381898538649525_m, 179.237900796301_m),
-{;
+};
 
-frc::Pose2d GSLayout1Path1FinalPt(8.381999999999998_m, 179.238_m frc::Rotation2d(0_deg));
+frc::Pose2d GSLayout1Path1FinalPt(8.381999999999998_m, 179.238_m, frc::Rotation2d(0_deg));

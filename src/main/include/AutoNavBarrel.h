@@ -410,6 +410,6 @@ std::vector<frc::Translation2d> AutoNavBarrel =
   frc::Translation2d(1.4865171821622214_m, 178.17025368969422_m),
   frc::Translation2d(1.369006253101491_m, 178.16673756153608_m),
   frc::Translation2d(1.2958150525920256_m, 178.1618866007212_m),
-{;
+};
 
-frc::Pose2d AutoNavBarrelFinalPt(1.249988275462207_m, 178.1562378406236_m frc::Rotation2d(0_deg));
+frc::Pose2d AutoNavBarrelFinalPt(1.249988275462207_m, 178.1562378406236_m, frc::Rotation2d(0_deg));
