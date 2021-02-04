@@ -45,7 +45,7 @@ using namespace DriveConstants;
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
-    , m_hood()
+    //, m_hood()
 {
     // Initialize all of your commands and subsystems here
 
@@ -174,6 +174,7 @@ void RobotContainer::ConfigureButtonBindings()
             {&m_drive}
         )
     );
+
     
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenPressed(
         HoodRaise(&m_hood)

@@ -108,9 +108,9 @@ namespace DriveConstants
     constexpr double kTurnValidationDistance = 0.5;
 
     /// Turn PID Controller for Swerve Modules
-    constexpr double kTurnP = 0.1; // 0.35
+    constexpr double kTurnP = 0.35; // 0.35 // 0.1
     constexpr double kTurnI = 0; //1e-4;
-    constexpr double kTurnD = 1; // 1.85
+    constexpr double kTurnD = 1.85; // 1.85 // 1
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -177,7 +177,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 0;
+    constexpr double kMotorPort = 15;
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -189,7 +189,7 @@ namespace IntakeConstants
 // Flywheel Subsystem constants
 namespace FlywheelConstants
 {
-    constexpr double kMotorPort = 1;
+    constexpr double kMotorPort = 14;
 
     constexpr double kRampRate = 0.1;
     // Total error allowed for the flywheel, in RPM
@@ -221,7 +221,7 @@ namespace FlywheelConstants
 // Turret Subsystem Constants
 namespace TurretConstants
 {
-    constexpr double kMotorPort = 2;
+    constexpr double kMotorPort = 12;
 
     constexpr double kP = 0;
     constexpr double kI = 0;
@@ -262,7 +262,7 @@ namespace TurretConstants
 namespace HoodConstants
 {
     /// PWM Port for hood servo
-    constexpr int kPWMPort = 0;
+    constexpr int kPWMPort = 13;
     constexpr double kTestServoSpeed = 0.14;
 
 }
