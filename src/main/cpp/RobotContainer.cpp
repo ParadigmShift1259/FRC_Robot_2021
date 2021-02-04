@@ -191,9 +191,63 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
 ///*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        frc::Pose2d(1.143_m, 320.583_m, frc::Rotation2d(0_deg)),
+        AutoNavBarrelInitPt,
+        AutoNavBarrel,
+        AutoNavBarrelFinalPt,
+        config
+    );
+//*/
+
+///*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        AutoNavBounceInitPt,
+        AutoNavBounce,
+        AutoNavBounceFinalPt,
+        config
+    );
+//*/
+
+///*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        AutoNavSlalomInitPt,
         AutoNavSlalom,
-        frc::Pose2d(1.524_m, 320.583_m, frc::Rotation2d(0_deg)),
+        AutoNavSlalomFinalPt,
+        config
+    );
+//*/
+
+///*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        GSLayout1Path1InitPt,
+        GSLayout1Path1,
+        GSLayout1Path1FinalPt,
+        config
+    );
+//*/
+
+///*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        GSLayout1Path2InitPt,
+        GSLayout1Path2,
+        GSLayout1Path2FinalPt,
+        config
+    );
+//*/
+
+///*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        GSLayout2Path1InitPt,
+        GSLayout2Path1,
+        GSLayout2Path1FinalPt,
+        config
+    );
+//*/
+
+///*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        GSLayout2Path2InitPt,
+        GSLayout2Path2,
+        GSLayout2Path2FinalPt,
         config
     );
 //*/
