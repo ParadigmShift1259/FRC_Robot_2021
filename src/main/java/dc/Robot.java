@@ -170,8 +170,8 @@ public class Robot extends TimedRobot {
     CANSparkMax leftFollowerID7 = setupCANSparkMax(7, Sides.FOLLOWER, false);
     leftFollowerID7.follow(leftMotor, false);
 
-    CANSparkMax rightMotor = setupCANSparkMax(3, Sides.RIGHT, true);
-    CANSparkMax rightFollowerID5 = setupCANSparkMax(5, Sides.FOLLOWER, true);
+    CANSparkMax rightMotor = setupCANSparkMax(3, Sides.RIGHT, false);
+    CANSparkMax rightFollowerID5 = setupCANSparkMax(5, Sides.FOLLOWER, false);
     rightFollowerID5.follow(rightMotor, false);
     drive = new DifferentialDrive(leftMotor, rightMotor);
     drive.setDeadband(0);
@@ -192,8 +192,8 @@ public class Robot extends TimedRobot {
     backRightE = new CANEncoder(backRightRot);
     backLeftE = new CANEncoder(backLeftRot);
 
-    double P = 0.1; // 0.35 // 0.1
-    double D = 1; // 1.85 // 1
+    double P = 0.04; // 0.35 // 0.1
+    double D = 0.40; // 1.85 // 1
 
     frontLeftPID.setP(P);
     frontLeftPID.setD(D);
@@ -247,9 +247,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // feedback for users, but not used by the control program
     SmartDashboard.putNumber("l_encoder_front", frontLeftE.getPosition());
-    SmartDashboard.putNumber("l_encoder_back", frontRightE.getPosition());
-    SmartDashboard.putNumber("r_encoder_front", backRightE.getPosition());
-    SmartDashboard.putNumber("r_encoder_back", backLeftE.getPosition());
+    SmartDashboard.putNumber("r_encoder_front", frontRightE.getPosition());
+    SmartDashboard.putNumber("r_encoder_back", backRightE.getPosition());
+    SmartDashboard.putNumber("l_encoder_back", backLeftE.getPosition());
   }
 
   @Override
@@ -263,11 +263,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    drive.arcadeDrive(stick.getY(), -stick.getX());
+    drive.arcadeDrive(-stick.getY(), stick.getX());
+    SmartDashboard.putNumber("l_encoder_front", frontLeftE.getPosition());
+    SmartDashboard.putNumber("r_encoder_front", frontRightE.getPosition());
+    SmartDashboard.putNumber("r_encoder_back", backRightE.getPosition());
+    SmartDashboard.putNumber("l_encoder_back", backLeftE.getPosition());
     frontLeftPID.setReference(0, ControlType.kPosition);
     frontRightPID.setReference(0, ControlType.kPosition);
     backRightPID.setReference(0, ControlType.kPosition);
     backLeftPID.setReference(0, ControlType.kPosition);
+
   }
 
   @Override
