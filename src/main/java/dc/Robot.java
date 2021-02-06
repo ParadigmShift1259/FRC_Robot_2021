@@ -8,6 +8,7 @@
 package dc;
 
 import java.util.function.Supplier;
+import java.lang.Math;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -27,6 +28,8 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SPI;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
@@ -35,6 +38,7 @@ import com.revrobotics.AlternateEncoderType;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
@@ -164,6 +168,49 @@ public class Robot extends TimedRobot {
     rightFollowerID5.follow(rightMotor, false);
     drive = new DifferentialDrive(leftMotor, rightMotor);
     drive.setDeadband(0);
+
+    // Custom code to maintain 0 position for rotation SPARK MAXES
+    CANPIDController leftFrontPID = new CANPIDController(leftMotor);
+    CANPIDController leftBackPID = new CANPIDController(leftFollowerID7);
+    CANPIDController rightFrontPID = new CANPIDController(rightMotor);
+    CANPIDController rightBackPID = new CANPIDController(rightFollowerID5);
+
+    AnalogInput leftFrontE = new AnalogInput(0);
+    AnalogInput leftBackE = new AnalogInput(1);
+    AnalogInput rightFrontE = new AnalogInput(2);
+    AnalogInput rightBackE = new AnalogInput(3);
+
+    double P = 0.35; // 0.35 // 0.1
+    double D = 1.85; // 1.85 // 1
+
+    double leftFrontO = 3.142;
+    double leftBackO = 5.105;
+    double rightFrontO = 5.963;
+    double rightBackO = 0.665;
+
+    leftFrontPID.setP(P);
+    leftFrontPID.setD(D);
+    leftBackPID.setP(P);
+    leftBackPID.setD(D);
+    rightFrontPID.setP(P);
+    rightFrontPID.setD(D);
+    rightBackPID.setP(P);
+    rightBackPID.setD(D);
+
+    double kMaxAV = 4.93;
+    double kTurnVTR = 2.0 * Math.PI / kMaxAV;
+
+    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO + 2 * Math.PI) % (2 * Math.PI);
+    double rightFrontR = (rightFrontE.getVoltage() * kTurnVTR - rightFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO + 2 * Math.PI) % (2 * Math.PI);
+
+    leftFrontPID.setReference(leftFrontR, ControlType.kPosition);
+    leftBackPID.setReference(leftBackR, ControlType.kPosition);
+    rightFrontPID.setReference(rightFrontR, ControlType.kPosition);
+    rightBackPID.setReference(rightBackR, ControlType.kPosition);
+
+
 
     //
     // Configure gyro
