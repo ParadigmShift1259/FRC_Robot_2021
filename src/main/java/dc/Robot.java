@@ -69,6 +69,20 @@ public class Robot extends TimedRobot {
   Joystick stick;
   DifferentialDrive drive;
 
+  AnalogInput leftFrontE;
+  AnalogInput leftBackE;
+  AnalogInput rightFrontE;
+  AnalogInput rightBackE;
+
+  double leftFrontO = 3.142;
+  double leftBackO = 5.105;
+  double rightFrontO = 5.963;
+  double rightBackO = 0.665;
+
+  CANPIDController leftFrontPID;
+  CANPIDController leftBackPID;
+  CANPIDController rightFrontPID;
+  CANPIDController rightBackPID;
 
   Supplier<Double> leftEncoderPosition;
   Supplier<Double> leftEncoderRate;
@@ -170,23 +184,18 @@ public class Robot extends TimedRobot {
     drive.setDeadband(0);
 
     // Custom code to maintain 0 position for rotation SPARK MAXES
-    CANPIDController leftFrontPID = new CANPIDController(leftMotor);
-    CANPIDController leftBackPID = new CANPIDController(leftFollowerID7);
-    CANPIDController rightFrontPID = new CANPIDController(rightMotor);
-    CANPIDController rightBackPID = new CANPIDController(rightFollowerID5);
+    leftFrontPID = new CANPIDController(leftMotor);
+    leftBackPID = new CANPIDController(leftFollowerID7);
+    rightFrontPID = new CANPIDController(rightMotor);
+    rightBackPID = new CANPIDController(rightFollowerID5);
 
-    AnalogInput leftFrontE = new AnalogInput(0);
-    AnalogInput leftBackE = new AnalogInput(1);
-    AnalogInput rightFrontE = new AnalogInput(2);
-    AnalogInput rightBackE = new AnalogInput(3);
+    leftFrontE = new AnalogInput(0);
+    leftBackE = new AnalogInput(1);
+    rightFrontE = new AnalogInput(2);
+    rightBackE = new AnalogInput(3);
 
     double P = 0.35; // 0.35 // 0.1
     double D = 1.85; // 1.85 // 1
-
-    double leftFrontO = 3.142;
-    double leftBackO = 5.105;
-    double rightFrontO = 5.963;
-    double rightBackO = 0.665;
 
     leftFrontPID.setP(P);
     leftFrontPID.setD(D);
@@ -196,21 +205,6 @@ public class Robot extends TimedRobot {
     rightFrontPID.setD(D);
     rightBackPID.setP(P);
     rightBackPID.setD(D);
-
-    double kMaxAV = 4.93;
-    double kTurnVTR = 2.0 * Math.PI / kMaxAV;
-
-    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO + 2 * Math.PI) % (2 * Math.PI);
-    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO + 2 * Math.PI) % (2 * Math.PI);
-    double rightFrontR = (rightFrontE.getVoltage() * kTurnVTR - rightFrontO + 2 * Math.PI) % (2 * Math.PI);
-    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO + 2 * Math.PI) % (2 * Math.PI);
-
-    leftFrontPID.setReference(leftFrontR, ControlType.kPosition);
-    leftBackPID.setReference(leftBackR, ControlType.kPosition);
-    rightFrontPID.setReference(rightFrontR, ControlType.kPosition);
-    rightBackPID.setReference(rightBackR, ControlType.kPosition);
-
-
 
     //
     // Configure gyro
@@ -268,6 +262,19 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     drive.arcadeDrive(-stick.getY(), stick.getX());
+
+    double kMaxAV = 4.93;
+    double kTurnVTR = 2.0 * Math.PI / kMaxAV;
+
+    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO + 2 * Math.PI) % (2 * Math.PI);
+    double rightFrontR = (rightFrontE.getVoltage() * kTurnVTR - rightFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO + 2 * Math.PI) % (2 * Math.PI);
+
+    leftFrontPID.setReference(leftFrontR, ControlType.kPosition);
+    leftBackPID.setReference(leftBackR, ControlType.kPosition);
+    rightFrontPID.setReference(rightFrontR, ControlType.kPosition);
+    rightBackPID.setReference(rightBackR, ControlType.kPosition);
   }
 
   @Override
@@ -287,6 +294,19 @@ public class Robot extends TimedRobot {
   */
   @Override
   public void autonomousPeriodic() {
+
+    double kMaxAV = 4.93;
+    double kTurnVTR = 2.0 * Math.PI / kMaxAV;
+
+    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO + 2 * Math.PI) % (2 * Math.PI);
+    double rightFrontR = (rightFrontE.getVoltage() * kTurnVTR - rightFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO + 2 * Math.PI) % (2 * Math.PI);
+
+    leftFrontPID.setReference(leftFrontR, ControlType.kPosition);
+    leftBackPID.setReference(leftBackR, ControlType.kPosition);
+    rightFrontPID.setReference(rightFrontR, ControlType.kPosition);
+    rightBackPID.setReference(rightBackR, ControlType.kPosition);
 
     // Retrieve values to send back before telling the motors to do something
     double now = Timer.getFPGATimestamp();
