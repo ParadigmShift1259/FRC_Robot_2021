@@ -292,6 +292,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    frontLeftPID.setReference(0, ControlType.kPosition);
+    frontRightPID.setReference(0, ControlType.kPosition);
+    backRightPID.setReference(0, ControlType.kPosition);
+    backLeftPID.setReference(0, ControlType.kPosition);
+
     // Retrieve values to send back before telling the motors to do something
     double now = Timer.getFPGATimestamp();
 
