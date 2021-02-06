@@ -214,63 +214,49 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
 // /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavBarrelInitPt,
         AutoNavBarrel,
-        AutoNavBarrelFinalPt,
         config
     );
 // */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavBounceInitPt,
         AutoNavBounce,
-        AutoNavBounceFinalPt,
         config
     );
 */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavSlalomInitPt,
         AutoNavSlalom,
-        AutoNavSlalomFinalPt,
         config
     );
 */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout1Path1InitPt,
         GSLayout1Path1,
-        GSLayout1Path1FinalPt,
         config
     );
 */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout1Path2InitPt,
         GSLayout1Path2,
-        GSLayout1Path2FinalPt,
         config
     );
 */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout2Path1InitPt,
         GSLayout2Path1,
-        GSLayout2Path1FinalPt,
         config
     );
 */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout2Path2InitPt,
         GSLayout2Path2,
-        GSLayout2Path2FinalPt,
         config
     );
 */
