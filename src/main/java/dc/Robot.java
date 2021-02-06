@@ -75,9 +75,9 @@ public class Robot extends TimedRobot {
   AnalogInput rightBackE;
 
   double leftFrontO = 3.142;
-  double leftBackO = 5.105;
-  double rightFrontO = 5.963;
-  double rightBackO = 0.665;
+  double leftBackO = 5.963 + 2.67;
+  double rightFrontO = 5.105 + 1.831;
+  double rightBackO = 0.665 + 0.09 + 1.27;
 
   CANPIDController leftFrontPID;
   CANPIDController leftBackPID;
@@ -174,28 +174,31 @@ public class Robot extends TimedRobot {
 
     CANSparkMax leftFollowerID7 = setupCANSparkMax(7, Sides.FOLLOWER, false);
     leftFollowerID7.follow(leftMotor, false);
-        
-    
 
-    CANSparkMax rightMotor = setupCANSparkMax(3, Sides.RIGHT, false);
-    CANSparkMax rightFollowerID5 = setupCANSparkMax(5, Sides.FOLLOWER, false);
+    CANSparkMax rightMotor = setupCANSparkMax(3, Sides.RIGHT, true);
+    CANSparkMax rightFollowerID5 = setupCANSparkMax(5, Sides.FOLLOWER, true);
     rightFollowerID5.follow(rightMotor, false);
     drive = new DifferentialDrive(leftMotor, rightMotor);
     drive.setDeadband(0);
 
+    CANSparkMax leftFrontRot = new CANSparkMax(2, MotorType.kBrushless);
+    CANSparkMax leftBackRot = new CANSparkMax(8, MotorType.kBrushless);
+    CANSparkMax rightFrontRot = new CANSparkMax(4, MotorType.kBrushless);
+    CANSparkMax rightBackRot = new CANSparkMax(6, MotorType.kBrushless);
+
     // Custom code to maintain 0 position for rotation SPARK MAXES
-    leftFrontPID = new CANPIDController(leftMotor);
-    leftBackPID = new CANPIDController(leftFollowerID7);
-    rightFrontPID = new CANPIDController(rightMotor);
-    rightBackPID = new CANPIDController(rightFollowerID5);
+    leftFrontPID = new CANPIDController(leftFrontRot);
+    leftBackPID = new CANPIDController(leftBackRot);
+    rightFrontPID = new CANPIDController(rightFrontRot);
+    rightBackPID = new CANPIDController(rightBackRot);
 
     leftFrontE = new AnalogInput(0);
     leftBackE = new AnalogInput(1);
     rightFrontE = new AnalogInput(2);
     rightBackE = new AnalogInput(3);
 
-    double P = 0.35; // 0.35 // 0.1
-    double D = 1.85; // 1.85 // 1
+    double P = 0.1; // 0.35 // 0.1
+    double D = 1; // 1.85 // 1
 
     leftFrontPID.setP(P);
     leftFrontPID.setD(D);
@@ -247,29 +250,48 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+
+    double offsetExample = SmartDashboard.getNumber("test", 0);
+    double offsetExample2 = SmartDashboard.getNumber("test2", 0);
+    double offsetExample3 = SmartDashboard.getNumber("test3", 0);
+
+    double kMaxAV = 4.93;
+    double kTurnVTR = 2.0 * Math.PI / kMaxAV;
+    
+    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO - offsetExample3 + 2 * Math.PI) % (2 * Math.PI);
+    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO - offsetExample2 + 2 * Math.PI) % (2 * Math.PI);
+    double rightFrontR = (rightFrontE.getVoltage() * kTurnVTR - rightFrontO + 2 * Math.PI) % (2 * Math.PI);
+    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO - offsetExample + 2 * Math.PI) % (2 * Math.PI);
     // feedback for users, but not used by the control program
-    SmartDashboard.putNumber("l_encoder_pos", leftEncoderPosition.get());
-    SmartDashboard.putNumber("l_encoder_rate", leftEncoderRate.get());
-    SmartDashboard.putNumber("r_encoder_pos", rightEncoderPosition.get());
-    SmartDashboard.putNumber("r_encoder_rate", rightEncoderRate.get());
+    SmartDashboard.putNumber("l_encoder_front", leftFrontR);
+    SmartDashboard.putNumber("l_encoder_back", leftBackR);
+    SmartDashboard.putNumber("r_encoder_front", rightFrontR);
+    SmartDashboard.putNumber("r_encoder_back", rightBackR);
   }
 
   @Override
   public void teleopInit() {
     System.out.println("Robot in operator control mode");
+    SmartDashboard.putNumber("test", 0);
+    SmartDashboard.putNumber("test2", 0);
+    SmartDashboard.putNumber("test3", 0);
   }
 
   @Override
   public void teleopPeriodic() {
-    drive.arcadeDrive(-stick.getY(), stick.getX());
+    drive.arcadeDrive(stick.getY(), -stick.getX());
+    
+    double offsetExample = SmartDashboard.getNumber("test", 0);
+    double offsetExample2 = SmartDashboard.getNumber("test2", 0);
+    double offsetExample3 = SmartDashboard.getNumber("test3", 0);
 
     double kMaxAV = 4.93;
     double kTurnVTR = 2.0 * Math.PI / kMaxAV;
 
-    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO + 2 * Math.PI) % (2 * Math.PI);
-    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO + 2 * Math.PI) % (2 * Math.PI);
+    double leftFrontR = (leftFrontE.getVoltage() * kTurnVTR - leftFrontO - offsetExample3 + 2 * Math.PI) % (2 * Math.PI);
+    double leftBackR = (leftBackE.getVoltage() * kTurnVTR - leftBackO - offsetExample2 + 2 * Math.PI) % (2 * Math.PI);
     double rightFrontR = (rightFrontE.getVoltage() * kTurnVTR - rightFrontO + 2 * Math.PI) % (2 * Math.PI);
-    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO + 2 * Math.PI) % (2 * Math.PI);
+    double rightBackR = (rightBackE.getVoltage() * kTurnVTR - rightBackO - offsetExample + 2 * Math.PI) % (2 * Math.PI);
 
     leftFrontPID.setReference(leftFrontR, ControlType.kPosition);
     leftBackPID.setReference(leftBackR, ControlType.kPosition);
