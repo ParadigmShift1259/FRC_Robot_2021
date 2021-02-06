@@ -23,6 +23,7 @@
 #include "subsystems/TurretSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/HoodSubsystem.h"
+#include "subsystems/CyclerSubsystem.h"
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
 #include "AutoNavSlalom.h"
@@ -41,6 +42,7 @@
 #include "commands/Shoot.h"
 
 using namespace DriveConstants;
+using namespace CyclerConstants;
 
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
@@ -175,7 +177,16 @@ void RobotContainer::ConfigureButtonBindings()
         )
     );
 
-    
+    /*
+    /// Interferes with flywheel
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
+        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeout);
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
+        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeoutAlt);
+    // Interferes with flywheel
+    */
+
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenPressed(
         HoodRaise(&m_hood)
     );

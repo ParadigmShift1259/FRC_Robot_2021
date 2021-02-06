@@ -266,3 +266,41 @@ namespace HoodConstants
     constexpr double kTestServoSpeed = 0.14;
 
 }
+
+// Cycler Subsystem Constants
+namespace CyclerConstants
+{
+    constexpr double kFeederPort = 14;
+    constexpr double kTurnTablePort = 15;
+
+    constexpr double kFeederSpeed = 20;
+
+    constexpr double kFeederTimeout = 10;
+    constexpr double kFeederTimeoutAlt = 15;
+
+    constexpr double kMinOut = 0;
+    constexpr double kMaxOut = 0.175;
+
+    constexpr double kTimeout = 30;
+    constexpr double kInverted = true;
+    constexpr double kSensorPhase = true;
+
+    constexpr double kDegreeStopRange = 0.125;
+
+    constexpr double kPulley = 2.7305;
+    constexpr double kSpinner = 29.845;
+
+    constexpr double kMotorRevPerRev = kPulley / kSpinner;
+    constexpr double kTicksPerRev = 4096.0;
+    constexpr double kDegreesPerRev = 360.0;
+    constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
+
+    // Maximum rotation of the turntable relative to the turntable, in degrees
+    constexpr double kMinAngle = 0;
+    constexpr double kMaxAngle = 270;
+
+    constexpr double kAddedAngle = 10;
+
+    // initial configured angle of the turntable relative to the turntable, in degrees
+    constexpr double kStartingPositionDegrees = 135;
+}
