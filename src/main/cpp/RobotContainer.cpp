@@ -12,9 +12,13 @@
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/trajectory/Trajectory.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
+#include <frc/Filesystem.h>
+#include <frc/trajectory/TrajectoryUtil.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/button/JoystickButton.h>
+#include <wpi/Path.h>
+#include <wpi/SmallString.h>
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
@@ -230,12 +234,19 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 */
 
-// /*
+    wpi::SmallString<64> deployDirectory;
+    frc::filesystem::GetDeployDirectory(deployDirectory);
+    wpi::sys::path::append(deployDirectory, "paths");
+    wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
+
+    frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
+
+/*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         AutoNavBarrel,
         config
     );
-// */
+*/
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(

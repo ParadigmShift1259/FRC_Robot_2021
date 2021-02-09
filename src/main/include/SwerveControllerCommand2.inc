@@ -96,11 +96,11 @@ void SwerveControllerCommand2<NumModules>::Execute() {
   auto curTime = units::second_t(m_timer.Get());
   auto m_desiredState = m_trajectory.Sample(curTime);
 
-  auto targetChassisSpeeds =
-//      m_controller.Calculate(m_pose(), m_desiredState, m_desiredRotation());
-      m_controller.Calculate(m_pose(), m_desiredState, m_desiredState.pose.Rotation());
-  auto targetModuleStates =
-      m_kinematics.ToSwerveModuleStates(targetChassisSpeeds);
+  //auto targetChassisSpeeds = m_controller.Calculate(m_pose(), m_desiredState, m_desiredRotation());
+  auto targetChassisSpeeds = m_controller.Calculate(m_pose(), m_desiredState, m_desiredState.pose.Rotation());
+  printf("desired x %.3f y %.3f Rot %.3f time %.3f\n", m_desiredState.pose.X().to<double>(), m_desiredState.pose.Y().to<double>(), m_desiredState.pose.Rotation().Degrees().to<double>(), curTime.to<double>());
+  printf("odometr x %.3f y %.3f Rot %.3f\n", m_pose().X().to<double>(), m_pose().Y().to<double>(), m_pose().Rotation().Degrees().to<double>());
+  auto targetModuleStates = m_kinematics.ToSwerveModuleStates(targetChassisSpeeds);
 
   m_outputStates(targetModuleStates);
 }
