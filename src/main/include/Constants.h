@@ -160,7 +160,7 @@ namespace AutoConstants
 
     constexpr double kPXController = 0.25;
     constexpr double kPYController = 0.25;
-    constexpr double kPThetaController = 0.5;
+    constexpr double kPThetaController = 0.8;
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
 }  // namespace AutoConstants

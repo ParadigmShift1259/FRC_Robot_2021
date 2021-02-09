@@ -49,6 +49,8 @@ public:
 
     void ResetLog() { m_drive.ResetLog(); }
 
+    // frc::Rotation2d GetDesiredRotation();
+
 private:
     double Deadzone(double inputValue, double deadzone)
     {

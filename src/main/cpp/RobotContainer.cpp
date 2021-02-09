@@ -14,7 +14,6 @@
 #include <frc/trajectory/TrajectoryGenerator.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
-#include <frc2/command/SwerveControllerCommand.h>
 #include <frc2/command/button/JoystickButton.h>
 
 #include "Constants.h"
@@ -24,6 +23,8 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/HoodSubsystem.h"
 #include "subsystems/CyclerSubsystem.h"
+#include "SwerveControllerCommand2.h"
+
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
 #include "AutoNavSlalom.h"
@@ -44,12 +45,16 @@
 using namespace DriveConstants;
 using namespace CyclerConstants;
 
+DriveSubsystem *g_drive = nullptr;
+
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
     //, m_hood()
 {
     // Initialize all of your commands and subsystems here
+
+    g_drive = &m_drive;
 
     // Configure the button bindings
     ConfigureButtonBindings();
@@ -198,7 +203,9 @@ void RobotContainer::ConfigureButtonBindings()
     );
 }
 
-frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
+// frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
+
+frc::Rotation2d GetDesiredRotation() { return g_drive->GetHeadingAsRot2d(); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
@@ -292,14 +299,14 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
     thetaController.EnableContinuousInput(units::radian_t(-wpi::math::pi), units::radian_t(wpi::math::pi));
 
-    frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> swerveControllerCommand(
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> swerveControllerCommand(
         exampleTrajectory,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
         m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
         frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
         frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
         thetaController,                                                        // frc::ProfiledPIDController<units::radians>
-        GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        // GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );
