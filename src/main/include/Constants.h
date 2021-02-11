@@ -5,6 +5,8 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+#pragma once
+
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/trajectory/TrapezoidProfile.h>
@@ -13,7 +15,9 @@
 #include <units/acceleration.h>
 #include <wpi/math>
 
-#pragma once
+#include <ctre/phoenix/CANifier.h>
+
+using namespace ctre::phoenix;
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -31,6 +35,9 @@ namespace DriveConstants
     /// \name CAN bus IDs
     ///@{
     /// CAN IDs for swerve modules
+
+    constexpr int kCanifierID = 0;
+
     constexpr int kFrontLeftDriveMotorPort    = 1;          
     constexpr int kFrontLeftTurningMotorPort  = 2;
 
@@ -42,6 +49,15 @@ namespace DriveConstants
 
     constexpr int kRearLeftDriveMotorPort     = 7;
     constexpr int kRearLeftTurningMotorPort   = 8;
+    ///@}
+
+    /// \name Canifier PWM channels
+    ///@{
+    /// PWM channels for the canifier
+    constexpr CANifier::PWMChannel kFrontLeftPWM = CANifier::PWMChannel::PWMChannel0;
+    constexpr CANifier::PWMChannel kFrontRightPWM = CANifier::PWMChannel::PWMChannel2;
+    constexpr CANifier::PWMChannel kRearRightPWM = CANifier::PWMChannel::PWMChannel1;
+    constexpr CANifier::PWMChannel kRearLeftPWM = CANifier::PWMChannel::PWMChannel3;
     ///@}
 
     /// \name Drive wheel reversal (inverting) flags
@@ -91,9 +107,14 @@ namespace DriveConstants
     constexpr double kRearLeftOffset    = 0.402;
     constexpr double kRearRightOffset   = 0.342;
 
+    // For MK2 swerve encoders
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
+
+    constexpr double kPulseWidthToZeroOne = 1;
+    constexpr double kPulseWidthToRadians = 2.0 * wpi::math::pi / kPulseWidthToZeroOne;
+    constexpr double kPulseWidthToDegrees = 360 / kPulseWidthToRadians;
 
      // Rotation PID Controller, converts between radians angle error to radians per second turn
 

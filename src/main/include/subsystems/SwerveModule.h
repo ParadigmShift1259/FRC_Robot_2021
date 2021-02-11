@@ -30,6 +30,8 @@ using namespace rev;
 using namespace units;
 using namespace ctre::phoenix::motorcontrol;
 
+using GetPulseWidthCallback = std::function<double (CANifier::PWMChannel)>;
+
 class TurnPidParams
 {
     double m_p = DriveConstants::kTurnP;
@@ -180,6 +182,8 @@ class SwerveModule
 public:
     SwerveModule( int driveMotorChannel
                 , int turningMotorChannel
+                , GetPulseWidthCallback pulseWidthCallback
+                , CANifier::PWMChannel pwmChannel
                 , bool driveEncoderReversed
                 , double offSet
                 , const std::string& name
@@ -229,6 +233,8 @@ private:
     TurnPidParams   m_turnPidParams;
 
     CANEncoder m_turnNeoEncoder = m_turningMotor.GetEncoder();
+    GetPulseWidthCallback m_pulseWidthCallback;
+    CANifier::PWMChannel m_pwmChannel;
 
     nt::NetworkTableEntry m_nteAbsEncTuningOffset;
     nt::NetworkTableEntry m_nteAbsEncTuningVoltage;

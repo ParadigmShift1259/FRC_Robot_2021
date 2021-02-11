@@ -118,6 +118,11 @@ public:
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
 
+    /// Converts PWM input on the CANifier to a pulse width
+    /// \param pwmChannel The PWM channel to pass in
+    /// \return The pulse width of the PWM channel
+    double PWMToPulseWidth(CANifier::PWMChannel pwmChannel);
+
     /// The log header flag must be reset everyt time the robot is enabled
     void ResetLog()
     { 
@@ -167,6 +172,7 @@ private:
     SwerveModule m_rearLeft;
     ///@}
 
+    CANifier m_canifier;
     PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
 
     /// Odometry class for tracking robot pose

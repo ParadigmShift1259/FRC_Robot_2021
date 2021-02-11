@@ -16,6 +16,8 @@
 
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
+                           GetPulseWidthCallback pulseWidthCallback,
+                           CANifier::PWMChannel pwmChannel,
                            bool driveMotorReversed,
                            double offset,
                            const std::string& name,
@@ -25,6 +27,8 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     , m_driveMotor(driveMotorChannel)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_turnNeoEncoder(m_turningMotor)
+    , m_pulseWidthCallback(pulseWidthCallback)
+    , m_pwmChannel(pwmChannel)
     , m_logData(c_headerNamesSwerveModule, true, name)
     , m_log(log)
 {
@@ -159,6 +163,16 @@ double SwerveModule::VoltageToRadians(double voltage, double offset)
 #ifdef TUNE_ABS_ENC
     offset = m_nteAbsEncTuningOffset.GetDouble(m_offset);
 #endif
+    double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
+
+    SmartDashboard::PutNumber("TEST_Pulse Width", pulseWidth);
+    /*
+    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    angle = 2 * wpi::math::pi - angle;
+
+    return angle;
+    */
+
     m_nteAbsEncTuningVoltage.SetDouble(voltage);
     double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
