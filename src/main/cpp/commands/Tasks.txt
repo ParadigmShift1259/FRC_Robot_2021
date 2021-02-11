@@ -2,16 +2,48 @@ Command resources here: https://docs.wpilib.org/en/stable/docs/software/commandb
 Some examples, but the ones in the code (HoodSubsystem, TurretSubsystem) are easier, since you have to completely build these ground up
 
 New commands (probably) needed (Also just good for practice for now)
-- IntakeRelease
 - FlywheelIdle
     Requires flywheel
     RunCommand that maintains the flywheel at a constant kIdleRPM
 - FlywheelRamp
     Requires flywheel
     RunCommand that maintains the flywheel at a higher constant kRampRPM
-- Shoot
-    Requires flywheel, turret, and hood
-    RunCommand that runs the flywheel at a designated speed (put constant for now) for a time constant kShootTime
 - TurretControl
     Requires turret
     RunCommand that accepts an X and Y input (for rotation), converts it into rotation, and calls turret.TurnToRelative() 
+    
+Official structure for firing:
+
+While Y is pressed, run Fire
+
+Fire
+- ParallelCommandGroup
+- Runs CyclerReady and Conditional Command at the same time
+    - ConditionalCommand
+    - Runs ShootBalls or HomeTarget based on whether m_cycler_ready and m_shooting_ready, a pointer that's passed into HomeTarget
+
+ShootBalls
+- ParallelCommandGroup
+- Runs HomeTarget and CyclerLaunch at the same time
+
+Default Commands
+- Turret
+    - Conditional Command
+    - Maintains last robot angle driven OR if there are inputs, runs TurretControl
+- Flywheel
+    - FlywheelIdle
+- Servo
+    - Set to 0
+- Cycler
+    - Runs CyclerAgitation
+
+
+Fire -> CyclerReady, ShootBalls, HomeTarget
+ShootBalls -> HomeTarget, CyclerLaunch
+
+CyclerAgitation
+TurretMaintain
+TurretControl
+
+
+
