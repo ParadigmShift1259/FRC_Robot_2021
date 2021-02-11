@@ -19,6 +19,9 @@
 #include <frc2/command/button/JoystickButton.h>
 #include <wpi/Path.h>
 #include <wpi/SmallString.h>
+#include <frc2/command/SwerveControllerCommand.h>
+
+#include <iostream>
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
@@ -36,6 +39,7 @@
 #include "GSLayout1Path2.h"
 #include "GSLayout2Path1.h"
 #include "GSLayout2Path2.h"
+#include "TestTraj.h"
 
 #include "commands/DriveForward.h"
 #include "commands/FlywheelIdle.h"
@@ -209,7 +213,9 @@ void RobotContainer::ConfigureButtonBindings()
 
 // frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
 
-frc::Rotation2d GetDesiredRotation() { return g_drive->GetHeadingAsRot2d(); }
+// frc::Rotation2d GetDesiredRotation() { return g_drive->GetHeadingAsRot2d(); }
+
+frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
@@ -234,12 +240,22 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 */
 
+/*
     wpi::SmallString<64> deployDirectory;
     frc::filesystem::GetDeployDirectory(deployDirectory);
     wpi::sys::path::append(deployDirectory, "paths");
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
 
     frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
+*/
+
+// /*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        TestTrajCircle2,
+        config
+    );
+    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+// */
 
 /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
