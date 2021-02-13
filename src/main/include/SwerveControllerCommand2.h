@@ -24,7 +24,41 @@
 #include <frc2/command/CommandHelper.h>
 #include <frc2/Timer.h>
 
+#include "Logger.h"
+
 #pragma once
+
+// For each enum here, add a string to c_headerNamesSwerveModule
+// and a line like this: 
+//      m_logData[ESwerveModuleLogData::e???] = ???;
+// to SwerveModule::Periodic
+enum class ESwerveCtrlrCmdLogData : int
+{
+      eFirstInt
+    , eLastInt = eFirstInt
+
+    , eFirstDouble
+    , eTimeStep = eFirstDouble
+    , eDesiredX
+    , eDesiredY
+    , eActualX
+    , eActualY
+    , eDesiredRot
+    , eActualRot
+
+    , eLastDouble
+};
+
+const std::vector<std::string> c_headerNamesSwerveCtrlrCmd
+{
+      "TimeStep"
+    , "DesiredX"
+    , "DesiredY"
+    , "ActualX"
+    , "ActualY"
+    , "DesiredRot"
+    , "ActualRot"
+};
 
 namespace frc2 {
 
@@ -92,7 +126,7 @@ class SwerveControllerCommand2
       std::function<frc::Rotation2d()> desiredRotation,
       std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
           output,
-      std::initializer_list<Subsystem*> requirements);
+      std::initializer_list<Subsystem*> requirements, Logger& log);
 
   /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
@@ -130,7 +164,7 @@ class SwerveControllerCommand2
       frc::ProfiledPIDController<units::radians> thetaController,
       std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
           output,
-      std::initializer_list<Subsystem*> requirements);
+      std::initializer_list<Subsystem*> requirements, Logger& log);
 
   /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
@@ -167,7 +201,7 @@ class SwerveControllerCommand2
       std::function<frc::Rotation2d()> desiredRotation,
       std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
           output,
-      wpi::ArrayRef<Subsystem*> requirements = {});
+      wpi::ArrayRef<Subsystem*> requirements = {}, Logger& log);
 
   /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
@@ -205,7 +239,7 @@ class SwerveControllerCommand2
       frc::ProfiledPIDController<units::radians> thetaController,
       std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
           output,
-      wpi::ArrayRef<Subsystem*> requirements = {});
+      wpi::ArrayRef<Subsystem*> requirements = {}, Logger& log);
 
   void Initialize() override;
 
@@ -214,6 +248,8 @@ class SwerveControllerCommand2
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  void ResetLog() { m_logData.ResetHeaderLogged(); }
 
  private:
   frc::Trajectory m_trajectory;
@@ -228,6 +264,10 @@ class SwerveControllerCommand2
   frc2::Timer m_timer;
   units::second_t m_prevTime;
   frc::Rotation2d m_finalRotation;
+
+  using LogData = LogDataT<ESwerveCtrlrCmdLogData>;
+  LogData m_logData;
+  Logger& m_log;  
 };
 }  // namespace frc2
 

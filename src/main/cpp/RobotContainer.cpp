@@ -240,28 +240,33 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 */
 
-/*
+// /*
     wpi::SmallString<64> deployDirectory;
     frc::filesystem::GetDeployDirectory(deployDirectory);
-    wpi::sys::path::append(deployDirectory, "paths");
+    wpi::sys::path::append(deployDirectory, "paths/output"); //Has the projects that are created in meters
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
 
     frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
-
-    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    /*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        TestTrajLine,
+        config
+    );
+    */
+    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
     
-    for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    {
-        std::cout << "i " << i;
-        std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
-        std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
-        std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
-        std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
-        std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
-    }
-*/
+    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    // {
+    //     std::cout << "i " << i;
+    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
+    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
+    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
+    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
+    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
+    // }
+// */
 
-//  /*
+ /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         TestTrajCircle2,
         config
@@ -284,17 +289,17 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         AutoNavBarrel,
         config
     );
-    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
     
-    for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    {
-        std::cout << "i " << i;
-        std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
-        std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
-        std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
-        std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
-        std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
-    }
+    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    // {
+    //     std::cout << "i " << i;
+    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
+    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
+    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
+    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
+    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
+    // }
 */
 
 /*
