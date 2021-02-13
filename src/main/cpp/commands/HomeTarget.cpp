@@ -28,4 +28,7 @@ void HomeTarget::Execute()
     m_hood->Set(hoodangle);
 
     // if at position, set turret ready to true
+    if (m_flywheel->isAtRPM() && m_turret->isAtSetpoint()) {
+        *m_turretready = true;
+    }
 }
