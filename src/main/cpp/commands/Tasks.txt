@@ -1,32 +1,20 @@
 Command resources here: https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html
 Some examples, but the ones in the code (HoodSubsystem, TurretSubsystem) are easier, since you have to completely build these ground up
 
-New commands (probably) needed (Also just good for practice for now)
-- FlywheelRamp
-    Requires flywheel
-    RunCommand that maintains the flywheel at a higher constant kRampRPM
-- TurretControl
-    Requires turret
-    RunCommand that accepts an X and Y input (for rotation), converts it into rotation, and calls turret.TurnToRelative() 
-    
-Official structure for firing:
-
 While Y is pressed, run Fire
 
 Fire
 - ParallelCommandGroup
-- Runs Sequential Command, HomeTarget, and CyclerLaunch at the same time
-    - SequentialCommand
-        - CyclerPrepare and CyclerReady
-    - Runs only if m_cycler_ready and m_shooting_ready, a pointer that's passed
+- Runs HomeTarget, CyclerPrepare, and CyclerLaunch
+
+HomeTarget
+- Sets flywheel speed, hood angle, and turret angle to correct positions based on limelight feeder
+- Sets pointer that CyclerLaunch uses to true AND DOESNT END so speeds and angles are accurately maintained
 
 CyclerPrepare
 - Requires cycler
 - Drives the turntable until a specific absolute encoder position
-
-CyclerReady
-- Keeps the turntable stopped
-- Sets m_cycler_ready to true
+- Sets pointer that CyclerLaunch uses to true AND ENDS (important to allow CyclerLaunch to take over)
 
 CyclerLaunch
 - Requires cycler
@@ -39,31 +27,10 @@ CyclerLaunch
 
 Default Commands
 - Turret
-    - Conditional Command Inline
-    - Maintains last robot angle driven OR if there are inputs, runs TurretControl
+    - Sets position to 0
 - Flywheel
     - idle Inline
 - Servo
     - Set to 0 Inline
 - Cycler
-    - Runs CyclerAgitation
-
-
-Fire -> CyclerReady, ShootBalls, HomeTarget
-ShootBalls -> HomeTarget, CyclerLaunch
-
-CyclerAgitation
-- Requires cycler
-- Drives motor in a certain pattern based on time, will set positive, 0, negative, 0, repeat
-TurretMaintain 
-- Requires drive and turret
-- Will constantly call TurnToField with turret's m_last_desired_angle and the updated gyroAngle from m_drive
-TurretControl
-- Requires drive and turret
-- Will do math very similar to RotationDrive in Drivesubsystem to create 2d
-- Will call TurnToField with that desired angle + angle from m_drive
-
-Sequential overview
-
-HomeTarget and CyclerReady in parallel
-CyclerLaunch
+    - Drives motor in a certain pattern based on time, will set positive, 0, negative, 0, repeat
