@@ -13,9 +13,7 @@ CyclerPrepare::CyclerPrepare(CyclerSubsystem* subsystem, bool* cyclerready)
 void CyclerPrepare::Execute() {
     // Sets the cycler to rotate until the paddle position is at the feeder position
     // m_cycler->SetPaddlePosition();
-    if (m_cycler->TicksToDegrees(m_cycler->GetPosition())
-    % 360 < 2 || m_cycler->TicksToDegrees(m_cycler->GetPosition())
-    % 360 > -2) {
+    if (fmod(m_cycler->GetAngle(), 360.0) < 2 || fmod(m_cycler->GetAngle(), 360.0) > -2) {
         m_cycler->SetTurnTable(CyclerConstants::kTurnTableSpeed);
         m_cycler->SetFeeder(0);
     }

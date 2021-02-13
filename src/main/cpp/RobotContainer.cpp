@@ -59,8 +59,23 @@ RobotContainer::RobotContainer(Logger& log)
 
     // Configure the button bindings
     ConfigureButtonBindings();
+    SetDefaultCommands();
 
-    // Set up default commands
+    m_testNumber = 0;
+    m_testPower = 0;
+
+    SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
+    SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+}
+
+void RobotContainer::Periodic()
+{
+    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+}
+
+void RobotContainer::SetDefaultCommands()
+{
     m_drive.SetDefaultCommand(
         DriveDefault(&m_drive, 
             [this] {
@@ -90,22 +105,38 @@ RobotContainer::RobotContainer(Logger& log)
         )
     );
 
+    m_turret.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_turret.TurnTo(0);
+            }, {&m_turret}
+        )
+    );
+
+    m_flywheel.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+            }, {&m_flywheel}
+        )
+    );
+
+    m_hood.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_hood.Set(0);
+            }, {&m_hood}
+        )
+    );
+
+    m_cycler.SetDefaultCommand(
+        CyclerAgitation(&m_cycler)
+    );
+
     ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
     m_inputXentry = tab.Add("X", 0).GetEntry();
     m_inputYentry = tab.Add("Y", 0).GetEntry();
     m_inputRotentry = tab.Add("Rot", 0).GetEntry();
-
-    m_testNumber = 0;
-    m_testPower = 0;
-
-    SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
-    SmartDashboard::PutNumber("TEST_testPower", m_testPower);
-}
-
-void RobotContainer::Periodic()
-{
-    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
 }
 
 void RobotContainer::ConfigureButtonBindings()

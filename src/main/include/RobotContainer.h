@@ -29,12 +29,7 @@
 #include "subsystems/VisionSubsystem.h"
 
 #include "commands/DriveDefault.h"
-#include "commands/DriveForward.h"
-#include "commands/FlywheelIdle.h"
-#include "commands/HoodRaise.h"
-#include "commands/IntakeIngest.h"
-#include "commands/IntakeRelease.h"
-#include "commands/TurretControl.h"
+#include "commands/CyclerAgitation.h"
 #include "commands/Fire.h"
 
 /**
@@ -91,6 +86,7 @@ private:
     nt::NetworkTableEntry m_inputYentry;
     nt::NetworkTableEntry m_inputRotentry;
 
+    void SetDefaultCommands();
     void ConfigureButtonBindings();
     frc2::InstantCommand TestCommands();
 
