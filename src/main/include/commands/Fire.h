@@ -8,6 +8,7 @@
 #include "subsystems/HoodSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/CyclerSubsystem.h"
+#include "subsystems/VisionSubsystem.h"
 
 #include "commands/CyclerLaunch.h"
 #include "commands/CyclerPrepare.h"
@@ -17,8 +18,8 @@
 
 class Fire : public frc2::CommandHelper<frc2::ParallelCommandGroup, Fire> {
 public:
-    Fire(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
-                    IntakeSubsystem* intake, CyclerSubsystem* cycler);
+    Fire(   FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
+            IntakeSubsystem* intake, CyclerSubsystem* cycler, VisionSubsystem* vision);
 private:
     bool m_turretready;
     bool m_cyclerready;

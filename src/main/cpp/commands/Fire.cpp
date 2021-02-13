@@ -2,7 +2,7 @@
 #include "Constants.h"
 
 Fire::Fire(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood, 
-            IntakeSubsystem* intake, CyclerSubsystem* cycler)
+            IntakeSubsystem* intake, CyclerSubsystem* cycler, VisionSubsystem* vision)
 : m_turretready(false)
 , m_cyclerready(false)
 {
