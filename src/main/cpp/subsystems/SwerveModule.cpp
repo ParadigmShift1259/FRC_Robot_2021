@@ -47,7 +47,7 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_drivePidParams.Load(m_driveMotor);
     m_turnPidParams.Load(m_turnPIDController);
 
-    double initPosition = VoltageToRadians(m_turningMotor.GetAnalog().GetVoltage(), m_offset);
+    double initPosition = EncoderToRadians();
     m_turnNeoEncoder.SetPosition(initPosition); // Tell the encoder where the absolute encoder is
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("AbsEncTuning");
@@ -70,13 +70,13 @@ SwerveModule::SwerveModule(int driveMotorChannel,
 
 frc::SwerveModuleState SwerveModule::GetState()
 {
-    double angle = VoltageToRadians(m_turningMotor.GetAnalog().GetVoltage(), m_offset);
+    double angle = EncoderToRadians();
     return { CalcMetersPerSec(), frc::Rotation2d(radian_t(angle))};
 }
 
 void SwerveModule::Periodic()
 {
-    double absAngle = VoltageToRadians(m_turningMotor.GetAnalog().GetVoltage(), m_offset);
+    double absAngle = EncoderToRadians();
     SmartDashboard::PutNumber(m_name, absAngle);
 
     /* Used for tuning SwerveModule Turn PID
@@ -97,7 +97,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
 
     // Find absolute encoder and NEO encoder positions
-    double absAngle = VoltageToRadians(m_turningMotor.GetAnalog().GetVoltage(), m_offset);
+    double absAngle = EncoderToRadians();
     double currentPosition = m_turnNeoEncoder.GetPosition();
 
     // Calculate new turn position given current Neo position, current absolute encoder position, and desired state position
@@ -158,32 +158,22 @@ void SwerveModule::ResetEncoders()
     m_driveMotor.SetSelectedSensorPosition(0.0); 
 }
 
-double SwerveModule::VoltageToRadians(double voltage, double offset)
+double SwerveModule::EncoderToRadians()
 {
-#ifdef TUNE_ABS_ENC
-    offset = m_nteAbsEncTuningOffset.GetDouble(m_offset);
-#endif
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
 
     SmartDashboard::PutNumber("TEST_Pulse Width", pulseWidth);
-    /*
-    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+
+    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
-
-    return angle;
-    */
-
-    m_nteAbsEncTuningVoltage.SetDouble(voltage);
-    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
-    angle = 2 * wpi::math::pi - angle;
-
     return angle;
 }
 
-double SwerveModule::VoltageToDegrees(double voltage, double offSet)
+double SwerveModule::EncoderToDegrees()
 {
-    double angle = fmod(voltage * DriveConstants::KTurnVoltageToDegrees - offSet + 360.0, 360.0);
+    double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
 
+    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToDegrees - m_offset + 360.0, 360.0);
     return angle;
 }
 

@@ -24,7 +24,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
-        , PWMToPulseWidth
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kFrontLeftPWM
         , kFrontLeftDriveMotorReversed
         , kFrontLeftOffset
@@ -36,7 +36,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
-        , PWMToPulseWidth
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kFrontRightPWM
         , kFrontRightDriveMotorReversed
         , kFrontRightOffset
@@ -48,7 +48,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
-        , PWMToPulseWidth
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kRearRightPWM
         , kRearRightDriveMotorReversed
         , kRearRightOffset
@@ -60,7 +60,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
-        , PWMToPulseWidth
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kRearLeftPWM
         , kRearLeftDriveMotorReversed
         , kRearLeftOffset

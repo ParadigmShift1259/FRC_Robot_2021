@@ -206,8 +206,8 @@ public:
     static double NegPiToPiRads(double theta);
 
 private:
-    double VoltageToRadians(double voltage, double Offset);
-    double VoltageToDegrees(double voltage, double Offset);
+    double EncoderToRadians();
+    double EncoderToDegrees();
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 

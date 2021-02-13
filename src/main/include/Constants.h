@@ -112,7 +112,7 @@ namespace DriveConstants
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
-    constexpr double kPulseWidthToZeroOne = 1;
+    constexpr double kPulseWidthToZeroOne = .004096;    // 2 - 4096 micro second pulse width
     constexpr double kPulseWidthToRadians = 2.0 * wpi::math::pi / kPulseWidthToZeroOne;
     constexpr double kPulseWidthToDegrees = 360 / kPulseWidthToRadians;
 
