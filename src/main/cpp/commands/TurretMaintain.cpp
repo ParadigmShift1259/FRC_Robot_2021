@@ -9,5 +9,9 @@ TurretMaintain::TurretMaintain(TurretSubsystem* subsystem) : m_turret(subsystem)
 }
 
 void TurretMaintain::Execute() {
-    m_turret->TurnToField(TurretSubsystem::TicksToDegrees(TurretSubsystem::m_turretmotor.GetSelectedSensorPosition()), DriveSubsystem::GetHeadingAsRot2d()); 
+  /*
+    m_turret->TurnToField(
+      m_turret->TicksToDegrees(m_turret->Get
+        TurretSubsystem::m_turretmotor.GetSelectedSensorPosition()), DriveSubsystem::GetHeadingAsRot2d()); 
+  */
 }
