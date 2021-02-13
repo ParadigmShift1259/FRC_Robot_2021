@@ -63,4 +63,7 @@ TurretControl
 - Will do math very similar to RotationDrive in Drivesubsystem to create 2d
 - Will call TurnToField with that desired angle + angle from m_drive
 
+Sequential overview
 
+HomeTarget and CyclerReady in parallel
+CyclerLaunch

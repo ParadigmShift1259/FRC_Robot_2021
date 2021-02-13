@@ -273,7 +273,8 @@ namespace CyclerConstants
     constexpr double kFeederPort = 14;
     constexpr double kTurnTablePort = 15;
 
-    constexpr double kFeederSpeed = 20;
+    constexpr double kFeederSpeed = 0.400;
+    constexpr double kTurnTableSpeed = 0.400;
 
     constexpr double kFeederTimeout = 10;
     constexpr double kFeederTimeoutAlt = 15;
