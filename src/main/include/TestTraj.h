@@ -2,7 +2,7 @@
 #include <frc/geometry/Translation2d.h>
 #include <units/units.h>
 
-#define RADIUS 3.0_m
+#define RADIUS 10.0_ft
 
 std::vector<frc::Pose2d> TestTrajCircle1 =
 {

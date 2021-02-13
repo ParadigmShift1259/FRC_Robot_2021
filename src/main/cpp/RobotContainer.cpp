@@ -219,7 +219,7 @@ frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-    m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
+    //m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
 
     // Set up config for trajectory
     frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
@@ -247,14 +247,36 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
 
     frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
+
+    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    
+    for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    {
+        std::cout << "i " << i;
+        std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
+        std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
+        std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
+        std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
+        std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
+    }
 */
 
-// /*
+//  /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         TestTrajCircle2,
         config
     );
-    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+//    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    
+    // Transform2d rot90 = Transform2d(Pose2d(0_m,0_m,0_deg), Pose2d(0_m,0_m,90_deg));
+    // Transform2d rot90 = Transform2d(Translation2d(), 90_deg);
+    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    //     {
+    //     std::cout << "pose " << i << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees();
+    //     exampleTrajectory.States()[i].pose.TransformBy(rot90); 
+    //     std::cout << " modified theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() <<  "\n";        
+    //     }
+        
 // */
 
 /*
@@ -262,6 +284,17 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         AutoNavBarrel,
         config
     );
+    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    
+    for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    {
+        std::cout << "i " << i;
+        std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
+        std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
+        std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
+        std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
+        std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
+    }
 */
 
 /*
