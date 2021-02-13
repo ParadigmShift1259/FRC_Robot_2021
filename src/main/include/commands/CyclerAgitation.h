@@ -2,6 +2,7 @@
 
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc2/Timer.h>
 
 
 #include "subsystems/CyclerSubsystem.h"
@@ -17,5 +18,6 @@ class CyclerAgitation : public frc2::CommandHelper<frc2::CommandBase, CyclerAgit
   void Initialize() override;
 
  private:
-  CyclerSubsystem* m_turret;
+  CyclerSubsystem* m_cycler;
+  Timer m_timer;
 };

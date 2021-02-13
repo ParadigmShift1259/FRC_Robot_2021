@@ -1,4 +1,3 @@
-ss
 #include "commands/CyclerAgitation.h"
 #include "Constants.h"
 
@@ -8,7 +7,7 @@ ss
 using namespace CyclerConstants;
 
 CyclerAgitation::CyclerAgitation(CyclerSubsystem* subsystem)
- : m_hood(subsystem)
+ : m_cycler(subsystem)
  , m_timer()
  {
   AddRequirements({subsystem});
