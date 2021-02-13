@@ -46,6 +46,7 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
+    m_container.Periodic();
 }
 
 /**

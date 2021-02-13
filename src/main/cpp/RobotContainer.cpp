@@ -41,76 +41,71 @@
 #include "GSLayout2Path2.h"
 #include "TestTraj.h"
 
-#include "commands/DriveForward.h"
-#include "commands/FlywheelIdle.h"
-#include "commands/FlywheelRamp.h"
-#include "commands/HoodRaise.h"
-#include "commands/IntakeIngest.h"
-#include "commands/IntakeRelease.h"
-#include "commands/TurretControl.h"
-#include "commands/Shoot.h"
-
 using namespace DriveConstants;
 using namespace CyclerConstants;
-
-DriveSubsystem *g_drive = nullptr;
 
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
-    //, m_hood()
+    , m_flywheel()
+    , m_turret()
+    , m_hood()
+    , m_intake()
+    , m_cycler()
+    , m_vision()
 {
     // Initialize all of your commands and subsystems here
-
-    g_drive = &m_drive;
+    m_fieldRelative = false;
 
     // Configure the button bindings
     ConfigureButtonBindings();
-    m_fieldRelative = false;
 
-    // Set up default drive command
-    m_drive.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            // up is xbox joystick y pos
-            // left is xbox joystick x pos
-            auto xInput = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto yInput = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
-            auto rotInput = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
-            auto xRot = m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
-            auto yRot = m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
-            if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
-                xRot = 0;
-                yRot = 0;
+    // Set up default commands
+    m_drive.SetDefaultCommand(
+        DriveDefault(&m_drive, 
+            [this] {
+                double x = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
+                m_inputXentry.SetDouble(x);
+                return x;
+            },
+            [this] {
+                double y = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+                m_inputYentry.SetDouble(y);
+                return y;
+            },
+            [this] {
+                double rot = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+                m_inputRotentry.SetDouble(rot);
+                return rot;
+            },
+            [this] {
+                return m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
+            }, 
+            [this] {
+                return m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
+            },
+            [this] {
+                return m_fieldRelative;
             }
-
-            m_inputXentry.SetDouble(xInput);
-            m_inputYentry.SetDouble(yInput);
-            m_inputRotentry.SetDouble(rotInput);
-
-            if (m_fieldRelative)
-            {
-                m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            xRot,
-                            yRot,
-                            m_fieldRelative);
-            }
-            else 
-            {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            units::radians_per_second_t(rotInput),
-                            m_fieldRelative);
-            }
-
-        },
-        {&m_drive}
-    ));
+        )
+    );
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
     m_inputXentry = tab.Add("X", 0).GetEntry();
     m_inputYentry = tab.Add("Y", 0).GetEntry();
     m_inputRotentry = tab.Add("Rot", 0).GetEntry();
+
+    m_testNumber = 0;
+    m_testPower = 0;
+
+    SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
+    SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+}
+
+void RobotContainer::Periodic()
+{
+    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
 }
 
 void RobotContainer::ConfigureButtonBindings()
@@ -127,8 +122,45 @@ void RobotContainer::ConfigureButtonBindings()
     //           180          //
     //            D           //
 
-    (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(&m_enableFieldRelative));
-    (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(&m_disableFieldRelative));
+    // Triggers Fire sequence
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
+    );
+
+    // Triggers field relative driving
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
+        frc2::InstantCommand(    
+            [this] { m_fieldRelative = true; },
+            {}
+        )
+    );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(
+        frc2::InstantCommand(    
+            [this] { m_fieldRelative = false; },
+            {}
+        )
+    );
+
+    // Zeros the gyro
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_drive.ZeroHeading();
+        },
+        {&m_drive}
+        )
+    );
+
+    // Runs autonomous path in gyro
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    );
+
+    // Runs sequence of tests for motors based on iterator and a power
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
+        TestCommands()
+    );
+    /*
 
     double c_buttonInputSpeed = 0.5;
     units::second_t c_buttonInputTime = 1.25_s;
@@ -177,43 +209,64 @@ void RobotContainer::ConfigureButtonBindings()
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
-        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
-    );
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
-            frc2::InstantCommand(    
-            [this] {
-                m_drive.ZeroHeading();
-            },
-            {&m_drive}
-        )
-    );
-
-    /*
-    /// Interferes with flywheel
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
-        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeout);
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
-        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeoutAlt);
-    // Interferes with flywheel
     */
+}
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenPressed(
-        HoodRaise(&m_hood)
-    );
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
-        FlywheelIdle(&m_flywheel)
-    );
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
-        FlywheelRamp(&m_flywheel)
-    );
+frc2::InstantCommand RobotContainer::TestCommands()
+{
+    switch(m_testNumber) {
+    case 0:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_intake.Set(m_testPower);
+            },
+            {&m_intake}
+        );
+    case 1:
+        return
+        frc2::InstantCommand(    
+            [this] {
+                m_cycler.SetFeeder(m_testPower);
+            },
+            {&m_cycler}
+        );
+    case 2:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_cycler.SetTurnTable(m_testPower);
+            },
+            {&m_cycler}
+        );
+    case 3:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_flywheel.SetRPM(m_testPower * 1000.0);
+            },
+            {&m_flywheel}
+        );
+        break;
+    case 4:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_hood.Set(m_testPower);
+            },
+            {&m_hood}
+        );
+    }
+    return 
+        frc2::InstantCommand(    
+            [this] {
+                m_intake.Set(m_testPower);
+            },
+            {&m_intake}
+        );
 }
 
 // frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
-
-// frc::Rotation2d GetDesiredRotation() { return g_drive->GetHeadingAsRot2d(); }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
