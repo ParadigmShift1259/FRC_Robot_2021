@@ -10,7 +10,7 @@ Fire::Fire(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* 
   // Only CyclerPrepare has an end, as CyclerLaunch must run once the Cycler is in the right position
   AddCommands(
     // Home flywheel, turret, and hood to the correct speeds based on tuned fit function
-    HomeTarget(flywheel, turret, hood, &m_turretready),
+    HomeTarget(flywheel, turret, hood, vision, &m_turretready),
     // Prepare cycler by directing to the right position
     CyclerPrepare(cycler, &m_cyclerready),
     // If m_cycler ready and turret ready are true, cycler launch drives all of the balls through
