@@ -232,7 +232,7 @@ private:
     DrivePidParams   m_drivePidParams;
     TurnPidParams   m_turnPidParams;
 
-    CANEncoder m_turnNeoEncoder = m_turningMotor.GetEncoder();
+    CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, 1);
     GetPulseWidthCallback m_pulseWidthCallback;
     CANifier::PWMChannel m_pwmChannel;
 

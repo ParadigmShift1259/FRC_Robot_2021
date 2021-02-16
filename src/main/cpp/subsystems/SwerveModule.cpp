@@ -26,7 +26,6 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     , m_name(name)
     , m_driveMotor(driveMotorChannel)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
-    , m_turnNeoEncoder(m_turningMotor)
     , m_pulseWidthCallback(pulseWidthCallback)
     , m_pwmChannel(pwmChannel)
     , m_logData(c_headerNamesSwerveModule, true, name)
@@ -39,7 +38,7 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_turningMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
 
     // Set up GetVelocity() to return meters per sec instead of RPM
-    m_turnNeoEncoder.SetPositionConversionFactor(2 * wpi::math::pi / ModuleConstants::kTurnMotorRevsPerWheelRev);
+    m_turnRelativeEncoder.SetPositionConversionFactor(2 * wpi::math::pi / ModuleConstants::kTurnMotorRevsPerWheelRev);
     
     m_driveMotor.SetInverted(driveMotorReversed ? TalonFXInvertType::CounterClockwise : TalonFXInvertType::Clockwise);
     m_turningMotor.SetInverted(false);
@@ -48,7 +47,7 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_turnPidParams.Load(m_turnPIDController);
 
     double initPosition = EncoderToRadians();
-    m_turnNeoEncoder.SetPosition(initPosition); // Tell the encoder where the absolute encoder is
+    m_turnRelativeEncoder.SetPosition(initPosition); // Tell the encoder where the absolute encoder is
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("AbsEncTuning");
     std::string nteName = m_name + " offset";
@@ -79,6 +78,9 @@ void SwerveModule::Periodic()
     double absAngle = EncoderToRadians();
     SmartDashboard::PutNumber(m_name, absAngle);
 
+    SmartDashboard::PutNumber("TEST_Relative_Encoder", m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("TEST_Absolute_Encoder", absAngle);
+
     /* Used for tuning SwerveModule Turn PID
     double P = SmartDashboard::GetNumber("TEST_TurnP", 0);
     double I = SmartDashboard::GetNumber("TEST_TurnI", 0);
@@ -98,7 +100,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     // Find absolute encoder and NEO encoder positions
     double absAngle = EncoderToRadians();
-    double currentPosition = m_turnNeoEncoder.GetPosition();
+    double currentPosition = m_turnRelativeEncoder.GetPosition();
 
     // Calculate new turn position given current Neo position, current absolute encoder position, and desired state position
     bool bOutputReverse = false;
