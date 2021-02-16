@@ -68,7 +68,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
         , log
       }
     , m_canifier(kCanifierID)
-    , m_gyro(0)
+    //, m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
     //SmartDashboard::PutBoolean("GetInputFromNetTable", false);
@@ -117,8 +117,8 @@ void DriveSubsystem::Periodic()
     m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
-    m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
+    //m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
+    //m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
     m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
     m_frontLeft.Periodic();
@@ -268,7 +268,7 @@ void DriveSubsystem::ResetEncoders()
 
 double DriveSubsystem::GetHeading()
 {
-    auto retVal = std::remainder(m_gyro.GetFusedHeading(), 360.0) * (kGyroReversed ? -1. : 1.);
+    auto retVal = 0.0;//std::remainder(m_gyro.GetFusedHeading(), 360.0) * (kGyroReversed ? -1. : 1.);
     if (retVal > 180.0)
     {
         retVal -= 360.0;
@@ -282,13 +282,13 @@ double DriveSubsystem::GetHeading()
 void DriveSubsystem::ZeroHeading()
 {
     //m_gyro.ClearStickyFaults();
-    m_gyro.SetFusedHeading(0.0, 0);
+    //m_gyro.SetFusedHeading(0.0, 0);
 }
 
 double DriveSubsystem::GetTurnRate()
 {
     double turnRates [3] = {0, 0, 0};
-    m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
+    //m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
     return turnRates[2]; 
 }
 
@@ -302,7 +302,10 @@ double DriveSubsystem::PWMToPulseWidth(CANifier::PWMChannel pwmChannel) {
     double dutyCycleAndPeriod [2];
     
     m_canifier.GetPWMInput(pwmChannel, dutyCycleAndPeriod);
-    return dutyCycleAndPeriod[0] * dutyCycleAndPeriod[1];
+    SmartDashboard::PutNumber("TEST_DutyCycle " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[0]);
+    SmartDashboard::PutNumber("TEST_Period " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[1]);
+
+    return dutyCycleAndPeriod[0] * dutyCycleAndPeriod[1] / kPulseWidthToZeroOne;
 }
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose)

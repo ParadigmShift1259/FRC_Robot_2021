@@ -112,9 +112,9 @@ namespace DriveConstants
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
-    constexpr double kPulseWidthToZeroOne = .004096;    // 2 - 4096 micro second pulse width
+    constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
     constexpr double kPulseWidthToRadians = 2.0 * wpi::math::pi / kPulseWidthToZeroOne;
-    constexpr double kPulseWidthToDegrees = 360 / kPulseWidthToRadians;
+    constexpr double kPulseWidthToDegrees = 360 / kPulseWidthToZeroOne;
 
      // Rotation PID Controller, converts between radians angle error to radians per second turn
 
@@ -149,7 +149,7 @@ namespace ModuleConstants
     //constexpr double kDriveGearRatio = 8.31;              //!< MK2 swerve modules 11.9 ft/sec
     constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec w/Falcon 13.6 ft/sec
     //constexpr double kDriveGearRatio = 6.86;              //!< MK3 swerve modules w/NEOs 14.4 ft/sec
-    constexpr double kTurnMotorRevsPerWheelRev = 18.0;
+    constexpr double kTurnMotorRevsPerWheelRev = 12.8;//18.0;
     /// Assumes the encoders are directly mounted on the wheel shafts
     constexpr double kDriveEncoderMetersPerSec = (kWheelDiameterMeters * wpi::math::pi * kDriveGearRatio) / static_cast<double>(kEncoderCPR);
 

@@ -37,8 +37,8 @@ enum class EDriveSubSystemLogData : int
   , eOdoY
   , eOdoRot
   , eLastDouble
-  , eGyroRot
-  , eGyroRotRate
+  //, eGyroRot
+  //, eGyroRotRate
 };
 
 const std::vector<std::string> c_headerNamesDriveSubsystem{
@@ -48,8 +48,8 @@ const std::vector<std::string> c_headerNamesDriveSubsystem{
      , "OdoX"
      , "OdoY"
      , "OdoRot"
-     , "eGyroRot"
-     , "eGyroRotRate"
+     //, "eGyroRot"
+     //, "eGyroRotRate"
 };
 
 class DriveSubsystem : public frc2::SubsystemBase
@@ -173,7 +173,7 @@ private:
     ///@}
 
     CANifier m_canifier;
-    PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
+    //PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
 
     /// Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;

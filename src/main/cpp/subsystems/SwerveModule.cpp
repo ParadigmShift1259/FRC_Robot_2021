@@ -162,7 +162,7 @@ double SwerveModule::EncoderToRadians()
 {
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
 
-    SmartDashboard::PutNumber("TEST_Pulse Width", pulseWidth);
+    SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
 
     double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
