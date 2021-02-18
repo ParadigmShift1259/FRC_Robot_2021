@@ -3,9 +3,11 @@
 
 #include <frc2/command/SubsystemBase.h>
 
-#include <ctre/phoenix.h>
+#include <ctre/phoenix/motorcontrol/ControlMode.h>
+#include "ctre/phoenix/motorcontrol/can/TalonSRX.h"
 
-#include <units\units.h>
+using namespace ctre::phoenix::motorcontrol;
+using namespace ctre::phoenix::motorcontrol::can;
 
 #include "Constants.h"
 #include "common/Util.h"
@@ -53,5 +55,5 @@ protected:
     double DegreesToTicks(double degrees);
 
 private:    
-    WPI_TalonSRX m_turretmotor;
+    TalonSRX m_turretmotor;
 };

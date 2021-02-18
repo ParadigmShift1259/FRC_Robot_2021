@@ -3,12 +3,19 @@
 
 #include <frc2/command/SubsystemBase.h>
 
-#include <rev\CANSparkMax.h>
-#include <rev\CANEncoder.h>
-#include <rev\CANPIDController.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 
-#include <units\units.h>
-#include <frc\controller\SimpleMotorFeedforward.h>
+#include <rev/CANSparkMax.h>
+#include <rev/CANEncoder.h>
+#include <rev/CANPIDController.h>
+
+#pragma GCC diagnostic pop
+
+#include "units/length.h"
+#include "units/time.h"
+#include "units/voltage.h"
+#include <frc/controller/SimpleMotorFeedforward.h>
 
 #include "Constants.h"
 

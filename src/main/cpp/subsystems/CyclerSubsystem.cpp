@@ -1,7 +1,5 @@
 #include "subsystems/CyclerSubsystem.h"
 
-#include "Constants.h"
-
 using namespace CyclerConstants;
 
 CyclerSubsystem::CyclerSubsystem()

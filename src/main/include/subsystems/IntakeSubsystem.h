@@ -4,10 +4,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc/Spark.h>
 
-#include <ctre/phoenix.h>
-
 #include "Constants.h"
-#include "SwerveModule.h"
 
 class IntakeSubsystem : public frc2::SubsystemBase
 {
@@ -23,5 +20,5 @@ public:
     void Set(double speed);
 
 private:    
-    Spark m_motor;
+    frc::Spark m_motor;
 };
