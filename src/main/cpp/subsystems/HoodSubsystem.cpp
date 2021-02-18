@@ -19,7 +19,7 @@ void HoodSubsystem::Periodic()
     SmartDashboard::PutNumber("Hood Servo Angle", m_servo.GetAngle());
 }
 
-void HoodSubsystem::Set(double speed) 
+void HoodSubsystem::Set(double position) 
 {
-    m_servo.Set(speed);
+    m_servo.Set(position);
 }

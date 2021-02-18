@@ -19,19 +19,18 @@
 
 #include "Constants.h"
 #include "Logger.h"
+
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/FlywheelSubsystem.h"
 #include "subsystems/TurretSubsystem.h"
-#include "subsystems/IntakeSubsystem.h"
 #include "subsystems/HoodSubsystem.h"
+#include "subsystems/IntakeSubsystem.h"
+#include "subsystems/CyclerSubsystem.h"
+#include "subsystems/VisionSubsystem.h"
 
-#include "commands/DriveForward.h"
-#include "commands/FlywheelIdle.h"
-#include "commands/FlywheelRamp.h"
-#include "commands/HoodRaise.h"
-#include "commands/IntakeIngest.h"
-#include "commands/IntakeRelease.h"
-#include "commands/TurretControl.h"
+#include "commands/DriveDefault.h"
+#include "commands/CyclerAgitation.h"
+#include "commands/Fire.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -45,6 +44,8 @@ class RobotContainer
 public:
     RobotContainer(Logger& log);
 
+    void Periodic();
+
     frc2::Command *GetAutonomousCommand();
 
     void ResetLog() { m_drive.ResetLog(); }
@@ -54,14 +55,8 @@ public:
 private:
     double Deadzone(double inputValue, double deadzone)
     {
-        if (fabs(inputValue) <= deadzone)
-        {
-            // If the input is small return 0
-            return 0.0;
-        }
-        
-        // Otherwise hand back the input value
-        return inputValue;
+        // If the input is small return 0
+        return abs(inputValue) <= deadzone ? 0 : inputValue;
     }    
     
     Logger& m_log;
@@ -73,9 +68,12 @@ private:
 
     // The robot's subsystems
     DriveSubsystem m_drive;
-    HoodSubsystem m_hood;
     FlywheelSubsystem m_flywheel;
-
+    TurretSubsystem m_turret;
+    HoodSubsystem m_hood;
+    IntakeSubsystem m_intake;
+    CyclerSubsystem m_cycler;
+    VisionSubsystem m_vision;
 
     // m_units::meters_per_second_t m_xInput;      //!< Last x input value
     // units::meters_per_second_t m_yInput;        //!< Last y input value
@@ -88,10 +86,12 @@ private:
     nt::NetworkTableEntry m_inputYentry;
     nt::NetworkTableEntry m_inputRotentry;
 
+    void SetDefaultCommands();
     void ConfigureButtonBindings();
+    frc2::InstantCommand TestCommands();
 
     bool m_fieldRelative = false;
 
-    frc2::InstantCommand m_enableFieldRelative{[this] () { m_fieldRelative = true; }};
-    frc2::InstantCommand m_disableFieldRelative{[this] () { m_fieldRelative = false; }};
+    int m_testNumber;
+    double m_testPower;
 };
