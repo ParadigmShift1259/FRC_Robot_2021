@@ -9,7 +9,6 @@
 
 #include <frc/geometry/Rotation2d.h>
 
-#include "Constants.h"
 #include <frc/SmartDashBoard/SmartDashboard.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 
@@ -147,9 +146,10 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
                                                                     // Used for tuning RotationDrive PID
         double max = DriveConstants::kMaxAbsoluteRotationSpeed;     //SmartDashboard::GetNumber("kMaxRotation", 0);
         double maxTurn = DriveConstants::kMaxAbsoluteTurnableSpeed; //SmartDashboard::GetNumber("kMaxRotationSpeed", 0);
-        double P = DriveConstants::kRotationP;                      //SmartDashboard::GetNumber("kRotationP", 0);
-        double I = DriveConstants::kRotationI;                      //SmartDashboard::GetNumber("kRotationI", 0);
-        double D = DriveConstants::kRotationD;                      //SmartDashboard::GetNumber("kRotationD", 0);
+
+        // double P = DriveConstants::kRotationP;                      //SmartDashboard::GetNumber("kRotationP", 0);
+        // double I = DriveConstants::kRotationI;                      //SmartDashboard::GetNumber("kRotationI", 0);
+        // double D = DriveConstants::kRotationD;                      //SmartDashboard::GetNumber("kRotationD", 0);
 
         /* Used for tuning RotationDrive PID
         m_rotationPIDController.SetP(P);
@@ -284,8 +284,8 @@ void DriveSubsystem::ZeroHeading()
 double DriveSubsystem::GetTurnRate()
 {
     double turnRates [3] = {0, 0, 0};
-    m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
-    return turnRates[2]; 
+    m_gyro.GetRawGyro(turnRates);
+    return turnRates[2] * (kGyroReversed ? -1. : 1.); 
 }
 
 frc::Pose2d DriveSubsystem::GetPose()

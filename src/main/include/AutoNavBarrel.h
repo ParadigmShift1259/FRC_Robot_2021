@@ -1,6 +1,7 @@
 #include <vector>
 #include <frc/geometry/Translation2d.h>
-#include <units/units.h>
+#include "units/angle.h"
+#include "units/length.h"
 
 std::vector<frc::Pose2d> AutoNavBarrel =
 {

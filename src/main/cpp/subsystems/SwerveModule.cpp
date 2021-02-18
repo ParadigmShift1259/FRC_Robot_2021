@@ -14,6 +14,10 @@
 
 #include "Constants.h"
 
+// Removes deprecated warning for CANEncoder and CANPIDController
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
                            const int turningEncoderPort,
@@ -64,6 +68,8 @@ SwerveModule::SwerveModule(int driveMotorChannel,
                                     .WithWidget(frc::BuiltInWidgets::kVoltageView)
                                     .GetEntry();
 }
+
+#pragma GCC diagnostic pop
 
 frc::SwerveModuleState SwerveModule::GetState()
 {

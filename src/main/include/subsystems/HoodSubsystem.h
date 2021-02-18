@@ -5,7 +5,6 @@
 #include <frc/Servo.h>
 
 #include "Constants.h"
-#include "SwerveModule.h"
 
 class HoodSubsystem : public frc2::SubsystemBase
 {

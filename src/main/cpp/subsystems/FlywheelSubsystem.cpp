@@ -7,6 +7,10 @@
 
 using namespace FlywheelConstants;
 
+// Removes deprecated warning for CANEncoder and CANPIDController
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 FlywheelSubsystem::FlywheelSubsystem() 
     : m_flywheelmotor(FlywheelConstants::kMotorPort, CANSparkMax::MotorType::kBrushless)
     , m_flywheelPID(m_flywheelmotor)
@@ -27,6 +31,8 @@ FlywheelSubsystem::FlywheelSubsystem()
 
     m_setpoint = 0;
 }
+
+#pragma GCC diagnostic pop
 
 void FlywheelSubsystem::Periodic()
 {
