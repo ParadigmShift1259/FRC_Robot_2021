@@ -154,9 +154,9 @@ void RobotContainer::ConfigureButtonBindings()
     //            D           //
 
     // Triggers Fire sequence
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
-    );
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
+    //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
+    // );
 
     // Triggers field relative driving
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
@@ -185,6 +185,25 @@ void RobotContainer::ConfigureButtonBindings()
     // Runs autonomous path in gyro
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    );
+
+    // Increments / Decrements a test power value for TestCommands()
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower += 0.05;
+        },
+        {}
+        )
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower -= 0.05;
+        },
+        {}
+        )
     );
 
     // Runs sequence of tests for motors based on iterator and a power
@@ -239,7 +258,6 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
-
     */
 }
 

@@ -17,10 +17,10 @@ IntakeSubsystem::IntakeSubsystem()
 
 void IntakeSubsystem::Periodic()
 {
-    SmartDashboard::PutNumber("Intake Motor Speed", m_motor.GetMotorOutputPercent());
+    SmartDashboard::PutNumber("Intake Motor Speed", m_motor.Get());
 }
 
 void IntakeSubsystem::Set(double speed) 
 {
-    m_motor.Set(ControlMode::PercentOutput, speed * IntakeConstants::kMotorReverseConstant);
+    m_motor.Set(speed * IntakeConstants::kMotorReverseConstant);
 }

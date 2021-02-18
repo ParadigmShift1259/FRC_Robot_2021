@@ -177,7 +177,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 15;
+    constexpr double kMotorPort = 0;
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
