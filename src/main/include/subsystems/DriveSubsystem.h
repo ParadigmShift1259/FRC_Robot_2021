@@ -94,7 +94,7 @@ public:
     void ResetEncoders();
 
     /// Readable alias for array of swerve modules
-    using SwerveModuleStates = std::array<frc::SwerveModuleState, DriveConstants::kNumSwerveModules>;
+    using SwerveModuleStates = wpi::array<frc::SwerveModuleState, DriveConstants::kNumSwerveModules>;
     /// Sets the drive SpeedControllers to a power from -1 to 1.
     void SetModuleStates(SwerveModuleStates desiredStates);
 
@@ -147,11 +147,13 @@ private:
     /// Get all 4 swerve module wheel speed to update the odometry with
     SwerveModuleStates getCurrentWheelSpeeds()
     {
-        SwerveModuleStates sms;
-        sms[0] = m_frontLeft.GetState();
-        sms[1] = m_frontRight.GetState();
-        sms[2] = m_rearRight.GetState();
-        sms[3] = m_rearLeft.GetState();
+        SwerveModuleStates sms
+        {
+              m_frontLeft.GetState()
+            , m_frontRight.GetState()
+            , m_rearRight.GetState()
+            , m_rearLeft.GetState()
+        };
         return sms;
     }
 

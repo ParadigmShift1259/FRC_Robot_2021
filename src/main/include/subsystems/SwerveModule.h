@@ -92,8 +92,8 @@ class DrivePidParams
     //double m_i = 0.0;
     double m_d = 0.0;
     double m_ff = 0.3;
-    double m_max = 1.0;
-    double m_min = -1.0;
+    double m_max = 0.2;//1.0;
+    double m_min = -0.2;//-1.0;
 
 public:
    void Load(TalonFX& driveMotor)
@@ -207,7 +207,7 @@ public:
 
 private:
     double EncoderToRadians();
-    double EncoderToDegrees();
+    //double EncoderToDegrees();
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 
@@ -218,8 +218,8 @@ private:
     // We have to use meters here instead of radians due to the fact that
     // ProfiledPIDController's constraints only take in meters per second and
     // meters per second squared.
-    static constexpr radians_per_second_t kModuleMaxAngularVelocity = radians_per_second_t(wpi::math::pi);                                           // radians per second
-    static constexpr unit_t<radians_per_second_squared_t> kModuleMaxAngularAcceleration = unit_t<radians_per_second_squared_t>(wpi::math::pi * 2.0); // radians per second squared
+    //static constexpr radians_per_second_t kModuleMaxAngularVelocity = radians_per_second_t(wpi::math::pi);                                           // radians per second
+    //static constexpr unit_t<radians_per_second_squared_t> kModuleMaxAngularAcceleration = unit_t<radians_per_second_squared_t>(wpi::math::pi * 2.0); // radians per second squared
 
     double m_offset;
     std::string m_name;
@@ -232,12 +232,9 @@ private:
     DrivePidParams   m_drivePidParams;
     TurnPidParams   m_turnPidParams;
 
-    CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, 1);
+    CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, ModuleConstants::kTurnEncoderCPR);
     GetPulseWidthCallback m_pulseWidthCallback;
     CANifier::PWMChannel m_pwmChannel;
-
-    nt::NetworkTableEntry m_nteAbsEncTuningOffset;
-    nt::NetworkTableEntry m_nteAbsEncTuningVoltage;
 
     using LogData = LogDataT<ESwerveModuleLogData>;
     LogData m_logData;

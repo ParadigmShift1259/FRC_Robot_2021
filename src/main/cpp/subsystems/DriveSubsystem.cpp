@@ -71,17 +71,15 @@ DriveSubsystem::DriveSubsystem(Logger& log)
     //, m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
-    //SmartDashboard::PutBoolean("GetInputFromNetTable", false);
-
-    SmartDashboard::PutNumber("FrontLeft", 0.0);
-    SmartDashboard::PutNumber("FrontRight", 0.0);
-    SmartDashboard::PutNumber("RearRight", 0.0);
-    SmartDashboard::PutNumber("RearLeft", 0.0);
-    
-    SmartDashboard::PutNumber("FrontLeftV", 0.0);
-    SmartDashboard::PutNumber("FrontRightV", 0.0);
-    SmartDashboard::PutNumber("RearLeftV", 0.0);
-    SmartDashboard::PutNumber("RearRightV", 0.0);
+    SmartDashboard::PutBoolean("GetInputFromNetTable", false);
+    SmartDashboard::PutNumber("FrontLeftManual", 0.0);
+    SmartDashboard::PutNumber("FrontRightManual", 0.0);
+    SmartDashboard::PutNumber("RearLeftManual", 0.0);
+    SmartDashboard::PutNumber("RearRightManual", 0.0);
+    SmartDashboard::PutNumber("FrontLeftVManual", 0.0);
+    SmartDashboard::PutNumber("FrontRightVManual", 0.0);
+    SmartDashboard::PutNumber("RearLeftVManual", 0.0);
+    SmartDashboard::PutNumber("RearRightVManual", 0.0);
 
     SmartDashboard::PutNumber("kP", ModuleConstants::kP_ModuleTurningController);
     SmartDashboard::PutNumber("kd", ModuleConstants::kD_ModuleTurningController);
@@ -215,31 +213,32 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
     
-    //if (SmartDashboard::GetBoolean("GetInputFromNetTable", false))
-    if (false)
+    if (SmartDashboard::GetBoolean("GetInputFromNetTable", false))
+    //if (false)
     {
-        double angle = SmartDashboard::GetNumber("FrontLeft", 0.0);
+        printf("Pulling module input from dashboard\n");
+        double angle = SmartDashboard::GetNumber("FrontLeftManual", 0.0);
         states[eFrontLeft].angle = frc::Rotation2d(radian_t(angle));
 
-        angle = SmartDashboard::GetNumber("FrontRight", 0.0);
+        angle = SmartDashboard::GetNumber("FrontRightManual", 0.0);
         states[eFrontRight].angle = frc::Rotation2d(radian_t(angle));
 
-        angle = SmartDashboard::GetNumber("RearLeft", 0.0);
+        angle = SmartDashboard::GetNumber("RearLeftManual", 0.0);
         states[eRearLeft].angle = frc::Rotation2d(radian_t(angle));
 
-        angle = SmartDashboard::GetNumber("RearRight", 0.0);
+        angle = SmartDashboard::GetNumber("RearRightManual", 0.0);
         states[eRearRight].angle = frc::Rotation2d(radian_t(angle));
 
-        double speed = SmartDashboard::GetNumber("FrontLeftV", 0.0);
+        double speed = SmartDashboard::GetNumber("FrontLeftVManual", 0.0);
         states[eFrontLeft].speed = meters_per_second_t(speed);
 
-        speed = SmartDashboard::GetNumber("FrontRightV", 0.0);
+        speed = SmartDashboard::GetNumber("FrontRightVManual", 0.0);
         states[eFrontLeft].speed = meters_per_second_t(speed);
 
-        speed = SmartDashboard::GetNumber("RearLeftV", 0.0);
+        speed = SmartDashboard::GetNumber("RearLeftVManual", 0.0);
         states[eFrontLeft].speed = meters_per_second_t(speed);
 
-        speed = SmartDashboard::GetNumber("RearRightV", 0.0);
+        speed = SmartDashboard::GetNumber("RearRightVManual", 0.0);
         states[eFrontLeft].speed = meters_per_second_t(speed);
     }
 

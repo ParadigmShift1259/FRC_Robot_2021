@@ -28,6 +28,11 @@ using namespace ctre::phoenix;
  * they are needed.
  */
 
+namespace Math
+{
+    constexpr double kTau = 2.0 * wpi::math::pi;
+}
+
 namespace DriveConstants
 {
     constexpr int kNumSwerveModules = 4;
@@ -102,19 +107,19 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
     // Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 0.180;
-    constexpr double kFrontRightOffset  = 0.403;
-    constexpr double kRearLeftOffset    = 0.402;
-    constexpr double kRearRightOffset   = 0.342;
+    constexpr double kFrontLeftOffset   = 2685.0; // 2.163;
+    constexpr double kFrontRightOffset  =  251.0; // 5.897;
+    constexpr double kRearRightOffset   = 1875.0; // 3.405;
+    constexpr double kRearLeftOffset    = 3867.0; // 0.351;
 
     // For MK2 swerve encoders
-    constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
-    constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
-    constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
+    //constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
+    //constexpr double kTurnVoltageToRadians = Math::kTau / kMaxAnalogVoltage;
+    //constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
     constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
-    constexpr double kPulseWidthToRadians = 2.0 * wpi::math::pi / kPulseWidthToZeroOne;
-    constexpr double kPulseWidthToDegrees = 360 / kPulseWidthToZeroOne;
+    constexpr double kPulseWidthToRadians =  Math::kTau / kPulseWidthToZeroOne;
+    //constexpr double kPulseWidthToDegrees = 360 / kPulseWidthToZeroOne;
 
      // Rotation PID Controller, converts between radians angle error to radians per second turn
 
@@ -122,9 +127,9 @@ namespace DriveConstants
     constexpr double kTurnValidationDistance = 0.35;
 
     /// Turn PID Controller for Swerve Modules
-    constexpr double kTurnP = 0.1; // 0.35
-    constexpr double kTurnI = 0; //1e-4;
-    constexpr double kTurnD = 1; // 1.85
+    constexpr double kTurnP = 0.0001;   //0.35;
+    constexpr double kTurnI = 0.0;      //1e-4;
+    constexpr double kTurnD = 0.2;      //1.0; // 1.85
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -153,7 +158,9 @@ namespace ModuleConstants
     /// Assumes the encoders are directly mounted on the wheel shafts
     constexpr double kDriveEncoderMetersPerSec = (kWheelDiameterMeters * wpi::math::pi * kDriveGearRatio) / static_cast<double>(kEncoderCPR);
 
-    constexpr double kP_ModuleTurningController = 1.1;
+    constexpr double kTurnEncoderCPR = 4096.0 * kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
+
+    constexpr double kP_ModuleTurningController = 0.01;//1.1;
     constexpr double kD_ModuleTurningController = 0.03;
 
     constexpr double kPModuleDriveController = 0.001;
