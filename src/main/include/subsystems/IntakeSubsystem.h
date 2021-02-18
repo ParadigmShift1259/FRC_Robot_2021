@@ -18,7 +18,7 @@ public:
 
     /// Drives the intake at a given speed
     /// \param speed         Desired motor speed to run, ranging from [-1, 1]
-    void Set(double speed);
+    void Run(double speed);
 
 private:    
     TalonSRX m_motor;
