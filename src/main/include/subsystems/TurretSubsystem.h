@@ -24,20 +24,20 @@ public:
     // Most calculations currently depend on counter clockwise turning, with 0 as "front"
 
     /// Turns the turret to a specified angle on the turret
-    /// \param angle        Angle desired to turn to, must be within the boundaries of the turret, must be positive, in degrees
+    /// \param angle        Angle desired to turn to, must be within the boundaries of the turret, must be positive
     void TurnTo(double angle);
 
     /// Turns the turret based on the robot angle
-    /// \param robotAngle        Robot angle to turn to, must be positive, in degrees
+    /// \param robotAngle        Robot angle to turn to, must be positive
     void TurnToRobot(double robotAngle);
 
     /// Turns the turret based on an absolute field angle
     /// \param gyroAngle        Field angle to turn to, must be positive
-    /// \param robotAngle       Current robot angle, must be positive, in degrees
+    /// \param robotAngle       Current robot angle, must be positive
     void TurnToField(double gyroAngle, double robotAngle);
 
     /// Turns the turret to an angle added to the current robot position
-    /// \param angle        Angle that should be added to the robot position and turned to, can be either positive or negative, in degrees
+    /// \param angle        Angle that should be added to the robot position and turned to, can be either positive or negative
     void TurnToRelative(double angle);
 
     /// Returns whether or not the turret is at the desired setpoint

@@ -17,8 +17,8 @@ public:
     void Periodic() override;
 
     /// Set hood to certain position
-    /// \param position         Servo rotation, ranging from [0, 1]
-    void Set(double position);
+    /// \param speed         Servo rotation, ranging from [0, 1]
+    void Set(double speed);
 
 private:    
     frc::Servo m_servo;

@@ -273,10 +273,7 @@ namespace CyclerConstants
     constexpr double kFeederPort = 14;
     constexpr double kTurnTablePort = 15;
 
-    constexpr double kFeederSpeed = 0.400;
-    constexpr double kTurnTableSpeed = 0.400;
-
-    constexpr double kTimePassed = 2;
+    constexpr double kFeederSpeed = 20;
 
     constexpr double kFeederTimeout = 10;
     constexpr double kFeederTimeoutAlt = 15;
@@ -306,17 +303,4 @@ namespace CyclerConstants
 
     // initial configured angle of the turntable relative to the turntable, in degrees
     constexpr double kStartingPositionDegrees = 135;
-}
-
-// Vision Subsystem Constants
-namespace VisionConstants
-{
-    // Mounting angle of the limelight, in degrees
-    constexpr double kMountingAngle = 18.0;
-    // Mounting height of the limelight from the ground, in inches
-    constexpr double kMountingHeight = 21.5;
-    // Target center height, in inches
-    constexpr double kTargetHeight = 98.25;
-    // Target width, in inches
-    constexpr double kTargetSize = 15;
 }
