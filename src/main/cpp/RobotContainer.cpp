@@ -127,6 +127,64 @@ void RobotContainer::ConfigureButtonBindings()
     //           180          //
     //            D           //
 
+    // Triggers Fire sequence
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
+    //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
+    // );
+
+    // Triggers field relative driving
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
+        frc2::InstantCommand(    
+            [this] { m_fieldRelative = true; },
+            {}
+        )
+    );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(
+        frc2::InstantCommand(    
+            [this] { m_fieldRelative = false; },
+            {}
+        )
+    );
+
+    // Zeros the gyro
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_drive.ZeroHeading();
+        },
+        {&m_drive}
+        )
+    );
+
+    // Runs autonomous path in gyro
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    );
+
+    // Increments / Decrements a test power value for TestCommands()
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower += 0.05;
+        },
+        {}
+        )
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower -= 0.05;
+        },
+        {}
+        )
+    );
+
+    // Runs sequence of tests for motors based on iterator and a power
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
+        TestCommands()
+    );
+    /*
     (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(&m_enableFieldRelative));
     (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(&m_disableFieldRelative));
 
@@ -176,39 +234,7 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
-        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
-    );
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
-            frc2::InstantCommand(    
-            [this] {
-                m_drive.ZeroHeading();
-            },
-            {&m_drive}
-        )
-    );
-
-    /*
-    /// Interferes with flywheel
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
-        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeout);
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
-        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeoutAlt);
-    // Interferes with flywheel
     */
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenPressed(
-        HoodRaise(&m_hood)
-    );
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
-        FlywheelIdle(&m_flywheel)
-    );
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
-        FlywheelRamp(&m_flywheel)
-    );
 }
 
 // frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
