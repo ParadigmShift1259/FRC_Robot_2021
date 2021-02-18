@@ -49,7 +49,7 @@ public:
 
     void ResetLog() { m_drive.ResetLog(); }
 
-    // frc::Rotation2d GetDesiredRotation();
+    void Periodic();
 
 private:
     double Deadzone(double inputValue, double deadzone)

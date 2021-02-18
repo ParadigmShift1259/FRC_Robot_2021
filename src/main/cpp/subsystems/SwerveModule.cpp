@@ -157,11 +157,12 @@ void SwerveModule::ResetEncoders()
 
 double SwerveModule::VoltageToRadians(double voltage, double offset)
 {
-#ifdef TUNE_ABS_ENC
-    offset = m_nteAbsEncTuningOffset.GetDouble(m_offset);
-#endif
-    m_nteAbsEncTuningVoltage.SetDouble(voltage);
     double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
+
+    SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
+
+    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
 
     return angle;

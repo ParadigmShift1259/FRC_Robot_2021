@@ -113,6 +113,10 @@ RobotContainer::RobotContainer(Logger& log)
     m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
 
+void RobotContainer::Periodic() {
+    m_drive.Periodic();
+}
+
 void RobotContainer::ConfigureButtonBindings()
 {
     //            U           //
@@ -208,6 +212,10 @@ void RobotContainer::ConfigureButtonBindings()
     );
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
         FlywheelRamp(&m_flywheel)
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Axis::kTriggerRight).WhenPressed(
+        IntakeIngest(&m_intake)
     );
 }
 
