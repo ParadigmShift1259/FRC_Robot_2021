@@ -7,31 +7,10 @@
 
 #include "RobotContainer.h"
 
-#include <frc/controller/PIDController.h>
-#include <frc/geometry/Translation2d.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-#include <frc/trajectory/Trajectory.h>
-#include <frc/trajectory/TrajectoryGenerator.h>
-#include <frc/Filesystem.h>
-#include <frc/trajectory/TrajectoryUtil.h>
-#include <frc2/command/InstantCommand.h>
-#include <frc2/command/SequentialCommandGroup.h>
-#include <frc2/command/button/JoystickButton.h>
-#include <wpi/Path.h>
-#include <wpi/SmallString.h>
-#include <frc2/command/SwerveControllerCommand.h>
-
-#include <iostream>
-
-#include "Constants.h"
-#include "subsystems/DriveSubsystem.h"
-#include "subsystems/FlywheelSubsystem.h"
-#include "subsystems/TurretSubsystem.h"
-#include "subsystems/IntakeSubsystem.h"
-#include "subsystems/HoodSubsystem.h"
-#include "subsystems/CyclerSubsystem.h"
-#include "SwerveControllerCommand2.h"
-
+// Commenting this out reduces build time by about half
+// However, includes are necessary to run trajectory paths
+//#define PATHS
+#ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
 #include "AutoNavSlalom.h"
@@ -40,9 +19,9 @@
 #include "GSLayout2Path1.h"
 #include "GSLayout2Path2.h"
 #include "TestTraj.h"
+#endif
 
 using namespace DriveConstants;
-using namespace CyclerConstants;
 
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
