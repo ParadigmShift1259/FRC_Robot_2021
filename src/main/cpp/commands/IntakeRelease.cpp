@@ -9,5 +9,5 @@ IntakeRelease::IntakeRelease(IntakeSubsystem* subsystem) : m_intake(subsystem) {
 }
 
 void IntakeRelease::Execute() {
-    m_intake->Set(IntakeConstants::kReleaseHigh);
+    m_intake->Run(IntakeConstants::kReleaseHigh);
 }

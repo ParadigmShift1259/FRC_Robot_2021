@@ -31,11 +31,6 @@ double CyclerSubsystem::GetPosition()
     return m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(CyclerConstants::kStartingPositionDegrees), 0, CyclerConstants::kTimeout);
 }
 
-double CyclerSubsystem::GetAngle()
-{
-    return TicksToDegrees(m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(CyclerConstants::kStartingPositionDegrees), 0, CyclerConstants::kTimeout));
-}
-
 double CyclerSubsystem::TicksToDegrees(double ticks)
 {
     double rev = ticks / CyclerConstants::kTicksPerRev;

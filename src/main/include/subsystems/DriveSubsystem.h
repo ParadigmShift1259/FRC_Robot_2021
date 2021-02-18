@@ -148,6 +148,7 @@ private:
             m_rearRight.GetState(),
             m_rearLeft.GetState()
         );
+
         return sms;
     }
 
