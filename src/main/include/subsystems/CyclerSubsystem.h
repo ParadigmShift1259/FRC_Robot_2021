@@ -65,6 +65,9 @@ public:
     /// Gets the TurnTable position
     double GetPosition();
 
+    /// Gets the TurnTable angle in degrees
+    double GetAngle();
+
 protected:
     /// Converts motor ticks into turntable rotation, in degrees
     /// \param ticks        Number of ticks to be converted
