@@ -13,7 +13,7 @@
 
 // Commenting this out removes subsystem CAN errors
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
-#define SUBSYSTEMS
+//#define SUBSYSTEMS
 #ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
