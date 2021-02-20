@@ -75,6 +75,16 @@ RobotContainer::RobotContainer(Logger& log)
             // left is xbox joystick x pos
             auto xInput = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
             auto yInput = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            /*
+            if (xInput >= 0)
+                xInput = xInput*xInput; // square
+            else
+                xInput = -xInput*xInput; // square
+            if (yInput >= 0)
+                yInput = yInput*yInput; // square
+            else
+                yInput = -yInput*yInput; // square
+            */
             auto rotInput = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
             auto xRot = m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
@@ -89,16 +99,16 @@ RobotContainer::RobotContainer(Logger& log)
 
             if (m_fieldRelative)
             {
-                m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                m_drive.RotationDrive(units::meters_per_second_t(xInput), // TO DO: add teleOp const for max speed
+                            units::meters_per_second_t(yInput), // TO DO: add teleOp const for max speed
                             xRot,
                             yRot,
                             m_fieldRelative);
             }
             else 
             {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                m_drive.Drive(units::meters_per_second_t(xInput), // TO DO: add teleOp const for max speed
+                            units::meters_per_second_t(yInput), // TO DO: add teleOp const for max speed
                             units::radians_per_second_t(rotInput),
                             m_fieldRelative);
             }
@@ -222,7 +232,8 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     //m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
 
     // Set up config for trajectory
-    frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
+    // frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
+    frc::TrajectoryConfig config( units::meters_per_second_t (1.0), AutoConstants::kMaxAcceleration);
     // Add kinematics to ensure max speed is actually obeyed
     config.SetKinematics(m_drive.kDriveKinematics);
 
@@ -246,13 +257,10 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     wpi::sys::path::append(deployDirectory, "paths/output"); //Has the projects that are created in meters
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
 
-    frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
-    /*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        TestTrajLine,
-        config
-    );
-    */
+    frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);    
+
+    // auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(TestTrajLine, config);
+
     // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
     
     // for (int i = 0; i < exampleTrajectory.States().size(); i++)
@@ -357,7 +365,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
         frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
         thetaController,                                                        // frc::ProfiledPIDController<units::radians>
-        // GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        //GetDesiredRotation, //Comment out on SwerveControllerCommand1                                                      // std::function< frc::Rotation2d()> desiredRotation
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );

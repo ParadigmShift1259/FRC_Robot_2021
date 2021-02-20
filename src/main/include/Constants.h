@@ -83,18 +83,17 @@ namespace DriveConstants
     // Line up based on side, left or right
     // Record values, enter below, then redeploy
     // All gears should face outwards
-
-    constexpr double kFrontLeftOffset   = 3.142; //6.412;           //3.142;         // 3.14;
-    constexpr double kFrontRightOffset  = 5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
-    constexpr double kRearLeftOffset    = 5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
-    constexpr double kRearRightOffset   = 0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
+    constexpr double kFrontLeftOffset   = (6.28 - 3.14); //3.142; //6.412;           //3.142;         // 3.14;
+    constexpr double kFrontRightOffset  = (6.28 - 1.21); //5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
+    constexpr double kRearLeftOffset    = (6.28 - 0.36); //5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
+    constexpr double kRearRightOffset   = (6.28 - 5.67); //0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 
     // constexpr double kFrontLeftOffset   = 3.142;
     // constexpr double kFrontRightOffset  = 5.105 - wpi::math::pi;
     // constexpr double kRearLeftOffset    = 1.8292;
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
-    // Mk3 swerve module
+    // Mk3 swerve module=
     //constexpr double kFrontLeftOffset   = 0.180;
     //constexpr double kFrontRightOffset  = 0.403;
     //constexpr double kRearLeftOffset    = 0.402;
@@ -105,7 +104,7 @@ namespace DriveConstants
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
     /// Used to regulate PID on turning (especially field relative turning)
-    constexpr double kTurnValidationDistance = 0.5;
+    constexpr double kTurnValidationDistance = 6.28; // 0.5;
 
     /// Turn PID Controller for Swerve Modules
     constexpr double kTurnP = 0.35; // 0.35 // 0.1
@@ -153,14 +152,14 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(3.6); // units::meters_per_second_t(5.0);
+    constexpr auto kMaxSpeed = units::meters_per_second_t (3.6); 
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);
-    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
-    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
+    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(2* wpi::math::pi);
+    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(2* wpi::math::pi);
 
     constexpr double kPXController = 2.0;
     constexpr double kPYController = 2.0;
-    constexpr double kPThetaController = 4.0;
+    constexpr double kPThetaController = 6.0;
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
 }  // namespace AutoConstants

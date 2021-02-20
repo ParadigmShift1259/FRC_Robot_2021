@@ -40,7 +40,7 @@ std::vector<frc::Pose2d> TestTrajCircle2 =
 std::vector<frc::Pose2d> TestTrajLine =
 {
   frc::Pose2d(0_m, 0_m, 0.0_deg),
-  frc::Pose2d(3_m, 0_m, 0.0_deg),
-  frc::Pose2d(6_m, 0_m, 0.0_deg),
-  frc::Pose2d(9_m, 0_m, 0.0_deg)
+  frc::Pose2d(8_m, 0_m, 0.0_deg),
+  frc::Pose2d(16_m, 0_m, 0.0_deg),
+  frc::Pose2d(24_m, 0_m, 0.0_deg)
 };

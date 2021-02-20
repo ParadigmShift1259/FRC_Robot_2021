@@ -11,6 +11,7 @@
 #include <frc/shuffleboard/ShuffleboardWidget.h>
 #include <frc/geometry/Rotation2d.h>
 #include <wpi/math>
+#include <iostream>
 
 #include "Constants.h"
 
@@ -67,7 +68,8 @@ SwerveModule::SwerveModule(int driveMotorChannel,
 
 frc::SwerveModuleState SwerveModule::GetState()
 {
-    double angle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+//    double angle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    double angle = m_turnNeoEncoder.GetPosition();
     return {meters_per_second_t{m_driveEncoder.GetVelocity()}, frc::Rotation2d(radian_t(angle))};
 }
 
@@ -162,7 +164,8 @@ double SwerveModule::VoltageToRadians(double voltage, double offset)
 #endif
     m_nteAbsEncTuningVoltage.SetDouble(voltage);
     double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
-    angle = 2 * wpi::math::pi - angle;
+    // Negating angle here becuse analog encoder is increasing clockwise. TO DO: just make kTurnVoltageToRadians negative!
+    angle = 2 * wpi::math::pi - angle; 
 
     return angle;
 }
@@ -203,6 +206,20 @@ double SwerveModule::NegPiToPiRads(double theta)
 // init final   angle1   angle2 
 double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse)
 {
+    /*
+    init = ZeroTo2PiRads(init);
+    final = ZeroTo2PiRads(final);
+
+    double turn = final - init;
+    if (turn > M_PI)
+        turn -= 2 * M_PI;
+    else if (turn < -M_PI)
+        turn += 2 * M_PI;
+        
+    bOutputReverse = false;
+    return turn;
+    */
+    
     init = ZeroTo2PiRads(init);
     final = ZeroTo2PiRads(final);
 
@@ -245,4 +262,5 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
 
         return angle2;
     }
+
 }
