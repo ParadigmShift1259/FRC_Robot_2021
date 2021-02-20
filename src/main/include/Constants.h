@@ -276,7 +276,10 @@ namespace CyclerConstants
     constexpr double kFeederSpeed = 0.400;
     constexpr double kTurnTableSpeed = 0.400;
 
-    constexpr double kTimePassed = 2;
+    // Time to go from 0 to full throttle
+    constexpr double kTurnTableRampRate = 0.5;
+
+    constexpr double kTimePassed = 0.20;
 
     constexpr double kFeederTimeout = 10;
     constexpr double kFeederTimeoutAlt = 15;
@@ -319,4 +322,12 @@ namespace VisionConstants
     constexpr double kTargetHeight = 98.25;
     // Target width, in inches
     constexpr double kTargetSize = 15;
+}
+
+// Climber Subsystem constants
+namespace ClimberConstants
+{
+    constexpr double kMotorPort = 13;   // 0
+    constexpr double kMotorReverseConstant = 1;
+
 }

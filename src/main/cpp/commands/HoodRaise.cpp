@@ -9,5 +9,5 @@ HoodRaise::HoodRaise(HoodSubsystem* subsystem) : m_hood(subsystem) {
 }
 
 void HoodRaise::Execute() {
-    m_hood->Set(HoodConstants::kTestServoSpeed);
+    m_hood->Set(kTestServoSpeed);
 }

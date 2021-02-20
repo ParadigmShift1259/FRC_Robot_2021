@@ -12,22 +12,22 @@ using namespace FlywheelConstants;
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 FlywheelSubsystem::FlywheelSubsystem() 
-    : m_flywheelmotor(FlywheelConstants::kMotorPort, CANSparkMax::MotorType::kBrushless)
+    : m_flywheelmotor(kMotorPort, CANSparkMax::MotorType::kBrushless)
     , m_flywheelPID(m_flywheelmotor)
     , m_flywheelencoder(m_flywheelmotor)
     , m_flywheelFF(
-        FlywheelConstants::kS * 1_V, 
-        FlywheelConstants::kV * 1_V * 1_s / 1_m, 
-        FlywheelConstants::kA * 1_V * 1_s * 1_s / 1_m
+        kS * 1_V, 
+        kV * 1_V * 1_s / 1_m, 
+        kA * 1_V * 1_s * 1_s / 1_m
     )
 {
     m_flywheelmotor.SetIdleMode(CANSparkMax::IdleMode::kCoast);
-    m_flywheelmotor.SetClosedLoopRampRate(FlywheelConstants::kRampRate);
+    m_flywheelmotor.SetClosedLoopRampRate(kRampRate);
 
-    m_flywheelPID.SetP(FlywheelConstants::kP, 0);
-    m_flywheelPID.SetI(FlywheelConstants::kI, 0);
-    m_flywheelPID.SetD(FlywheelConstants::kD, 0);
-    m_flywheelPID.SetOutputRange(FlywheelConstants::kMinOut, FlywheelConstants::kMaxOut);
+    m_flywheelPID.SetP(kP, 0);
+    m_flywheelPID.SetI(kI, 0);
+    m_flywheelPID.SetD(kD, 0);
+    m_flywheelPID.SetOutputRange(kMinOut, kMaxOut);
 
     m_setpoint = 0;
 }
@@ -41,7 +41,7 @@ void FlywheelSubsystem::Periodic()
 void FlywheelSubsystem::SetRPM(double rpm)
 {
     // Ignore PIDF feedforward and substitute WPILib's SimpleMotorFeedforward class
-    double FF = m_flywheelFF.Calculate(rpm * FlywheelConstants::kMPSPerRPM * 1_mps).to<double>();
+    double FF = m_flywheelFF.Calculate(rpm * kMPSPerRPM * 1_mps).to<double>();
     m_flywheelPID.SetFF(0);
 
     m_setpoint = rpm;
@@ -49,5 +49,5 @@ void FlywheelSubsystem::SetRPM(double rpm)
 }
 
 bool FlywheelSubsystem::isAtRPM() {
-    return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) >= FlywheelConstants::kAllowedError;
+    return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) >= kAllowedError;
 }

@@ -10,7 +10,7 @@ using namespace std;
 using namespace frc;
 
 IntakeSubsystem::IntakeSubsystem() 
-    : m_motor(IntakeConstants::kMotorPort)
+    : m_motor(kMotorPort)
 {
     SmartDashboard::PutNumber("Intake Motor Speed", 0);
 }
@@ -22,5 +22,5 @@ void IntakeSubsystem::Periodic()
 
 void IntakeSubsystem::Set(double speed) 
 {
-    m_motor.Set(speed * IntakeConstants::kMotorReverseConstant);
+    m_motor.Set(speed * kMotorReverseConstant);
 }

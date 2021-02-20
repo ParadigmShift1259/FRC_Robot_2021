@@ -38,6 +38,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/CyclerSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
+#include "subsystems/ClimberSubsystem.h"
 
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
@@ -70,8 +71,6 @@ public:
 
     void ResetLog() { m_drive.ResetLog(); }
 
-    // frc::Rotation2d GetDesiredRotation();
-
 private:
     double Deadzone(double inputValue, double deadzone)
     {
@@ -94,6 +93,7 @@ private:
     IntakeSubsystem m_intake;
     CyclerSubsystem m_cycler;
     VisionSubsystem m_vision;
+    ClimberSubsystem m_climber;
 
     // m_units::meters_per_second_t m_xInput;      //!< Last x input value
     // units::meters_per_second_t m_yInput;        //!< Last y input value

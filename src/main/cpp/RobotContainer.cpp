@@ -37,6 +37,7 @@ RobotContainer::RobotContainer(Logger& log)
     , m_intake()
     , m_cycler()
     , m_vision()
+    , m_climber()
 #endif
 {
     // Initialize all of your commands and subsystems here
@@ -57,6 +58,7 @@ void RobotContainer::Periodic()
 {
     m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
     m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    m_drive.Periodic();
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -115,6 +117,14 @@ void RobotContainer::SetDefaultCommands()
             }, {&m_hood}
         )
     );
+    
+    m_climber.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_climber.Run(0);
+            }, {&m_climber}
+        )
+    );
 
     m_cycler.SetDefaultCommand(
         CyclerAgitation(&m_cycler)
@@ -127,6 +137,7 @@ void RobotContainer::SetDefaultCommands()
     m_inputYentry = tab.Add("Y", 0).GetEntry();
     m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
+
 
 void RobotContainer::ConfigureButtonBindings()
 {
@@ -298,6 +309,15 @@ frc2::InstantCommand RobotContainer::TestCommands()
                 m_hood.Set(m_testPower);
             },
             {&m_hood}
+        );
+        break;
+    case 5:
+        return
+        frc2::InstantCommand(    
+            [this] {
+                m_climber.Run(m_testPower);
+            },
+            {&m_climber}
         );
     }
     return 
