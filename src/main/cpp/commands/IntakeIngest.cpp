@@ -9,5 +9,5 @@ IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem) : m_intake(subsystem) {
 }
 
 void IntakeIngest::Execute() {
-    m_intake->Run(IntakeConstants::kIngestHigh);
+    m_intake->Set(kIngestHigh);
 }

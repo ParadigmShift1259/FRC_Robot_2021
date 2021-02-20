@@ -153,14 +153,14 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1.0); // units::meters_per_second_t(5.0);
-    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(0.1);
+    constexpr auto kMaxSpeed = units::meters_per_second_t(3.6);                 // 1.0   // 5.0
+    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
 
-    constexpr double kPXController = 0.25;
-    constexpr double kPYController = 0.25;
-    constexpr double kPThetaController = 2.0;
+    constexpr double kPXController = 2.0;       // 0.25 
+    constexpr double kPYController = 2.0;       // 0.25
+    constexpr double kPThetaController = 4.0;   // 2.0
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
 }  // namespace AutoConstants
@@ -177,7 +177,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 15;
+    constexpr double kMotorPort = 15;   // 0
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -276,7 +276,10 @@ namespace CyclerConstants
     constexpr double kFeederSpeed = 0.400;
     constexpr double kTurnTableSpeed = 0.400;
 
-    constexpr double kTimePassed = 2;
+    // Time to go from 0 to full throttle
+    constexpr double kTurnTableRampRate = 0.5;
+
+    constexpr double kTimePassed = 0.20;
 
     constexpr double kFeederTimeout = 10;
     constexpr double kFeederTimeoutAlt = 15;
@@ -319,4 +322,12 @@ namespace VisionConstants
     constexpr double kTargetHeight = 98.25;
     // Target width, in inches
     constexpr double kTargetSize = 15;
+}
+
+// Climber Subsystem constants
+namespace ClimberConstants
+{
+    constexpr double kMotorPort = 13;   // 0
+    constexpr double kMotorReverseConstant = 1;
+
 }

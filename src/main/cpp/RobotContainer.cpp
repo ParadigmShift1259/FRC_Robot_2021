@@ -7,31 +7,14 @@
 
 #include "RobotContainer.h"
 
-#include <frc/controller/PIDController.h>
-#include <frc/geometry/Translation2d.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-#include <frc/trajectory/Trajectory.h>
-#include <frc/trajectory/TrajectoryGenerator.h>
-#include <frc/Filesystem.h>
-#include <frc/trajectory/TrajectoryUtil.h>
-#include <frc2/command/InstantCommand.h>
-#include <frc2/command/SequentialCommandGroup.h>
-#include <frc2/command/button/JoystickButton.h>
-#include <wpi/Path.h>
-#include <wpi/SmallString.h>
-#include <frc2/command/SwerveControllerCommand.h>
+// Commenting this out reduces build time by about half
+// However, includes are necessary to run trajectory paths
+//#define PATHS
 
-#include <iostream>
-
-#include "Constants.h"
-#include "subsystems/DriveSubsystem.h"
-#include "subsystems/FlywheelSubsystem.h"
-#include "subsystems/TurretSubsystem.h"
-#include "subsystems/IntakeSubsystem.h"
-#include "subsystems/HoodSubsystem.h"
-#include "subsystems/CyclerSubsystem.h"
-#include "SwerveControllerCommand2.h"
-
+// Commenting this out removes subsystem CAN errors
+// Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
+#define SUBSYSTEMS
+#ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
 #include "AutoNavSlalom.h"
@@ -40,72 +23,114 @@
 #include "GSLayout2Path1.h"
 #include "GSLayout2Path2.h"
 #include "TestTraj.h"
-
-#include "commands/DriveForward.h"
-#include "commands/FlywheelIdle.h"
-#include "commands/FlywheelRamp.h"
-#include "commands/HoodRaise.h"
-#include "commands/IntakeIngest.h"
-#include "commands/IntakeRelease.h"
-#include "commands/TurretControl.h"
-#include "commands/Shoot.h"
+#endif
 
 using namespace DriveConstants;
-using namespace CyclerConstants;
-
-DriveSubsystem *g_drive = nullptr;
 
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
-    //, m_hood()
+#ifdef SUBSYSTEMS
+    , m_flywheel()
+    , m_turret()
+    , m_hood()
+    , m_intake()
+    , m_cycler()
+    , m_vision()
+    , m_climber()
+#endif
 {
     // Initialize all of your commands and subsystems here
-
-    g_drive = &m_drive;
+    m_fieldRelative = false;
 
     // Configure the button bindings
     ConfigureButtonBindings();
-    m_fieldRelative = false;
+    SetDefaultCommands();
 
-    // Set up default drive command
-    m_drive.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            // up is xbox joystick y pos
-            // left is xbox joystick x pos
-            auto xInput = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto yInput = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
-            auto rotInput = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
-            auto xRot = m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
-            auto yRot = m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
-            if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
-                xRot = 0;
-                yRot = 0;
+    m_testNumber = 0;
+    m_testPower = 0;
+
+    SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
+    SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+}
+
+void RobotContainer::Periodic()
+{
+    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    m_drive.Periodic();
+}
+
+void RobotContainer::SetDefaultCommands()
+{
+    m_drive.SetDefaultCommand(
+        DriveDefault(&m_drive, 
+            [this] {
+                double x = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
+                m_inputXentry.SetDouble(x);
+                return x;
+            },
+            [this] {
+                double y = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+                m_inputYentry.SetDouble(y);
+                return y;
+            },
+            [this] {
+                double rot = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+                m_inputRotentry.SetDouble(rot);
+                return rot;
+            },
+            [this] {
+                return m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
+            }, 
+            [this] {
+                return m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
+            },
+            [this] {
+                return m_fieldRelative;
             }
+        )
+    );
 
-            m_inputXentry.SetDouble(xInput);
-            m_inputYentry.SetDouble(yInput);
-            m_inputRotentry.SetDouble(rotInput);
+    #ifdef SUBSYSTEMS
 
-            if (m_fieldRelative)
-            {
-                m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            xRot,
-                            yRot,
-                            m_fieldRelative);
-            }
-            else 
-            {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            units::radians_per_second_t(rotInput),
-                            m_fieldRelative);
-            }
+    m_turret.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_turret.TurnTo(0);
+            }, {&m_turret}
+        )
+    );
 
-        },
-        {&m_drive}
-    ));
+    m_flywheel.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+            }, {&m_flywheel}
+        )
+    );
+
+    m_hood.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_hood.Set(0);
+            }, {&m_hood}
+        )
+    );
+    
+    m_climber.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_climber.Run(0);
+            }, {&m_climber}
+        )
+    );
+
+    m_cycler.SetDefaultCommand(
+        CyclerAgitation(&m_cycler)
+    );
+
+    #endif
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
     m_inputXentry = tab.Add("X", 0).GetEntry();
@@ -113,9 +138,6 @@ RobotContainer::RobotContainer(Logger& log)
     m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
 
-void RobotContainer::Periodic() {
-    m_drive.Periodic();
-}
 
 void RobotContainer::ConfigureButtonBindings()
 {
@@ -131,8 +153,69 @@ void RobotContainer::ConfigureButtonBindings()
     //           180          //
     //            D           //
 
-    (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(&m_enableFieldRelative));
-    (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(&m_disableFieldRelative));
+    // Triggers Fire sequence
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
+    //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
+    // );
+
+    // Triggers field relative driving
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
+        frc2::InstantCommand(    
+            [this] { m_fieldRelative = true; },
+            {}
+        )
+    );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(
+        frc2::InstantCommand(    
+            [this] { m_fieldRelative = false; },
+            {}
+        )
+    );
+
+    // Zeros the gyro
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_drive.ZeroHeading();
+        },
+        {&m_drive}
+        )
+    );
+
+    // Runs autonomous path in gyro
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    );
+
+    #ifdef SUBSYSTEMS
+
+    // Increments / Decrements a test power value for TestCommands()
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower += 0.05;
+        },
+        {}
+        )
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower -= 0.05;
+        },
+        {}
+        )
+    );
+
+    // Runs sequence of tests for motors based on iterator and a power
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
+        TestCommands()
+    );
+
+    #endif 
+
+    /*
 
     double c_buttonInputSpeed = 0.5;
     units::second_t c_buttonInputTime = 1.25_s;
@@ -180,54 +263,79 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStart).WhenPressed(
-        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
-    );
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
-            frc2::InstantCommand(    
-            [this] {
-                m_drive.ZeroHeading();
-            },
-            {&m_drive}
-        )
-    );
-
-    /*
-    /// Interferes with flywheel
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
-        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeout);
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
-        &m_feedermotor.Set(CyclerConstants::kFeederSpeed)).WithTimeout(CyclerConstants::kFeederTimeoutAlt);
-    // Interferes with flywheel
     */
+}
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenPressed(
-        HoodRaise(&m_hood)
-    );
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickLeft).WhenPressed(
-        FlywheelIdle(&m_flywheel)
-    );
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
-        FlywheelRamp(&m_flywheel)
-    );
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Axis::kTriggerRight).WhenPressed(
-        IntakeIngest(&m_intake)
-    );
+frc2::InstantCommand RobotContainer::TestCommands()
+{
+    switch(m_testNumber) {
+    case 0:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_intake.Set(m_testPower);
+            },
+            {&m_intake}
+        );
+    case 1:
+        return
+        frc2::InstantCommand(    
+            [this] {
+                m_cycler.SetFeeder(m_testPower);
+            },
+            {&m_cycler}
+        );
+    case 2:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_cycler.SetTurnTable(m_testPower);
+            },
+            {&m_cycler}
+        );
+    case 3:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_flywheel.SetRPM(m_testPower * 1000.0);
+            },
+            {&m_flywheel}
+        );
+        break;
+    case 4:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                m_hood.Set(m_testPower);
+            },
+            {&m_hood}
+        );
+        break;
+    case 5:
+        return
+        frc2::InstantCommand(    
+            [this] {
+                m_climber.Run(m_testPower);
+            },
+            {&m_climber}
+        );
+    }
+    return 
+        frc2::InstantCommand(    
+            [this] {
+                m_intake.Set(m_testPower);
+            },
+            {&m_intake}
+        );
 }
 
 // frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
-
-// frc::Rotation2d GetDesiredRotation() { return g_drive->GetHeadingAsRot2d(); }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-    m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
+    //m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
 
     // Set up config for trajectory
     frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
@@ -248,21 +356,48 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 */
 
-/*
+// /*
     wpi::SmallString<64> deployDirectory;
     frc::filesystem::GetDeployDirectory(deployDirectory);
-    wpi::sys::path::append(deployDirectory, "paths");
+    wpi::sys::path::append(deployDirectory, "paths/output"); //Has the projects that are created in meters
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
 
     frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
-*/
+    /*
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+        TestTrajLine,
+        config
+    );
+    */
+    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    
+    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    // {
+    //     std::cout << "i " << i;
+    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
+    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
+    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
+    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
+    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
+    // }
+// */
 
-// /*
+ /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         TestTrajCircle2,
         config
     );
-    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+//    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    
+    // Transform2d rot90 = Transform2d(Pose2d(0_m,0_m,0_deg), Pose2d(0_m,0_m,90_deg));
+    // Transform2d rot90 = Transform2d(Translation2d(), 90_deg);
+    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    //     {
+    //     std::cout << "pose " << i << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees();
+    //     exampleTrajectory.States()[i].pose.TransformBy(rot90); 
+    //     std::cout << " modified theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() <<  "\n";        
+    //     }
+        
 // */
 
 /*
@@ -270,6 +405,17 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         AutoNavBarrel,
         config
     );
+    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
+    
+    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
+    // {
+    //     std::cout << "i " << i;
+    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
+    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
+    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
+    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
+    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
+    // }
 */
 
 /*

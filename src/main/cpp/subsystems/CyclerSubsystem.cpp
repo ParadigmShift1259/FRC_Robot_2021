@@ -1,19 +1,18 @@
 #include "subsystems/CyclerSubsystem.h"
 
-#include "Constants.h"
-
 using namespace CyclerConstants;
 
 CyclerSubsystem::CyclerSubsystem()
-    : m_feedermotor(CyclerConstants::kFeederPort), m_turntablemotor(CyclerConstants::kTurnTablePort)
+    : m_feedermotor(kFeederPort), m_turntablemotor(kTurnTablePort)
 {
     
-    m_turntablemotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, CyclerConstants::kTimeout);
+    m_turntablemotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeout);
     m_turntablemotor.SetNeutralMode(NeutralMode::Brake);
-    m_turntablemotor.SetSensorPhase(CyclerConstants::kSensorPhase);
-    m_turntablemotor.SetInverted(CyclerConstants::kInverted);
+    m_turntablemotor.SetSensorPhase(kSensorPhase);
+    m_turntablemotor.SetInverted(kInverted);
+    m_turntablemotor.ConfigOpenloopRamp(kTurnTableRampRate, kTimeout);
 
-    m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(CyclerConstants::kStartingPositionDegrees), 0, CyclerConstants::kTimeout);
+    m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
 }
 
 void CyclerSubsystem::SetFeeder(double speed)
@@ -28,20 +27,25 @@ void CyclerSubsystem::SetTurnTable(double speed)
 
 double CyclerSubsystem::GetPosition()
 {
-    return m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(CyclerConstants::kStartingPositionDegrees), 0, CyclerConstants::kTimeout);
+    return m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
+}
+
+double CyclerSubsystem::GetAngle()
+{
+    return TicksToDegrees(m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout));
 }
 
 double CyclerSubsystem::TicksToDegrees(double ticks)
 {
-    double rev = ticks / CyclerConstants::kTicksPerRev;
-    double turntablerev = rev * CyclerConstants::kMotorRevPerRev;
-    return turntablerev * CyclerConstants::kDegreesPerRev;
+    double rev = ticks / kTicksPerRev;
+    double turntablerev = rev * kMotorRevPerRev;
+    return turntablerev * kDegreesPerRev;
 }
 
 
 double CyclerSubsystem::DegreesToTicks(double degrees)
 {
-    double turntablerev = degrees / CyclerConstants::kDegreesPerRev;
-    double rev = turntablerev / CyclerConstants::kMotorRevPerRev;
-    return rev * CyclerConstants::kTicksPerRev;
+    double turntablerev = degrees / kDegreesPerRev;
+    double rev = turntablerev / kMotorRevPerRev;
+    return rev * kTicksPerRev;
 }

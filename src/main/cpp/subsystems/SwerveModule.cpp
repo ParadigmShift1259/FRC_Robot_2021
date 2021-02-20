@@ -14,6 +14,10 @@
 
 #include "Constants.h"
 
+// Removes deprecated warning for CANEncoder and CANPIDController
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
                            const int turningEncoderPort,
@@ -64,6 +68,8 @@ SwerveModule::SwerveModule(int driveMotorChannel,
                                     .WithWidget(frc::BuiltInWidgets::kVoltageView)
                                     .GetEntry();
 }
+
+#pragma GCC diagnostic pop
 
 frc::SwerveModuleState SwerveModule::GetState()
 {
@@ -157,12 +163,12 @@ void SwerveModule::ResetEncoders()
 
 double SwerveModule::VoltageToRadians(double voltage, double offset)
 {
-    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
-    double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
+    //double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    //double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
 
-    SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
+    //SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
 
-    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
 
     return angle;

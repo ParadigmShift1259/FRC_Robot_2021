@@ -157,7 +157,5 @@ gradle-app.setting
 bin/
 imgui.ini
 
-# remove win merge bak files
-*.bak
 
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode

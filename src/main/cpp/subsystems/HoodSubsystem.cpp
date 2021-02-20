@@ -9,7 +9,7 @@ using namespace std;
 using namespace frc;
 
 HoodSubsystem::HoodSubsystem() 
-    : m_servo(HoodConstants::kPWMPort)
+    : m_servo(kPWMPort)
 {
     SmartDashboard::PutNumber("Hood Servo Angle", 0);
 }

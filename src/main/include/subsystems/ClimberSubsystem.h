@@ -2,23 +2,24 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <frc/Spark.h>
+#include <ctre/phoenix.h>
 
 #include "Constants.h"
+#include "SwerveModule.h"
 
-class IntakeSubsystem : public frc2::SubsystemBase
+class ClimberSubsystem : public frc2::SubsystemBase
 {
 public:
 
-    IntakeSubsystem();
+    ClimberSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
 
-    /// Drives the intake at a given speed
+    /// Drives the climber at a given speed
     /// \param speed         Desired motor speed to run, ranging from [-1, 1]
-    void Set(double speed);
+    void Run(double speed);
 
 private:    
-    frc::Spark m_motor;
+    TalonSRX m_motor;
 };
