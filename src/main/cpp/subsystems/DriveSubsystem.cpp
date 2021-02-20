@@ -23,7 +23,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
-        , kFrontLeftTurningEncoderPort
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
+        , kFrontLeftPWM
         , kFrontLeftDriveMotorReversed
         , kFrontLeftOffset
         , std::string("FrontLeft")
@@ -34,7 +35,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
-        , kFrontRightTurningEncoderPort
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
+        , kFrontRightPWM
         , kFrontRightDriveMotorReversed
         , kFrontRightOffset
         , std::string("FrontRight")
@@ -45,7 +47,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
-        , kRearRightTurningEncoderPort
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
+        , kRearRightPWM
         , kRearRightDriveMotorReversed
         , kRearRightOffset
         , std::string("RearRight")
@@ -56,7 +59,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
-        , kRearLeftTurningEncoderPort
+        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
+        , kRearLeftPWM
         , kRearLeftDriveMotorReversed
         , kRearLeftOffset
         , std::string("RearLeft")
@@ -64,6 +68,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       }
 
     , m_gyro(0)
+    , m_canifier(DriveConstants::kCanifierID)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
     //SmartDashboard::PutBoolean("GetInputFromNetTable", false);
@@ -292,6 +297,17 @@ frc::Pose2d DriveSubsystem::GetPose()
 {
     // TODO needed? m_odometry.UpdateWithTime(m_timer.Get(), m_angle, getCurrentWheelSpeeds());
     return m_odometry.GetPose();
+}
+
+double DriveSubsystem::PWMToPulseWidth(CANifier::PWMChannel pwmChannel)
+{
+    double dutyCycleAndPeriod[2];
+    
+    m_canifier.GetPWMInput(pwmChannel, dutyCycleAndPeriod);
+    // SmartDashboard::PutNumber("TEST_DutyCycle " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[0]);
+    // SmartDashboard::PutNumber("TEST_Period " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[1]);
+
+    return dutyCycleAndPeriod[0] * dutyCycleAndPeriod[1] / kPulseWidthToZeroOne;
 }
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose)

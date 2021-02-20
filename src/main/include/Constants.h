@@ -5,6 +5,8 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+#pragma once
+
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/trajectory/TrapezoidProfile.h>
@@ -13,7 +15,10 @@
 #include <units/acceleration.h>
 #include <wpi/math>
 
-#pragma once
+#include <ctre/phoenix/CANifier.h>
+
+using namespace ctre::phoenix;
+
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -24,6 +29,11 @@
  * they are needed.
  */
 
+namespace Math
+{
+    constexpr double kTau = 2.0 * wpi::math::pi;
+}
+
 namespace DriveConstants
 {
     constexpr int kNumSwerveModules = 4;
@@ -31,6 +41,9 @@ namespace DriveConstants
     /// \name CAN bus IDs
     ///@{
     /// CAN IDs for swerve modules
+
+    constexpr int kCanifierID = 0;
+    
     constexpr int kFrontLeftDriveMotorPort    = 1;          
     constexpr int kFrontLeftTurningMotorPort  = 2;
 
@@ -42,6 +55,15 @@ namespace DriveConstants
 
     constexpr int kRearLeftDriveMotorPort     = 7;
     constexpr int kRearLeftTurningMotorPort   = 8;
+    ///@}
+
+    /// \name Canifier PWM channels
+    ///@{
+    /// PWM channels for the canifier
+    constexpr CANifier::PWMChannel kFrontLeftPWM = CANifier::PWMChannel::PWMChannel0;
+    constexpr CANifier::PWMChannel kFrontRightPWM = CANifier::PWMChannel::PWMChannel2;
+    constexpr CANifier::PWMChannel kRearRightPWM = CANifier::PWMChannel::PWMChannel1;
+    constexpr CANifier::PWMChannel kRearLeftPWM = CANifier::PWMChannel::PWMChannel3;
     ///@}
 
     /// \name Roborio analog input channels
@@ -95,22 +117,27 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
     // Mk3 swerve module
-    //constexpr double kFrontLeftOffset   = 0.180;
-    //constexpr double kFrontRightOffset  = 0.403;
-    //constexpr double kRearLeftOffset    = 0.402;
-    //constexpr double kRearRightOffset   = 0.342;
+    // constexpr double kFrontLeftOffset   = 2718.0; // 2.163;
+    // constexpr double kFrontRightOffset  =  238.0; // 5.897;
+    // constexpr double kRearRightOffset   = 1861.0; // 3.405;
+    // constexpr double kRearLeftOffset    = 37.0; // 0.351;
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
-    /// Used to regulate PID on turning (especially field relative turning)
-    constexpr double kTurnValidationDistance = 0.5;
+    constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
+    constexpr double kPulseWidthToRadians =  Math::kTau / kPulseWidthToZeroOne;
 
     /// Turn PID Controller for Swerve Modules
     constexpr double kTurnP = 0.35; // 0.35 // 0.1
     constexpr double kTurnI = 0; //1e-4;
     constexpr double kTurnD = 1.85; // 1.85 // 1
+
+    /// Turn PID Controller for Swerve Modules Mk3
+    // constexpr double kTurnP = 0.1;   //0.35;
+    // constexpr double kTurnI = 0.0;   //1e-4;
+    // constexpr double kTurnD = 1.1;   // 1.85
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -132,16 +159,23 @@ namespace DriveConstants
 namespace ModuleConstants
 {
     constexpr int kEncoderCPR = 1024;
+    //constexpr int kEncoderCPR = 2048; Mk3
     constexpr int kEncoderTicksPerSec = 10;                 //!< TalonFX::GetSelectedSensorVelocity() returns ticks/100ms = 10 ticks/sec
     constexpr double kWheelDiameterMeters = .1016;          //!< 4"
     //constexpr double kDriveGearRatio = 8.31;              //!< MK2 swerve modules 11.9 ft/sec
     constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec w/Falcon 13.6 ft/sec
     //constexpr double kDriveGearRatio = 6.86;              //!< MK3 swerve modules w/NEOs 14.4 ft/sec
-    constexpr double kTurnMotorRevsPerWheelRev = 18.0;
+    constexpr double kTurnMotorRevsPerWheelRev = 18.0;  // 12.8 Mk3
     /// Assumes the encoders are directly mounted on the wheel shafts
-    constexpr double kDriveEncoderDistancePerPulse = (kWheelDiameterMeters * wpi::math::pi) / static_cast<double>(kEncoderCPR);
+    //constexpr double kDriveEncoderDistancePerPulse = (kWheelDiameterMeters * wpi::math::pi) / static_cast<double>(kEncoderCPR);
 
-    constexpr double kP_ModuleTurningController = 1.1;
+    /// Assumes the encoders are directly mounted on the wheel shafts // Mk3
+    // ticks / 100 ms -> ticks / s -> motor rev / s -> wheel rev / s -> m / s
+    constexpr double kDriveEncoderMetersPerSec = kEncoderTicksPerSec / static_cast<double>(kEncoderCPR) / kDriveGearRatio * (kWheelDiameterMeters * wpi::math::pi);
+
+    constexpr double kTurnEncoderCPR = 4096.0 / kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
+
+    constexpr double kP_ModuleTurningController = 1.1;  // 0.01 Mk3
     constexpr double kD_ModuleTurningController = 0.03;
 
     constexpr double kPModuleDriveController = 0.001;
@@ -161,6 +195,11 @@ namespace AutoConstants
     constexpr double kPXController = 2.0;       // 0.25 
     constexpr double kPYController = 2.0;       // 0.25
     constexpr double kPThetaController = 4.0;   // 2.0
+    
+    // Mk3
+    // constexpr double kPXController = 0.25;
+    // constexpr double kPYController = 0.25;
+    // constexpr double kPThetaController = 0.5;
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
 }  // namespace AutoConstants

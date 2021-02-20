@@ -18,6 +18,7 @@
 
 #include "Constants.h"
 #include "SwerveModule.h"
+#include "SwerveModule2.h"
 #include "Logger.h"
 
 // For each enum here, add a string to c_headerNamesDriveSubsystem
@@ -114,6 +115,11 @@ public:
     /// \return The pose.
     frc::Pose2d GetPose();
 
+    /// Converts PWM input on the CANifier to a pulse width
+    /// \param pwmChannel The PWM channel to pass in
+    /// \return The pulse width of the PWM channel
+    double PWMToPulseWidth(CANifier::PWMChannel pwmChannel);
+
     /// Resets the odometry to the specified pose.
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
@@ -129,6 +135,7 @@ public:
     }
 
     meter_t kTrackWidth = 21.5_in; //!< Distance between centers of right and left wheels on robot
+    // 23.5_in Mk3
     meter_t kWheelBase = 23.5_in;  //!< Distance between centers of front and back wheels on robot
 
     /// The kinematics object converts inputs into 4 individual swerve module turn angle and wheel speeds
@@ -162,12 +169,13 @@ private:
     /// \name Swerve Modules
     /// The drive subsystem owns all 4 swerve modules
     ///@{
-    SwerveModule m_frontLeft;
-    SwerveModule m_frontRight;
-    SwerveModule m_rearRight;
-    SwerveModule m_rearLeft;
+    SwerveModule2 m_frontLeft;
+    SwerveModule2 m_frontRight;
+    SwerveModule2 m_rearRight;
+    SwerveModule2 m_rearLeft;
     ///@}
 
+    CANifier m_canifier;
     PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
 
     /// Odometry class for tracking robot pose
