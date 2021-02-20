@@ -18,19 +18,19 @@ void CyclerAgitation::Initialize(){
 }
 
 void CyclerAgitation::Execute() {
-    if (m_timer.Get() <= CyclerConstants::kTimePassed) {
+    if (m_timer.Get() <= kTimePassed) {
         m_cycler->SetTurnTable(kTurnTableSpeed);
     }
-    else if (m_timer.Get() <= CyclerConstants::kTimePassed * 2) {
+    else if (m_timer.Get() <= kTimePassed * 2) {
         m_cycler->SetTurnTable(0);
     }
-    else if (m_timer.Get() <= CyclerConstants::kTimePassed * 3) {
+    else if (m_timer.Get() <= kTimePassed * 3) {
         m_cycler->SetTurnTable(kTurnTableSpeed * -1.0);
     }
-    else if (m_timer.Get() <= CyclerConstants::kTimePassed * 4) {
+    else if (m_timer.Get() <= kTimePassed * 4) {
         m_cycler->SetTurnTable(0);
     }
-    else if (m_timer.Get() > CyclerConstants::kTimePassed * 4) {
+    else if (m_timer.Get() > kTimePassed * 4) {
         m_timer.Reset();
     }
 }

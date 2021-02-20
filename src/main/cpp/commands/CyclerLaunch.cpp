@@ -12,7 +12,7 @@ CyclerLaunch::CyclerLaunch(CyclerSubsystem* subsystem, bool* turretready, bool* 
 
 void CyclerLaunch::Execute() {
     if (*m_turretready && *m_cyclerready) {
-        m_cycler->SetTurnTable(CyclerConstants::kTurnTableSpeed);
-        m_cycler->SetFeeder(CyclerConstants::kFeederSpeed);
+        m_cycler->SetTurnTable(kTurnTableSpeed);
+        m_cycler->SetFeeder(kFeederSpeed);
     }
 }
