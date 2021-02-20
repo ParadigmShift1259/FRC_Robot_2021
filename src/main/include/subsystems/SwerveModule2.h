@@ -17,8 +17,13 @@
 #include <networktables/NetworkTableEntry.h>
 #include <wpi/math>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+
 #include <rev\CANSparkMax.h>
 #include <rev\CANEncoder.h>
+
+#pragma GCC diagnostic pop
 
 #include <ctre\Phoenix.h>
 
@@ -26,6 +31,8 @@
 
 #include "Constants.h"
 #include "Logger.h"
+
+#ifndef Mk2
 
 using namespace rev;
 using namespace units;
@@ -260,3 +267,5 @@ private:
     LogData m_logData;
     Logger& m_log;
 };
+
+#endif

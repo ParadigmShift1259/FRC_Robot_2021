@@ -14,6 +14,8 @@
 
 #include "Constants.h"
 
+#ifndef Mk2
+
 SwerveModule2::SwerveModule2(int driveMotorChannel, 
                            int turningMotorChannel,
                            GetPulseWidthCallback pulseWidthCallback,
@@ -244,3 +246,4 @@ double SwerveModule2::CalcTicksPer100Ms(meters_per_second_t speed)
    return speed.to<double>() / ModuleConstants::kDriveEncoderMetersPerSec;
 }
 
+#endif

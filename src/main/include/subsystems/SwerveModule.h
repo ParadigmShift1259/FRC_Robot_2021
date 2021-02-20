@@ -35,6 +35,7 @@
 using namespace rev;
 using namespace units;
 
+#ifdef Mk2
 
 class TurnPidParams
 {
@@ -244,3 +245,5 @@ private:
     LogData m_logData;
     Logger& m_log;
 };
+
+#endif

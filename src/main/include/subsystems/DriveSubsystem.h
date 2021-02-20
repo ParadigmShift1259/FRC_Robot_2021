@@ -19,6 +19,7 @@
 #include "Constants.h"
 #include "SwerveModule.h"
 #include "SwerveModule2.h"
+#include "common/Util.h"
 #include "Logger.h"
 
 // For each enum here, add a string to c_headerNamesDriveSubsystem
@@ -169,10 +170,18 @@ private:
     /// \name Swerve Modules
     /// The drive subsystem owns all 4 swerve modules
     ///@{
+#ifdef Mk2
+    SwerveModule m_frontLeft;
+    SwerveModule m_frontRight;
+    SwerveModule m_rearRight;
+    SwerveModule m_rearLeft;
+#else
     SwerveModule2 m_frontLeft;
     SwerveModule2 m_frontRight;
     SwerveModule2 m_rearRight;
     SwerveModule2 m_rearLeft;
+#endif
+
     ///@}
 
     CANifier m_canifier;

@@ -23,8 +23,12 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
+#ifdef Mk2
+        , kFrontLeftTurningEncoderPort
+#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kFrontLeftPWM
+#endif
         , kFrontLeftDriveMotorReversed
         , kFrontLeftOffset
         , std::string("FrontLeft")
@@ -35,8 +39,12 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
+#ifdef Mk2
+        , kFrontRightTurningEncoderPort
+#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kFrontRightPWM
+#endif
         , kFrontRightDriveMotorReversed
         , kFrontRightOffset
         , std::string("FrontRight")
@@ -47,8 +55,12 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
+#ifdef Mk2
+        , kRearRightTurningEncoderPort
+#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kRearRightPWM
+#endif
         , kRearRightDriveMotorReversed
         , kRearRightOffset
         , std::string("RearRight")
@@ -59,8 +71,12 @@ DriveSubsystem::DriveSubsystem(Logger& log)
       {
           kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
+#ifdef Mk2
+        , kRearLeftTurningEncoderPort
+#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kRearLeftPWM
+#endif
         , kRearLeftDriveMotorReversed
         , kRearLeftOffset
         , std::string("RearLeft")
@@ -138,7 +154,7 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
         double rotPosition = atan2f(yRot, xRot);
 
         double error = rotPosition - GetHeadingAsRot2d().Radians().to<double>();
-        double desiredSet = SwerveModule::NegPiToPiRads(error);
+        double desiredSet = Util::NegPiToPiRads(error);
 
         /*
         SmartDashboard::PutNumber("TEST_error", error);

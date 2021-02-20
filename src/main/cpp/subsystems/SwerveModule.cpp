@@ -18,6 +18,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+#ifdef Mk2
+
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
                            const int turningEncoderPort,
@@ -241,3 +243,5 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
         return angle2;
     }
 }
+
+#endif
