@@ -19,13 +19,16 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
+#include "AutoNavSlalom.h"
+/*
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
-#include "AutoNavSlalom.h"
+
 #include "GSLayout1Path1.h"
 #include "GSLayout1Path2.h"
 #include "GSLayout2Path1.h"
 #include "GSLayout2Path2.h"
+*/
 
 #include "commands/DriveForward.h"
 
@@ -104,7 +107,7 @@ void RobotContainer::ConfigureButtonBindings()
     (frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(&m_disableFieldRelative));
 
     double c_buttonInputSpeed = 0.5;
-    units::second_t c_buttonInputTime = 1.25_s;
+    units::second_t c_buttonInputTime = 5.0_s;// 1.25_s;
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
         frc2::RunCommand(    
@@ -127,6 +130,14 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
+
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
+    //         frc2::RunCommand(    
+    //         [this] {
+    //             m_drive.TemporaryRunTurnMotor();
+    //         },
+    //         {&m_drive}
+    //     ).WithTimeout(c_buttonInputTime));
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
             frc2::RunCommand(    
@@ -168,6 +179,10 @@ frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
+//#define NO_TRAJ
+#ifdef NO_TRAJ
+    return nullptr;
+#else
     m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
 
     // Set up config for trajectory
@@ -230,4 +245,5 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
             {}
         )
     );
+#endif
 }

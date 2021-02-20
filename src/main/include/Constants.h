@@ -68,10 +68,10 @@ namespace DriveConstants
     /// \name Drive wheel reversal (inverting) flags
     ///@{
     /// To keep the swerve module bevel gear facing inwards we need to reverse the right side
-    constexpr bool kFrontLeftDriveMotorReversed  = false;
-    constexpr bool kRearLeftDriveMotorReversed   = false;
-    constexpr bool kFrontRightDriveMotorReversed = true;
-    constexpr bool kRearRightDriveMotorReversed  = true;
+    constexpr bool kFrontLeftDriveMotorReversed  = true;
+    constexpr bool kRearLeftDriveMotorReversed   = true;
+    constexpr bool kFrontRightDriveMotorReversed = false;
+    constexpr bool kRearRightDriveMotorReversed  = false;
     ///@}
 
     constexpr bool kGyroReversed = false;
@@ -107,10 +107,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
     // Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 2685.0; // 2.163;
-    constexpr double kFrontRightOffset  =  251.0; // 5.897;
-    constexpr double kRearRightOffset   = 1875.0; // 3.405;
-    constexpr double kRearLeftOffset    = 3867.0; // 0.351;
+    constexpr double kFrontLeftOffset   = 2718.0; // 2.163;
+    constexpr double kFrontRightOffset  =  238.0; // 5.897;
+    constexpr double kRearRightOffset   = 1861.0; // 3.405;
+    constexpr double kRearLeftOffset    = 37.0; // 0.351;
 
     // For MK2 swerve encoders
     //constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -127,9 +127,9 @@ namespace DriveConstants
     constexpr double kTurnValidationDistance = 0.35;
 
     /// Turn PID Controller for Swerve Modules
-    constexpr double kTurnP = 0.0001;   //0.35;
-    constexpr double kTurnI = 0.0;      //1e-4;
-    constexpr double kTurnD = 0.2;      //1.0; // 1.85
+    constexpr double kTurnP = 0.1;   //0.35;
+    constexpr double kTurnI = 0.0;   //1e-4;
+    constexpr double kTurnD = 1.1;   // 1.85
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -156,9 +156,10 @@ namespace ModuleConstants
     //constexpr double kDriveGearRatio = 6.86;              //!< MK3 swerve modules w/NEOs 14.4 ft/sec
     constexpr double kTurnMotorRevsPerWheelRev = 12.8;//18.0;
     /// Assumes the encoders are directly mounted on the wheel shafts
-    constexpr double kDriveEncoderMetersPerSec = (kWheelDiameterMeters * wpi::math::pi * kDriveGearRatio) / static_cast<double>(kEncoderCPR);
+    // ticks / 100 ms -> ticks / s -> motor rev / s -> wheel rev / s -> m / s
+    constexpr double kDriveEncoderMetersPerSec = kEncoderTicksPerSec / static_cast<double>(kEncoderCPR) / kDriveGearRatio * (kWheelDiameterMeters * wpi::math::pi);
 
-    constexpr double kTurnEncoderCPR = 4096.0 * kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
+    constexpr double kTurnEncoderCPR = 4096.0 / kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
 
     constexpr double kP_ModuleTurningController = 0.01;//1.1;
     constexpr double kD_ModuleTurningController = 0.03;
@@ -172,7 +173,7 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(0.7); // units::meters_per_second_t(5.0);
+    constexpr auto kMaxSpeed = units::meters_per_second_t(1); // 4.145 // units::meters_per_second_t(5.0);
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);

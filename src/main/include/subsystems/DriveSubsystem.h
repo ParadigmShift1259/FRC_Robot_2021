@@ -133,6 +133,11 @@ public:
         m_rearLeft.ResetLog();
     }
 
+    // void TemporaryRunTurnMotor()
+    // {
+    //     m_frontLeft.TemporaryRunTurnMotor();
+    // }
+
     const meter_t kTrackWidth = 23.5_in; //!< Distance between centers of right and left wheels on robot
     const meter_t kWheelBase = 23.5_in;  //!< Distance between centers of front and back wheels on robot
 

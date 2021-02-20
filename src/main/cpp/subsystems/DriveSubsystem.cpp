@@ -19,7 +19,7 @@ using namespace frc;
 
 DriveSubsystem::DriveSubsystem(Logger& log)
     : m_log(log)
-    , m_logData(c_headerNamesDriveSubsystem, true, "")
+    , m_logData(c_headerNamesDriveSubsystem, false, "") // 2nd arg  false no log shadow
     , m_frontLeft
       {
           kFrontLeftDriveMotorPort
@@ -297,12 +297,13 @@ frc::Pose2d DriveSubsystem::GetPose()
     return m_odometry.GetPose();
 }
 
-double DriveSubsystem::PWMToPulseWidth(CANifier::PWMChannel pwmChannel) {
-    double dutyCycleAndPeriod [2];
+double DriveSubsystem::PWMToPulseWidth(CANifier::PWMChannel pwmChannel)
+{
+    double dutyCycleAndPeriod[2];
     
     m_canifier.GetPWMInput(pwmChannel, dutyCycleAndPeriod);
-    SmartDashboard::PutNumber("TEST_DutyCycle " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[0]);
-    SmartDashboard::PutNumber("TEST_Period " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[1]);
+    // SmartDashboard::PutNumber("TEST_DutyCycle " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[0]);
+    // SmartDashboard::PutNumber("TEST_Period " + std::to_string((int)pwmChannel), dutyCycleAndPeriod[1]);
 
     return dutyCycleAndPeriod[0] * dutyCycleAndPeriod[1] / kPulseWidthToZeroOne;
 }

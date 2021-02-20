@@ -13,6 +13,7 @@
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/SmartDashboard/SmartDashboard.h>
+#include <frc/Timer.h>
 #include <networktables/NetworkTableEntry.h>
 #include <wpi/math>
 
@@ -88,12 +89,12 @@ public:
 
 class DrivePidParams
 {
-    double m_p = 0.2;
+    double m_p = 0.0;
     //double m_i = 0.0;
     double m_d = 0.0;
-    double m_ff = 0.3;
-    double m_max = 0.2;//1.0;
-    double m_min = -0.2;//-1.0;
+    double m_ff = 0.047619;
+    double m_max = 1.0;
+    double m_min = -1.0;
 
 public:
    void Load(TalonFX& driveMotor)
@@ -135,6 +136,10 @@ public:
             driveMotor.ConfigPeakOutputForward(m_max);
             driveMotor.ConfigPeakOutputReverse(m_min);
         }
+
+        SmartDashboard::PutNumber("Drive P Gain", p);
+        SmartDashboard::PutNumber("Drive D Gain", d);
+        frc::SmartDashboard::GetNumber("Drive Feed Forward", ff);
     }
 };
 
@@ -205,15 +210,27 @@ public:
     // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
     static double NegPiToPiRads(double theta);
 
+    // Used to confirm the encoder and motor direction are in sync
+    // units::volt_t m_tempVoltage = 0.1_V; 
+    // void TemporaryRunTurnMotor()
+    // {
+    //     m_turningMotor.SetVoltage(m_tempVoltage);
+    //     m_tempVoltage += 0.1_V; 
+    //     if ( m_tempVoltage > 5.0_V)
+    //     {
+    //          m_tempVoltage = 0.1_V;
+    //     }
+    // }
+
 private:
-    double EncoderToRadians();
-    //double EncoderToDegrees();
+    void EncoderToRadians();
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 
     // All angles in radians
     double MinTurnRads(double init, double final, bool& bOutputReverse);
     meters_per_second_t CalcMetersPerSec();
+    double CalcTicksPer100Ms(meters_per_second_t speed);
 
     // We have to use meters here instead of radians due to the fact that
     // ProfiledPIDController's constraints only take in meters per second and
@@ -223,18 +240,21 @@ private:
 
     double m_offset;
     std::string m_name;
+    double m_absAngle = 0.0;
 
     TalonFX m_driveMotor;
     CANSparkMax m_turningMotor;
 
-    CANPIDController m_turnPIDController = m_turningMotor.GetPIDController();
-
     DrivePidParams   m_drivePidParams;
     TurnPidParams   m_turnPidParams;
 
-    CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, ModuleConstants::kTurnEncoderCPR);
+    CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, 
+                                                                          ModuleConstants::kTurnEncoderCPR);
+    CANPIDController m_turnPIDController = m_turningMotor.GetPIDController();
     GetPulseWidthCallback m_pulseWidthCallback;
     CANifier::PWMChannel m_pwmChannel;
+
+    Timer m_timer;
 
     using LogData = LogDataT<ESwerveModuleLogData>;
     LogData m_logData;
