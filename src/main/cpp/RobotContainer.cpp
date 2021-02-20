@@ -7,31 +7,14 @@
 
 #include "RobotContainer.h"
 
-#include <frc/controller/PIDController.h>
-#include <frc/geometry/Translation2d.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-#include <frc/trajectory/Trajectory.h>
-#include <frc/trajectory/TrajectoryGenerator.h>
-#include <frc/Filesystem.h>
-#include <frc/trajectory/TrajectoryUtil.h>
-#include <frc2/command/InstantCommand.h>
-#include <frc2/command/SequentialCommandGroup.h>
-#include <frc2/command/button/JoystickButton.h>
-#include <wpi/Path.h>
-#include <wpi/SmallString.h>
-#include <frc2/command/SwerveControllerCommand.h>
+// Commenting this out reduces build time by about half
+// However, includes are necessary to run trajectory paths
+//#define PATHS
 
-#include <iostream>
-
-#include "Constants.h"
-#include "subsystems/DriveSubsystem.h"
-#include "subsystems/FlywheelSubsystem.h"
-#include "subsystems/TurretSubsystem.h"
-#include "subsystems/IntakeSubsystem.h"
-#include "subsystems/HoodSubsystem.h"
-#include "subsystems/CyclerSubsystem.h"
-#include "SwerveControllerCommand2.h"
-
+// Commenting this out removes subsystem CAN errors
+// Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
+//#define SUBSYSTEMS
+#ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
 #include "AutoNavSlalom.h"
@@ -40,19 +23,21 @@
 #include "GSLayout2Path1.h"
 #include "GSLayout2Path2.h"
 #include "TestTraj.h"
+#endif
 
 using namespace DriveConstants;
-using namespace CyclerConstants;
 
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
+#ifdef SUBSYSTEMS
     , m_flywheel()
     , m_turret()
     , m_hood()
     , m_intake()
     , m_cycler()
     , m_vision()
+#endif
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
@@ -105,6 +90,8 @@ void RobotContainer::SetDefaultCommands()
         )
     );
 
+    #ifdef SUBSYSTEMS
+
     m_turret.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
@@ -132,6 +119,8 @@ void RobotContainer::SetDefaultCommands()
     m_cycler.SetDefaultCommand(
         CyclerAgitation(&m_cycler)
     );
+
+    #endif
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
     m_inputXentry = tab.Add("X", 0).GetEntry();
@@ -187,6 +176,8 @@ void RobotContainer::ConfigureButtonBindings()
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
 
+    #ifdef SUBSYSTEMS
+
     // Increments / Decrements a test power value for TestCommands()
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
         frc2::InstantCommand(    
@@ -210,6 +201,9 @@ void RobotContainer::ConfigureButtonBindings()
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
         TestCommands()
     );
+
+    #endif 
+
     /*
 
     double c_buttonInputSpeed = 0.5;
