@@ -7,25 +7,25 @@
 using namespace TurretConstants;
 
 TurretSubsystem::TurretSubsystem() 
-    : m_turretmotor(TurretConstants::kMotorPort)
+    : m_turretmotor(kMotorPort)
 {
-    m_turretmotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, TurretConstants::kTimeout);
+    m_turretmotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeout);
     m_turretmotor.SetNeutralMode(NeutralMode::Brake);
-    m_turretmotor.SetSensorPhase(TurretConstants::kSensorPhase);
-    m_turretmotor.SetInverted(TurretConstants::kInverted);
+    m_turretmotor.SetSensorPhase(kSensorPhase);
+    m_turretmotor.SetInverted(kInverted);
 
-    m_turretmotor.Config_kP(0, TurretConstants::kP, TurretConstants::kTimeout);
-    m_turretmotor.Config_kI(0, TurretConstants::kI, TurretConstants::kTimeout);
-    m_turretmotor.Config_kD(0, TurretConstants::kD, TurretConstants::kTimeout);
+    m_turretmotor.Config_kP(0, kP, kTimeout);
+    m_turretmotor.Config_kI(0, kI, kTimeout);
+    m_turretmotor.Config_kD(0, kD, kTimeout);
 
-    m_turretmotor.ConfigNominalOutputForward(TurretConstants::kMinOut, TurretConstants::kTimeout);
-    m_turretmotor.ConfigNominalOutputReverse(TurretConstants::kMinOut * -1.0, TurretConstants::kTimeout);
-    m_turretmotor.ConfigPeakOutputForward(TurretConstants::kMaxOut, TurretConstants::kTimeout);
-    m_turretmotor.ConfigPeakOutputReverse(TurretConstants::kMaxOut * -1.0, TurretConstants::kTimeout);
+    m_turretmotor.ConfigNominalOutputForward(kMinOut, kTimeout);
+    m_turretmotor.ConfigNominalOutputReverse(kMinOut * -1.0, kTimeout);
+    m_turretmotor.ConfigPeakOutputForward(kMaxOut, kTimeout);
+    m_turretmotor.ConfigPeakOutputReverse(kMaxOut * -1.0, kTimeout);
     //m_turretmotor.ConfigClosedloopRamp()
-    m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(TurretConstants::kDegreeStopRange), TurretConstants::kTimeout);
+    m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(kDegreeStopRange), kTimeout);
 
-    m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(TurretConstants::kStartingPositionDegrees), 0, TurretConstants::kTimeout);
+    m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
 }
 
 void TurretSubsystem::Periodic()
@@ -39,7 +39,7 @@ void TurretSubsystem::TurnTo(double angle)
     // safeguard
     angle = Util::ZeroTo360Degs(angle);
     // Turret is not set if desired angle is within the deadzone area
-    if (angle >= TurretConstants::kMinAngle && angle <= TurretConstants::kMaxAngle)
+    if (angle >= kMinAngle && angle <= kMaxAngle)
     {
         m_turretmotor.Set(ControlMode::Position, DegreesToTicks(angle));
     }
@@ -47,7 +47,7 @@ void TurretSubsystem::TurnTo(double angle)
 
 void TurretSubsystem::TurnToRobot(double robotAngle)
 {
-    double angle = robotAngle - TurretConstants::kTurretToRobotAngleOffset;
+    double angle = robotAngle - kTurretToRobotAngleOffset;
     TurnTo(Util::ZeroTo360Degs(angle));
 }
 
@@ -72,20 +72,20 @@ void TurretSubsystem::TurnToRelative(double angle)
 
 bool TurretSubsystem::isAtSetpoint()
 {
-    return fabs(m_turretmotor.GetClosedLoopError()) <= DegreesToTicks(TurretConstants::kDegreeStopRange);
+    return fabs(m_turretmotor.GetClosedLoopError()) <= DegreesToTicks(kDegreeStopRange);
 }
 
 double TurretSubsystem::TicksToDegrees(double ticks)
 {
-    double rev = ticks / TurretConstants::kTicksPerRev;
-    double turretrev = rev * TurretConstants::kMotorRevPerRev;
-    return turretrev * TurretConstants::kDegreesPerRev;
+    double rev = ticks / kTicksPerRev;
+    double turretrev = rev * kMotorRevPerRev;
+    return turretrev * kDegreesPerRev;
 }
 
 
 double TurretSubsystem::DegreesToTicks(double degrees)
 {
-    double turretrev = degrees / TurretConstants::kDegreesPerRev;
-    double rev = turretrev / TurretConstants::kMotorRevPerRev;
-    return rev * TurretConstants::kTicksPerRev;
+    double turretrev = degrees / kDegreesPerRev;
+    double rev = turretrev / kMotorRevPerRev;
+    return rev * kTicksPerRev;
 }
