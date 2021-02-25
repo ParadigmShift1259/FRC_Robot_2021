@@ -101,7 +101,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     // Calculate new turn position given current Neo position, current absolute encoder position, and desired state position
     bool bOutputReverse = false;
-    double minTurnRads = MinTurnRads(absAngle, state.angle.Radians().to<double>(), bOutputReverse);
+    double minTurnRads = MinTurnRads(currentPosition, state.angle.Radians().to<double>(), bOutputReverse);
     double direction = 1.0;
     // Inverts the drive motor if going in the "backwards" direction on the swerve module
     if (bOutputReverse)

@@ -233,7 +233,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
     // Set up config for trajectory
     // frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
-    frc::TrajectoryConfig config( units::meters_per_second_t (1.0), AutoConstants::kMaxAcceleration);
+    frc::TrajectoryConfig config( units::meters_per_second_t (AutoConstants::kMaxSpeed), AutoConstants::kMaxAcceleration);
     // Add kinematics to ensure max speed is actually obeyed
     config.SetKinematics(m_drive.kDriveKinematics);
 
@@ -251,15 +251,15 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 */
 
-// /*
+
     wpi::SmallString<64> deployDirectory;
     frc::filesystem::GetDeployDirectory(deployDirectory);
     wpi::sys::path::append(deployDirectory, "paths/output"); //Has the projects that are created in meters
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
-
     frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);    
 
     // auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(TestTrajLine, config);
+    // auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBarrel, config);
 
     // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
     
@@ -362,6 +362,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         exampleTrajectory,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
         m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        [this]() { return m_drive.GetCurrentModuleStates(); },                  
         frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
         frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
         thetaController,                                                        // frc::ProfiledPIDController<units::radians>
