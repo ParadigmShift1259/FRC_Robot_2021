@@ -9,7 +9,7 @@
 
 // Commenting this out reduces build time by about half
 // However, includes are necessary to run trajectory paths
-//#define PATHS
+#define PATHS
 
 // Commenting this out removes subsystem CAN errors
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
