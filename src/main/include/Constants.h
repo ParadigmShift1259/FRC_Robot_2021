@@ -173,8 +173,8 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1); // 4.145 // units::meters_per_second_t(5.0);
-    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);
+    constexpr auto kMaxSpeed = units::meters_per_second_t(3.8); // 4.145 // units::meters_per_second_t(5.0);
+    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(2.0);
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(4 * wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(4 * wpi::math::pi);
 
