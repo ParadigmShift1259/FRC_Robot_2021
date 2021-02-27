@@ -45,6 +45,9 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_driveMotor.ConfigSelectedFeedbackSensor(TalonFXFeedbackDevice::IntegratedSensor);
     m_turnPIDController.SetFeedbackDevice(m_turnRelativeEncoder);
 
+    m_turningMotor.SetIdleMode(CANSparkMax::IdleMode::kBrake);
+    m_driveMotor.SetNeutralMode(NeutralMode::Brake);
+
     EncoderToRadians();
     m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the encoder where the absolute encoder is
 
@@ -185,7 +188,7 @@ void SwerveModule::EncoderToRadians()
 {
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
 
-    //SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
+    SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
 
     //double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + Math::kTau, Math::kTau);
     m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + Math::kTau, Math::kTau);

@@ -20,10 +20,10 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 #include "AutoNavSlalom.h"
-/*
+
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
-
+/*
 #include "GSLayout1Path1.h"
 #include "GSLayout1Path2.h"
 #include "GSLayout2Path1.h"
@@ -204,14 +204,14 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 */
 
-///*
+/*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         frc::Pose2d(1.143_m, 320.583_m, frc::Rotation2d(0_deg)),
         AutoNavSlalom,
         frc::Pose2d(1.524_m, 320.583_m, frc::Rotation2d(0_deg)),
         config
     );
-//*/
+*/
 
     frc::ProfiledPIDController<units::radians> thetaController{
         AutoConstants::kPThetaController, 0, 0,

@@ -107,10 +107,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
     // Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 2718.0; // 2.163;
-    constexpr double kFrontRightOffset  =  238.0; // 5.897;
-    constexpr double kRearRightOffset   = 1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 37.0; // 0.351;
+    constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
+    constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
+    constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
+    constexpr double kRearLeftOffset    = 3796.1; // 37.0; // 0.351;
 
     // For MK2 swerve encoders
     //constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V

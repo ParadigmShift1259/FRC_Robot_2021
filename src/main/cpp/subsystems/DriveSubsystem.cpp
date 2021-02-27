@@ -233,13 +233,13 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
         states[eFrontLeft].speed = meters_per_second_t(speed);
 
         speed = SmartDashboard::GetNumber("FrontRightVManual", 0.0);
-        states[eFrontLeft].speed = meters_per_second_t(speed);
+        states[eFrontRight].speed = meters_per_second_t(speed);
 
         speed = SmartDashboard::GetNumber("RearLeftVManual", 0.0);
-        states[eFrontLeft].speed = meters_per_second_t(speed);
+        states[eRearLeft].speed = meters_per_second_t(speed);
 
         speed = SmartDashboard::GetNumber("RearRightVManual", 0.0);
-        states[eFrontLeft].speed = meters_per_second_t(speed);
+        states[eRearRight].speed = meters_per_second_t(speed);
     }
 
     m_frontLeft.SetDesiredState(states[eFrontLeft]);
