@@ -119,8 +119,8 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
     bool bOutputReverse = false;
     double minTurnRads = MinTurnRads(currentPosition, state.angle.Radians().to<double>(), bOutputReverse);
     double direction = 1.0; // Sent to TalonFX
-    // if (bOutputReverse)
-    //     direction = -1.0;
+    if (bOutputReverse)
+        direction = -1.0;
     // m_driveMotor.SetInverted(bOutputReverse);
 
     // Set position reference of turnPIDController

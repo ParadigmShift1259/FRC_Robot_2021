@@ -124,8 +124,8 @@ void DriveSubsystem::Periodic()
     // Implementation of subsystem periodic method goes here.
     m_odometry.Update(GetHeadingAsRot2d()
                     , m_frontLeft.GetState()
-                    , m_rearLeft.GetState() // TODO check order FL, RL?
                     , m_frontRight.GetState()
+                    , m_rearLeft.GetState()
                     , m_rearRight.GetState());
    
     auto pose = m_odometry.GetPose();
