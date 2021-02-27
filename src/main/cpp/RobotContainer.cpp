@@ -119,6 +119,17 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
+    
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenHeld(
+        frc2::RunCommand(    
+            [this, c_buttonInputSpeed] {
+                m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
+                        units::meters_per_second_t(0),
+                        units::radians_per_second_t(0),
+                        false);
+            },
+            {&m_drive}
+        ));
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
             frc2::RunCommand(    
@@ -189,6 +200,8 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
     // Add kinematics to ensure max speed is actually obeyed
     config.SetKinematics(m_drive.kDriveKinematics);
+
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBarrel, config);
 
 /*
     // An example trajectory to follow.  All units in meters.

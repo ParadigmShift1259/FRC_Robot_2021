@@ -142,17 +142,10 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
     }
     
-    // Let the turn complete before we activate the motor
-    // 1/22/21
-    SmartDashboard::PutBoolean("Good" + m_name, false);
-    if (fabs(currentPosition - newPosition) < DriveConstants::kTurnValidationDistance)
-    {
-        SmartDashboard::PutBoolean("Good" + m_name, true);
         // Set velocity reference of drivePIDController
 #ifndef TUNE_ABS_ENC    // Normal operation
         m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
 #endif
-    }
 
     // if (m_name == "FrontLeft")
     // {

@@ -110,7 +110,7 @@ namespace DriveConstants
     constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
     constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
     constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 3796.1; // 37.0; // 0.351;
+    constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
 
     // For MK2 swerve encoders
     //constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -127,9 +127,9 @@ namespace DriveConstants
     constexpr double kTurnValidationDistance = 0.35;
 
     /// Turn PID Controller for Swerve Modules
-    constexpr double kTurnP = 0.1;   //0.35;
+    constexpr double kTurnP = 0.35;   //0.35;
     constexpr double kTurnI = 0.0;   //1e-4;
-    constexpr double kTurnD = 1.1;   // 1.85
+    constexpr double kTurnD = 1.85;   // 1.85
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -161,7 +161,7 @@ namespace ModuleConstants
 
     constexpr double kTurnEncoderCPR = 4096.0 / kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
 
-    constexpr double kP_ModuleTurningController = 0.01;//1.1;
+    constexpr double kP_ModuleTurningController = 1.1;//1.1;
     constexpr double kD_ModuleTurningController = 0.03;
 
     constexpr double kPModuleDriveController = 0.001;
@@ -175,12 +175,12 @@ namespace AutoConstants
 
     constexpr auto kMaxSpeed = units::meters_per_second_t(1); // 4.145 // units::meters_per_second_t(5.0);
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);
-    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
-    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
+    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(4 * wpi::math::pi);
+    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(4 * wpi::math::pi);
 
-    constexpr double kPXController = 0.25;
-    constexpr double kPYController = 0.25;
-    constexpr double kPThetaController = 0.5;
+    constexpr double kPXController = 2.0;
+    constexpr double kPYController = 2.0;
+    constexpr double kPThetaController = 8.0;
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
 }  // namespace AutoConstants

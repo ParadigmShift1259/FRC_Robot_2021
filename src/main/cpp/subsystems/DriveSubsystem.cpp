@@ -68,7 +68,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
         , log
       }
     , m_canifier(kCanifierID)
-    //, m_gyro(0)
+    , m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
     SmartDashboard::PutBoolean("GetInputFromNetTable", false);
@@ -106,8 +106,8 @@ void DriveSubsystem::Periodic()
     // Implementation of subsystem periodic method goes here.
     m_odometry.Update(GetHeadingAsRot2d()
                     , m_frontLeft.GetState()
-                    , m_rearLeft.GetState() // TODO check order FL, RL?
                     , m_frontRight.GetState()
+                    , m_rearLeft.GetState()
                     , m_rearRight.GetState());
    
     auto pose = m_odometry.GetPose();
@@ -115,8 +115,8 @@ void DriveSubsystem::Periodic()
     m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
-    //m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-    //m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
+    m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
+    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
     m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
     m_frontLeft.Periodic();
@@ -267,7 +267,7 @@ void DriveSubsystem::ResetEncoders()
 
 double DriveSubsystem::GetHeading()
 {
-    auto retVal = 0.0;//std::remainder(m_gyro.GetFusedHeading(), 360.0) * (kGyroReversed ? -1. : 1.);
+    auto retVal = std::remainder(m_gyro.GetFusedHeading(), 360.0) * (kGyroReversed ? -1. : 1.);
     if (retVal > 180.0)
     {
         retVal -= 360.0;
@@ -280,14 +280,14 @@ double DriveSubsystem::GetHeading()
 
 void DriveSubsystem::ZeroHeading()
 {
-    //m_gyro.ClearStickyFaults();
-    //m_gyro.SetFusedHeading(0.0, 0);
+    m_gyro.ClearStickyFaults();
+    m_gyro.SetFusedHeading(0.0, 0);
 }
 
 double DriveSubsystem::GetTurnRate()
 {
     double turnRates [3] = {0, 0, 0};
-    //m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
+    m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
     return turnRates[2]; 
 }
 

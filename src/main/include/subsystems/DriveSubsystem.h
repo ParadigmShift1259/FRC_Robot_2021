@@ -180,7 +180,7 @@ private:
     ///@}
 
     CANifier m_canifier;
-    //PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
+    PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
 
     /// Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
