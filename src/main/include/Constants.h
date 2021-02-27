@@ -126,10 +126,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 #else
     //Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 2718.0; // 2.163;
-    constexpr double kFrontRightOffset  =  238.0; // 5.897;
-    constexpr double kRearRightOffset   = 1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 37.0; // 0.351;
+    constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
+    constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
+    constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
+    constexpr double kRearLeftOffset    = 3796.1; // 37.0; // 0.351;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -145,7 +145,7 @@ namespace DriveConstants
     constexpr double kTurnI = 0; //1e-4;
     constexpr double kTurnD = 1.85; // 1.85 // 1
 #else
-    constexpr double kTurnP = 0.1;   //0.35;
+    constexpr double kTurnP = 0.35;   //0.35;
     constexpr double kTurnI = 0.0;   //1e-4;
     constexpr double kTurnD = 1.1;   // 1.85
 #endif
@@ -169,9 +169,11 @@ namespace DriveConstants
 
 namespace ModuleConstants
 {
-
+#ifdef Mk2
     constexpr int kEncoderCPR = 1024;
-    //constexpr int kEncoderCPR = 2048; Mk3
+#else
+    constexpr int kEncoderCPR = 2048; Mk3
+#endif
     constexpr int kEncoderTicksPerSec = 10;                 //!< TalonFX::GetSelectedSensorVelocity() returns ticks/100ms = 10 ticks/sec
     constexpr double kWheelDiameterMeters = .1016;          //!< 4"
 #ifdef Mk2
@@ -203,7 +205,7 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(3.6);                 // 1.0   // 5.0
+    constexpr auto kMaxSpeed = units::meters_per_second_t(1);                 // 1.0   // 5.0
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);

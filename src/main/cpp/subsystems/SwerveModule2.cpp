@@ -46,6 +46,9 @@ SwerveModule2::SwerveModule2(int driveMotorChannel,
     m_turningMotor.SetInverted(false);
     m_driveMotor.ConfigSelectedFeedbackSensor(TalonFXFeedbackDevice::IntegratedSensor);
     m_turnPIDController.SetFeedbackDevice(m_turnRelativeEncoder);
+    
+    m_turningMotor.SetIdleMode(CANSparkMax::IdleMode::kBrake);
+    m_driveMotor.SetNeutralMode(NeutralMode::Brake);
 
     EncoderToRadians();
     m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the encoder where the absolute encoder is
