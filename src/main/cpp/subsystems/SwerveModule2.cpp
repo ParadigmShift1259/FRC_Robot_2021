@@ -175,9 +175,9 @@ void SwerveModule2::EncoderToRadians()
 {
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
 
-    //SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
+    SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
 
-    //double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + Math::kTau, Math::kTau);
+    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + Math::kTau, Math::kTau);
     m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + Math::kTau, Math::kTau);
     // Convert CW to CCW? m_absAngle = Math::kTau - m_absAngle;
 }

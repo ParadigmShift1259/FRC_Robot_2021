@@ -129,7 +129,7 @@ namespace DriveConstants
     constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
     constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
     constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 3796.1; // 37.0; // 0.351;
+    constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -172,7 +172,7 @@ namespace ModuleConstants
 #ifdef Mk2
     constexpr int kEncoderCPR = 1024;
 #else
-    constexpr int kEncoderCPR = 2048; Mk3
+    constexpr int kEncoderCPR = 2048;
 #endif
     constexpr int kEncoderTicksPerSec = 10;                 //!< TalonFX::GetSelectedSensorVelocity() returns ticks/100ms = 10 ticks/sec
     constexpr double kWheelDiameterMeters = .1016;          //!< 4"
@@ -192,7 +192,7 @@ namespace ModuleConstants
 #ifdef Mk2
     constexpr double kP_ModuleTurningController = 1.1;
 #else
-    constexpr double kP_ModuleTurningController = 0.01;
+    constexpr double kP_ModuleTurningController = 1.1;
 #endif
     constexpr double kD_ModuleTurningController = 0.03;
 
@@ -215,9 +215,9 @@ namespace AutoConstants
     constexpr double kPYController = 2.0;       // 0.25
     constexpr double kPThetaController = 4.0;   // 2.0
 #else
-    constexpr double kPXController = 0.25;
-    constexpr double kPYController = 0.25;
-    constexpr double kPThetaController = 0.5;
+    constexpr double kPXController = 2.0;
+    constexpr double kPYController = 2.0;
+    constexpr double kPThetaController = 4.0;
 #endif
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
