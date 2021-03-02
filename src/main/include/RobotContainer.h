@@ -16,6 +16,7 @@
 #include <frc2/command/PIDCommand.h>
 #include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/RunCommand.h>
+#include "subsystems/IntakeSubsystem.h"
 
 #include "Constants.h"
 #include "Logger.h"
@@ -32,6 +33,8 @@ class RobotContainer
 {
 public:
     RobotContainer(Logger& log);
+
+    void Periodic();
 
     frc2::Command *GetAutonomousCommand();
 
@@ -59,6 +62,7 @@ private:
 
     // The robot's subsystems
     DriveSubsystem m_drive;
+    IntakeSubsystem m_intake;
     // m_units::meters_per_second_t m_xInput;      //!< Last x input value
     // units::meters_per_second_t m_yInput;        //!< Last y input value
     // units::radians_per_second_t m_rotInput;     //!< Last rotation input value
@@ -71,9 +75,14 @@ private:
     nt::NetworkTableEntry m_inputRotentry;
 
     void ConfigureButtonBindings();
+    frc2::InstantCommand TestCommands();
 
     bool m_fieldRelative = false;
 
     frc2::InstantCommand m_enableFieldRelative{[this] () { m_fieldRelative = true; }};
     frc2::InstantCommand m_disableFieldRelative{[this] () { m_fieldRelative = false; }};
+
+    int m_testNumber;
+    double m_testPower;
+
 };

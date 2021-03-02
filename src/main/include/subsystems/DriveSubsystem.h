@@ -156,8 +156,8 @@ private:
         {
               m_frontLeft.GetState()
             , m_frontRight.GetState()
-            , m_rearRight.GetState()
             , m_rearLeft.GetState()
+            , m_rearRight.GetState()
         };
         return sms;
     }

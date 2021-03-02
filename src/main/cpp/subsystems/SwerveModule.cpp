@@ -14,6 +14,10 @@
 
 #include "Constants.h"
 
+// Removes deprecated warning for CANEncoder and CANPIDController
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
                            GetPulseWidthCallback pulseWidthCallback,

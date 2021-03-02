@@ -17,8 +17,13 @@
 #include <networktables/NetworkTableEntry.h>
 #include <wpi/math>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+
 #include <rev\CANSparkMax.h>
 #include <rev\CANEncoder.h>
+
+#pragma GCC diagnostic pop
 
 #include <ctre\Phoenix.h>
 

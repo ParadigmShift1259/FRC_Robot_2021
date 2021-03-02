@@ -154,14 +154,14 @@ namespace ModuleConstants
     //constexpr double kDriveGearRatio = 8.31;              //!< MK2 swerve modules 11.9 ft/sec
     constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec w/Falcon 13.6 ft/sec
     //constexpr double kDriveGearRatio = 6.86;              //!< MK3 swerve modules w/NEOs 14.4 ft/sec
-    constexpr double kTurnMotorRevsPerWheelRev = 12.8;//18.0;
+    constexpr double kTurnMotorRevsPerWheelRev = 12.8;
     /// Assumes the encoders are directly mounted on the wheel shafts
     // ticks / 100 ms -> ticks / s -> motor rev / s -> wheel rev / s -> m / s
     constexpr double kDriveEncoderMetersPerSec = kEncoderTicksPerSec / static_cast<double>(kEncoderCPR) / kDriveGearRatio * (kWheelDiameterMeters * wpi::math::pi);
 
     constexpr double kTurnEncoderCPR = 4096.0 / kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
 
-    constexpr double kP_ModuleTurningController = 1.1;//1.1;
+    constexpr double kP_ModuleTurningController = 1.1;
     constexpr double kD_ModuleTurningController = 0.03;
 
     constexpr double kPModuleDriveController = 0.001;
@@ -193,3 +193,15 @@ namespace OIConstants
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kDriverControllerPort = 0;
 }  // namespace OIConstants
+
+// Intake Subsystem constants
+namespace IntakeConstants
+{
+    constexpr double kMotorPort = 9;
+    constexpr double kMotorReverseConstant = 1;
+
+    constexpr double kIngestLow = 0.3;
+    constexpr double kIngestHigh = 0.6;
+    constexpr double kReleaseLow = -0.3;
+    constexpr double kReleaseHigh = -0.6;
+}

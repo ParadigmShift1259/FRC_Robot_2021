@@ -280,15 +280,15 @@ double DriveSubsystem::GetHeading()
 
 void DriveSubsystem::ZeroHeading()
 {
-    m_gyro.ClearStickyFaults();
+    //m_gyro.ClearStickyFaults();
     m_gyro.SetFusedHeading(0.0, 0);
 }
 
 double DriveSubsystem::GetTurnRate()
 {
     double turnRates [3] = {0, 0, 0};
-    m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
-    return turnRates[2]; 
+    m_gyro.GetRawGyro(turnRates);
+    return turnRates[2] * (kGyroReversed ? -1. : 1.); 
 }
 
 frc::Pose2d DriveSubsystem::GetPose()

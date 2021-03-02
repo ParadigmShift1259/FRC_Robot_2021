@@ -37,12 +37,19 @@ using namespace DriveConstants;
 RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
+    , m_intake()
 {
     // Initialize all of your commands and subsystems here
+    m_fieldRelative = false;
 
     // Configure the button bindings
     ConfigureButtonBindings();
-    m_fieldRelative = false;
+    //SetDefaultCommands();
+
+    m_testNumber = 0;
+    m_testPower = 0.7;
+    SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
+    SmartDashboard::PutNumber("TEST_testPower", m_testPower);
 
     // Set up default drive command
     m_drive.SetDefaultCommand(frc2::RunCommand(
@@ -89,6 +96,13 @@ RobotContainer::RobotContainer(Logger& log)
     m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
 
+void RobotContainer::Periodic()
+{
+    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    m_drive.Periodic();
+}
+
 void RobotContainer::ConfigureButtonBindings()
 {
     //            U           //
@@ -109,16 +123,56 @@ void RobotContainer::ConfigureButtonBindings()
     double c_buttonInputSpeed = 0.5;
     units::second_t c_buttonInputTime = 5.0_s;// 1.25_s;
 
+    // Increments / Decrements a test power value for TestCommands()
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
-        frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
-                        units::meters_per_second_t(0),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower += 0.05;
+            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+            printf("Y button ++ %.3f\n", m_testPower);
+        },
+        {}
+        )
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower -= 0.05;
+            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+            printf("X button -- %.3f\n", m_testPower);
+        },
+        {}
+        )
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenHeld(
+        frc2::InstantCommand(    
+        [this] {
+            m_testPower = 0.0;
+            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+            printf("B button -- %.3f\n", m_testPower);
+            TestCommands();
+        },
+        {}
+        )
+    );
+
+    // Runs sequence of tests for motors based on iterator and a power
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
+        TestCommands()  // No semi colon
+    );
+
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+    //     frc2::RunCommand(    
+    //         [this, c_buttonInputSpeed] {
+    //             m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
+    //                     units::meters_per_second_t(0),
+    //                     units::radians_per_second_t(0),
+    //                     false);
+    //         },
+    //         {&m_drive}
+    //     ).WithTimeout(c_buttonInputTime));
     
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenHeld(
         frc2::RunCommand(    
@@ -131,16 +185,16 @@ void RobotContainer::ConfigureButtonBindings()
             {&m_drive}
         ));
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
-            frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(-c_buttonInputSpeed),
-                        units::meters_per_second_t(0),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
+    //         frc2::RunCommand(    
+    //         [this, c_buttonInputSpeed] {
+    //             m_drive.Drive(units::meters_per_second_t(-c_buttonInputSpeed),
+    //                     units::meters_per_second_t(0),
+    //                     units::radians_per_second_t(0),
+    //                     false);
+    //         },
+    //         {&m_drive}
+    //     ).WithTimeout(c_buttonInputTime));
 
     // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
     //         frc2::RunCommand(    
@@ -150,16 +204,16 @@ void RobotContainer::ConfigureButtonBindings()
     //         {&m_drive}
     //     ).WithTimeout(c_buttonInputTime));
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
-            frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(0),
-                        units::meters_per_second_t(c_buttonInputSpeed),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
+    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
+    //         frc2::RunCommand(    
+    //         [this, c_buttonInputSpeed] {
+    //             m_drive.Drive(units::meters_per_second_t(0),
+    //                     units::meters_per_second_t(c_buttonInputSpeed),
+    //                     units::radians_per_second_t(0),
+    //                     false);
+    //         },
+    //         {&m_drive}
+    //     ).WithTimeout(c_buttonInputTime));
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenPressed(
             frc2::RunCommand(    
@@ -184,6 +238,70 @@ void RobotContainer::ConfigureButtonBindings()
             {&m_drive}
         )
     );
+}
+
+frc2::InstantCommand RobotContainer::TestCommands()
+{
+    // switch(m_testNumber) {
+    // case 0:
+        return 
+        frc2::InstantCommand(    
+            [this] {
+                printf("m_intake.Set(%.3f)\n", m_testPower);
+                m_intake.Set(m_testPower);
+            },
+            {&m_intake}
+        );
+    // case 1:
+    //     return
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_cycler.SetFeeder(m_testPower);
+    //         },
+    //         {&m_cycler}
+    //     );
+    // case 2:
+    //     return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_cycler.SetTurnTable(m_testPower);
+    //         },
+    //         {&m_cycler}
+    //     );
+    // case 3:
+    //     return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_flywheel.SetRPM(m_testPower * 1000.0);
+    //         },
+    //         {&m_flywheel}
+    //     );
+    //     break;
+    // case 4:
+    //     return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_hood.Set(m_testPower);
+    //         },
+    //         {&m_hood}
+    //     );
+    //     break;
+    // case 5:
+    //     return
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_climber.Run(m_testPower);
+    //         },
+    //         {&m_climber}
+    //     );
+    // }
+    // return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_intake.Set(m_testPower);
+    //         },
+    //         {&m_intake}
+    //     );
 }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
