@@ -82,9 +82,8 @@ DriveSubsystem::DriveSubsystem(Logger& log)
         , std::string("RearLeft")
         , log
       }
-
-    , m_gyro(0)
     , m_canifier(DriveConstants::kCanifierID)
+    , m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
     //SmartDashboard::PutBoolean("GetInputFromNetTable", false);

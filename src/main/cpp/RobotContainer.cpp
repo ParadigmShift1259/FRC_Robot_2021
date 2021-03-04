@@ -13,7 +13,7 @@
 
 // Commenting this out removes subsystem CAN errors
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
-//#define SUBSYSTEMS
+#define SUBSYSTEMS
 #include "AutoNavBarrel.h"
 #ifdef PATHS
 #include "AutoNavBarrel.h"
@@ -32,13 +32,13 @@ RobotContainer::RobotContainer(Logger& log)
     : m_log(log)
     , m_drive(log)
 #ifdef SUBSYSTEMS
-    , m_flywheel()
-    , m_turret()
-    , m_hood()
+    // , m_flywheel()
+    // , m_turret()
+    // , m_hood()
     , m_intake()
     , m_cycler()
-    , m_vision()
-    , m_climber()
+    // , m_vision()
+    // , m_climber()
 #endif
 {
     // Initialize all of your commands and subsystems here
@@ -64,68 +64,106 @@ void RobotContainer::Periodic()
 
 void RobotContainer::SetDefaultCommands()
 {
-    m_drive.SetDefaultCommand(
-        DriveDefault(&m_drive, 
-            [this] {
-                double x = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-                m_inputXentry.SetDouble(x);
-                return x;
-            },
-            [this] {
-                double y = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
-                m_inputYentry.SetDouble(y);
-                return y;
-            },
-            [this] {
-                double rot = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
-                m_inputRotentry.SetDouble(rot);
-                return rot;
-            },
-            [this] {
-                return m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
-            }, 
-            [this] {
-                return m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
-            },
-            [this] {
-                return m_fieldRelative;
+        m_drive.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            // up is xbox joystick y pos
+            // left is xbox joystick x pos
+            auto xInput = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
+            auto yInput = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            auto rotInput = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+            auto xRot = m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
+            auto yRot = m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
+            if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
+                xRot = 0;
+                yRot = 0;
             }
-        )
-    );
+
+            m_inputXentry.SetDouble(xInput);
+            m_inputYentry.SetDouble(yInput);
+            m_inputRotentry.SetDouble(rotInput);
+
+            if (m_fieldRelative)
+            {
+                m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            xRot,
+                            yRot,
+                            m_fieldRelative);
+            }
+            else 
+            {
+                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            units::radians_per_second_t(rotInput),
+                            m_fieldRelative);
+            }
+
+        },
+        {&m_drive}
+    ));
+
+    // m_drive.SetDefaultCommand(
+    //     DriveDefault(&m_drive, 
+    //         [this] {
+    //             double x = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
+    //             m_inputXentry.SetDouble(x);
+    //             return x;
+    //         },
+    //         [this] {
+    //             double y = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+    //             m_inputYentry.SetDouble(y);
+    //             return y;
+    //         },
+    //         [this] {
+    //             double rot = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+    //             m_inputRotentry.SetDouble(rot);
+    //             return rot;
+    //         },
+    //         [this] {
+    //             return m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
+    //         }, 
+    //         [this] {
+    //             return m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
+    //         },
+    //         [this] {
+    //             return m_fieldRelative;
+    //         }
+    //     )
+    // );
 
     #ifdef SUBSYSTEMS
 
-    m_turret.SetDefaultCommand(
-        frc2::RunCommand(
-            [this] {
-                m_turret.TurnTo(0);
-            }, {&m_turret}
-        )
-    );
+    // m_turret.SetDefaultCommand(
+    //     frc2::RunCommand(
+    //         [this] {
+    //             m_turret.TurnTo(0);
+    //         }, {&m_turret}
+    //     )
+    // );
 
-    m_flywheel.SetDefaultCommand(
-        frc2::RunCommand(
-            [this] {
-                m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
-            }, {&m_flywheel}
-        )
-    );
+    // m_flywheel.SetDefaultCommand(
+    //     frc2::RunCommand(
+    //         [this] {
+    //             m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+    //         }, {&m_flywheel}
+    //     )
+    // );
 
-    m_hood.SetDefaultCommand(
-        frc2::RunCommand(
-            [this] {
-                m_hood.Set(0);
-            }, {&m_hood}
-        )
-    );
+    // m_hood.SetDefaultCommand(
+    //     frc2::RunCommand(
+    //         [this] {
+    //             m_hood.Set(0);
+    //         }, {&m_hood}
+    //     )
+    // );
     
-    m_climber.SetDefaultCommand(
-        frc2::RunCommand(
-            [this] {
-                m_climber.Run(0);
-            }, {&m_climber}
-        )
-    );
+    // m_climber.SetDefaultCommand(
+    //     frc2::RunCommand(
+    //         [this] {
+    //             m_climber.Run(0);
+    //         }, {&m_climber}
+    //     )
+    // );
 
     m_cycler.SetDefaultCommand(
         CyclerAgitation(&m_cycler)
@@ -195,6 +233,7 @@ void RobotContainer::ConfigureButtonBindings()
         frc2::InstantCommand(    
         [this] {
             m_testPower += 0.05;
+            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
         },
         {}
         )
@@ -204,6 +243,7 @@ void RobotContainer::ConfigureButtonBindings()
         frc2::InstantCommand(    
         [this] {
             m_testPower -= 0.05;
+            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
         },
         {}
         )

@@ -235,7 +235,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 15;   // 0
+    constexpr double kMotorPort = 9;   // 0
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -329,15 +329,15 @@ namespace HoodConstants
 namespace CyclerConstants
 {
     constexpr double kFeederPort = 14;
-    constexpr double kTurnTablePort = 15;
+    constexpr double kTurnTablePort = 10;
 
-    constexpr double kFeederSpeed = 0.400;
+    constexpr double kFeederSpeed = 0.800;
     constexpr double kTurnTableSpeed = 0.400;
 
     // Time to go from 0 to full throttle
-    constexpr double kTurnTableRampRate = 0.5;
+    constexpr double kTurnTableRampRate = 0.75;
 
-    constexpr double kTimePassed = 0.20;
+    constexpr double kTimePassed = 0.5;
 
     constexpr double kFeederTimeout = 10;
     constexpr double kFeederTimeoutAlt = 15;
