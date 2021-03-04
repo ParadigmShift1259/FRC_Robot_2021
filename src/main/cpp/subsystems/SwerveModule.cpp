@@ -18,6 +18,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+#ifdef Mk2
+
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
                            const int turningEncoderPort,
@@ -114,32 +116,20 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     // Set position reference of turnPIDController
     double newPosition = currentPosition + minTurnRads;
 
+
 //#define TUNE_ABS_ENC
 #ifdef TUNE_ABS_ENC
     m_drivePIDController.SetReference(0.0, rev::ControlType::kVelocity);
 #endif
+// Set velocity reference of drivePIDController
+#ifndef TUNE_ABS_ENC    // Normal operation
+    m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
+#endif
 
-    // If we're stopping then stop the drive motors and leave the angle alone
-    if (state.speed.to<double>() == 0.0)
+    // Set the angle unless module is coming to a full stop
+    if (state.speed.to<double>() != 0.0)
     {
-#ifndef TUNE_ABS_ENC
-        m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
-#endif
-    }
-    else
-    {
-        // Otherwise set the angle
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
-    }
-    
-    // Let the turn complete before we activate the motor
-    // 1/22/21
-    if (fabs(currentPosition - newPosition) < DriveConstants::kTurnValidationDistance)
-    {
-        // Set velocity reference of drivePIDController
-#ifndef TUNE_ABS_ENC
-        m_drivePIDController.SetReference(direction * state.speed.to<double>(), rev::ControlType::kVelocity);
-#endif
     }
 
     const std::string FuncModule = "Swerve" + m_name;
@@ -253,3 +243,5 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
         return angle2;
     }
 }
+
+#endif

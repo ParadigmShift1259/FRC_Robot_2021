@@ -18,7 +18,7 @@ void CyclerAgitation::Initialize(){
 }
 
 void CyclerAgitation::Execute() {
-    if (m_timer.Get() <= kTimePassed) {
+    if (m_timer.Get() <= kTimePassed * 1.5) {
         m_cycler->SetTurnTable(kTurnTableSpeed);
     }
     else if (m_timer.Get() <= kTimePassed * 2) {

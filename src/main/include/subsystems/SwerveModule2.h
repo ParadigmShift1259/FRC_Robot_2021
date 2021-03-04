@@ -7,37 +7,40 @@
 
 #pragma once
 
-#include <frc/AnalogInput.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/SmartDashboard/SmartDashboard.h>
+#include <frc/Timer.h>
 #include <networktables/NetworkTableEntry.h>
 #include <wpi/math>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
 
-#include <rev/CANSparkMax.h>
-#include <rev/CANEncoder.h>
+#include <rev\CANSparkMax.h>
+#include <rev\CANEncoder.h>
 
 #pragma GCC diagnostic pop
 
-#include <wpi/math>
+#include <ctre\Phoenix.h>
 
 #include <string>
 
 #include "Constants.h"
 #include "Logger.h"
 
+#ifndef Mk2
+
 using namespace rev;
 using namespace units;
+using namespace ctre::phoenix::motorcontrol;
 
-#ifdef Mk2
+using GetPulseWidthCallback = std::function<double (CANifier::PWMChannel)>;
 
-class TurnPidParams
+class TurnPidParams2
 {
     double m_p = DriveConstants::kTurnP;
     double m_i = DriveConstants::kTurnI;
@@ -91,23 +94,24 @@ public:
     }
 };
 
-class DrivePidParams
+class DrivePidParams2
 {
-    double m_p = 0.2;
+    double m_p = 0.0;
     //double m_i = 0.0;
     double m_d = 0.0;
-    double m_ff = 0.3;
+    double m_ff = 0.047619;
     double m_max = 1.0;
     double m_min = -1.0;
 
 public:
-   void Load(CANPIDController& drivePIDController)
+   void Load(TalonFX& driveMotor)
     {
-        drivePIDController.SetP(m_p);
-        // drivePIDController.SetI(m_i);
-        drivePIDController.SetD(m_d);
-        drivePIDController.SetFF(m_ff);
-        drivePIDController.SetOutputRange(m_min, m_max);
+        driveMotor.Config_kP(0, m_p);
+        // driveMotor.Config_kI(0, m_i);
+        driveMotor.Config_kD(0, m_d);
+        driveMotor.Config_kF(0, m_ff);
+        driveMotor.ConfigPeakOutputForward(m_max);
+        driveMotor.ConfigPeakOutputReverse(m_min);
         frc::SmartDashboard::PutNumber("Drive P Gain", m_p);
         //frc::SmartDashboard::PutNumber("Drive I Gain", m_i);
         frc::SmartDashboard::PutNumber("Drive D Gain", m_d);
@@ -116,7 +120,7 @@ public:
         frc::SmartDashboard::PutNumber("Drive Min Output", m_min);
     }
 
-    void LoadFromNetworkTable(CANPIDController& drivePIDController)
+    void LoadFromNetworkTable(TalonFX& driveMotor)
     {
         // Retrieving drive PID values from SmartDashboard
         double p = frc::SmartDashboard::GetNumber("Drive P Gain", 0.0);
@@ -127,25 +131,30 @@ public:
         double min = frc::SmartDashboard::GetNumber("Drive Min Output", 0.0);
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
-        if ((p != m_p)) { drivePIDController.SetP(p); m_p = p; }
-        //if ((i != m_i)) { drivePIDController.SetI(i); m_i = i; }
-        if ((d != m_d)) { drivePIDController.SetD(d); m_d = d; }
-        if ((ff != m_ff)) { drivePIDController.SetFF(ff); m_ff = ff; }
+        if ((p != m_p)) { driveMotor.Config_kP(0, p); m_p = p; }
+        //if ((i != m_i)) { driveMotor.Config_kI(0, i); m_i = i; }
+        if ((d != m_d)) { driveMotor.Config_kD(0, d); m_d = d; }
+        if ((ff != m_ff)) { driveMotor.Config_kF(0, ff); m_ff = ff; }
         
         if ((max != m_max) || (min != m_min))
         { 
-            drivePIDController.SetOutputRange(min, max);
             m_min = min;
             m_max = max; 
+            driveMotor.ConfigPeakOutputForward(m_max);
+            driveMotor.ConfigPeakOutputReverse(m_min);
         }
+
+        SmartDashboard::PutNumber("Drive P Gain", p);
+        SmartDashboard::PutNumber("Drive D Gain", d);
+        frc::SmartDashboard::GetNumber("Drive Feed Forward", ff);
     }
 };
 
-// For each enum here, add a string to c_headerNamesSwerveModule
+// For each enum here, add a string to c_headerNamesSwerveModule2
 // and a line like this: 
 //      m_logData[ESwerveModuleLogData::e???] = ???;
-// to SwerveModule::Periodic
-enum class ESwerveModuleLogData : int
+// to SwerveModule2::Periodic
+enum class ESwerveModuleLogData2 : int
 {
       eFirstInt
     , eLastInt = eFirstInt
@@ -164,7 +173,7 @@ enum class ESwerveModuleLogData : int
     , eLastDouble
 };
 
-const std::vector<std::string> c_headerNamesSwerveModule
+const std::vector<std::string> c_headerNamesSwerveModule2
 {
       "desiredAngle"
     , "turnEncVolts"
@@ -178,14 +187,15 @@ const std::vector<std::string> c_headerNamesSwerveModule
     , "driveOutputDutyCyc"
 };
 
-class SwerveModule
+class SwerveModule2
 {
     using radians_per_second_squared_t = compound_unit<radians, inverse<squared<second>>>;
 
 public:
-    SwerveModule( int driveMotorChannel
+    SwerveModule2( int driveMotorChannel
                 , int turningMotorChannel
-                , const int turningEncoderPort
+                , GetPulseWidthCallback pulseWidthCallback
+                , CANifier::PWMChannel pwmChannel
                 , bool driveEncoderReversed
                 , double offSet
                 , const std::string& name
@@ -207,41 +217,53 @@ public:
     // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
     static double NegPiToPiRads(double theta);
 
+    // Used to confirm the encoder and motor direction are in sync
+    // units::volt_t m_tempVoltage = 0.1_V; 
+    // void TemporaryRunTurnMotor()
+    // {
+    //     m_turningMotor.SetVoltage(m_tempVoltage);
+    //     m_tempVoltage += 0.1_V; 
+    //     if ( m_tempVoltage > 5.0_V)
+    //     {
+    //          m_tempVoltage = 0.1_V;
+    //     }
+    // }
+
 private:
-    double VoltageToRadians(double voltage, double Offset);
-    double VoltageToDegrees(double voltage, double Offset);
+    void EncoderToRadians();
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 
     // All angles in radians
     double MinTurnRads(double init, double final, bool& bOutputReverse);
+    meters_per_second_t CalcMetersPerSec();
+    double CalcTicksPer100Ms(meters_per_second_t speed);
 
     // We have to use meters here instead of radians due to the fact that
     // ProfiledPIDController's constraints only take in meters per second and
     // meters per second squared.
-    static constexpr radians_per_second_t kModuleMaxAngularVelocity = radians_per_second_t(wpi::math::pi);                                           // radians per second
-    static constexpr unit_t<radians_per_second_squared_t> kModuleMaxAngularAcceleration = unit_t<radians_per_second_squared_t>(wpi::math::pi * 2.0); // radians per second squared
+    //static constexpr radians_per_second_t kModuleMaxAngularVelocity = radians_per_second_t(wpi::math::pi);                                           // radians per second
+    //static constexpr unit_t<radians_per_second_squared_t> kModuleMaxAngularAcceleration = unit_t<radians_per_second_squared_t>(wpi::math::pi * 2.0); // radians per second squared
 
     double m_offset;
     std::string m_name;
+    double m_absAngle = 0.0;
 
-    CANSparkMax m_driveMotor;
+    TalonFX m_driveMotor;
     CANSparkMax m_turningMotor;
 
-    CANPIDController m_drivePIDController = m_driveMotor.GetPIDController();
+    DrivePidParams2   m_drivePidParams;
+    TurnPidParams2   m_turnPidParams;
+
+    CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, 
+                                                                          ModuleConstants::kTurnEncoderCPR);
     CANPIDController m_turnPIDController = m_turningMotor.GetPIDController();
+    GetPulseWidthCallback m_pulseWidthCallback;
+    CANifier::PWMChannel m_pwmChannel;
 
-    DrivePidParams   m_drivePidParams;
-    TurnPidParams   m_turnPidParams;
+    Timer m_timer;
 
-    CANEncoder m_driveEncoder;
-    CANEncoder m_turnNeoEncoder = m_turningMotor.GetEncoder();
-    frc::AnalogInput m_turningEncoder;
-
-    nt::NetworkTableEntry m_nteAbsEncTuningOffset;
-    nt::NetworkTableEntry m_nteAbsEncTuningVoltage;
-
-    using LogData = LogDataT<ESwerveModuleLogData>;
+    using LogData = LogDataT<ESwerveModuleLogData2>;
     LogData m_logData;
     Logger& m_log;
 };
