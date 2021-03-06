@@ -26,12 +26,24 @@ TurretSubsystem::TurretSubsystem()
     m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(kDegreeStopRange), kTimeout);
 
     m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
+    frc::SmartDashboard::PutNumber("Turret P Gain", kP);
+    frc::SmartDashboard::PutNumber("Turret I Gain", kI);
+    frc::SmartDashboard::PutNumber("Turret D Gain", kD);
 }
 
 void TurretSubsystem::Periodic()
 {
     SmartDashboard::PutNumber("Turret Current Angle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
-    SmartDashboard::PutNumber("Turret Desired Angle", m_turretmotor.GetClosedLoopTarget());   
+    SmartDashboard::PutNumber("Turret Desired Angle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
+    SmartDashboard::PutNumber("Turret Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
+    SmartDashboard::PutNumber("Turret Output", m_turretmotor.GetMotorOutputPercent());
+
+    double p = frc::SmartDashboard::GetNumber("Turret P Gain", kP);
+    double i = frc::SmartDashboard::GetNumber("Turret I Gain", kI);
+    double d = frc::SmartDashboard::GetNumber("Turret D Gain", kD);
+    m_turretmotor.Config_kP(0, p, kTimeout);
+    m_turretmotor.Config_kI(0, i, kTimeout);
+    m_turretmotor.Config_kD(0, d, kTimeout);
 }
 
 void TurretSubsystem::TurnTo(double angle)

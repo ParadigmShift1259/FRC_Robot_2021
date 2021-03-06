@@ -33,7 +33,7 @@ RobotContainer::RobotContainer(Logger& log)
     , m_drive(log)
 #ifdef SUBSYSTEMS
     , m_flywheel()
-    // , m_turret()
+    , m_turret()
     // , m_hood()
     , m_intake()
     , m_cycler()
@@ -60,6 +60,7 @@ void RobotContainer::Periodic()
     m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
     m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
     m_drive.Periodic();
+    m_cycler.Periodic();
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -136,18 +137,18 @@ void RobotContainer::SetDefaultCommands()
     // m_turret.SetDefaultCommand(
     //     frc2::RunCommand(
     //         [this] {
-    //             m_turret.TurnTo(0);
+    //             m_turret.TurnTo(45);
     //         }, {&m_turret}
     //     )
     // );
 
-    // m_flywheel.SetDefaultCommand(
-    //     frc2::RunCommand(
-    //         [this] {
-    //             m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
-    //         }, {&m_flywheel}
-    //     )
-    // );
+    m_flywheel.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+            }, {&m_flywheel}
+        )
+    );
 
     // m_hood.SetDefaultCommand(
     //     frc2::RunCommand(
@@ -165,9 +166,9 @@ void RobotContainer::SetDefaultCommands()
     //     )
     // );
 
-    m_cycler.SetDefaultCommand(
-        CyclerAgitation(&m_cycler)
-    );
+    // m_cycler.SetDefaultCommand(
+    //     CyclerAgitation(&m_cycler)
+    // );
 
     #endif
 
@@ -309,6 +310,14 @@ void RobotContainer::ConfigureButtonBindings()
 
 frc2::InstantCommand RobotContainer::TestCommands()
 {
+    return
+    frc2::InstantCommand(    
+        [this] {
+            m_cycler.SetFeeder(CyclerConstants::kFeederSpeed);
+            m_cycler.SetTurnTable(CyclerConstants::kTurnTableSpeed);
+        },
+        {&m_cycler, &m_flywheel}
+    );
     switch(m_testNumber) {
     case 0:
         return 

@@ -1,23 +1,28 @@
 #include "subsystems/CyclerSubsystem.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 using namespace CyclerConstants;
 
 CyclerSubsystem::CyclerSubsystem()
-    : m_feedermotor(kFeederPort), m_turntablemotor(kTurnTablePort)
+    : m_feedermotor(kFeederPort, CANSparkMax::MotorType::kBrushless)
+    , m_turntablemotor(kTurnTablePort)
+    , m_sensor(0)
 {
-    
-    m_turntablemotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeout);
     m_turntablemotor.SetNeutralMode(NeutralMode::Brake);
-    m_turntablemotor.SetSensorPhase(kSensorPhase);
-    m_turntablemotor.SetInverted(kInverted);
+    m_turntablemotor.SetInverted(kTurnTableInverted);
     m_turntablemotor.ConfigOpenloopRamp(kTurnTableRampRate, kTimeout);
+    m_feedermotor.SetInverted(kFeederInverted);
+}
 
-    m_turntablemotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
+void CyclerSubsystem::Periodic()
+{
+    SmartDashboard::PutBoolean("D_C_SensorV2", m_sensor.Get());
+    SmartDashboard::PutNumber("D_C_Sensor", m_sensor.Get());
 }
 
 void CyclerSubsystem::SetFeeder(double speed)
 {
-    m_feedermotor.Set(ControlMode::PercentOutput, speed);
+    m_feedermotor.Set(speed);
 }
 
 void CyclerSubsystem::SetTurnTable(double speed)

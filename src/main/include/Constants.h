@@ -231,7 +231,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 9;   // 0
+    constexpr double kMotorPort = 10;   // 0
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -243,22 +243,22 @@ namespace IntakeConstants
 // Flywheel Subsystem constants
 namespace FlywheelConstants
 {
-    constexpr double kMotorPort = 14;
+    constexpr double kMotorPort = 20;
 
-    constexpr double kRampRate = 0.1;
+    constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
     constexpr double kAllowedError = 20;
 
-    constexpr double kP = 0;
+    constexpr double kP = 0.0008700;
     constexpr double kI = 0;
     constexpr double kD = 0;
 
     constexpr double kMinOut = 0;
     constexpr double kMaxOut = 1.0;
 
-    constexpr double kS = 0;
-    constexpr double kV = 0;
-    constexpr double kA = 0;
+    constexpr double kS = 0.059;
+    constexpr double kV = 0.102834;
+    constexpr double kA = 0;//0.0399;
 
     // Diameter is in meters
     constexpr double kWheelDiameter = 0.1524;
@@ -266,29 +266,30 @@ namespace FlywheelConstants
     constexpr double kWheelMetersPerRev = kWheelDiameter * wpi::math::pi;
     // Meters per second to Revolutions per minute
     constexpr double kMPSPerRPM = kWheelMetersPerRev / kSecondsPerMinute;
+    constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 10; 
+    constexpr double kIdleRPM = 2000; 
     constexpr double kRampRPM = 15;
 }
 
 // Turret Subsystem Constants
 namespace TurretConstants
 {
-    constexpr double kMotorPort = 12;
+    constexpr double kMotorPort = 11;
 
-    constexpr double kP = 0;
-    constexpr double kI = 0;
-    constexpr double kD = 0;
+    constexpr double kP = 0.14114;
+    constexpr double kI = 0.00085;
+    constexpr double kD = 0.1375;
 
     constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.175;
+    constexpr double kMaxOut = 0.275;
 
     constexpr double kTimeout = 30;
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kDegreeStopRange = 0.125;
+    constexpr double kDegreeStopRange = 0.225;
 
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
@@ -304,12 +305,10 @@ namespace TurretConstants
     constexpr double kTurretToRobotAngleOffset = -45;
     // Maximum rotation of the turret relative to the turret, in degrees
     constexpr double kMinAngle = 0;
-    constexpr double kMaxAngle = 270;
-
-    constexpr double kAddedAngle = 10;
+    constexpr double kMaxAngle = 90;
 
     // initial configured angle of the turret relative to the turret, in degrees
-    constexpr double kStartingPositionDegrees = 135;
+    constexpr double kStartingPositionDegrees = 45;
 }
 
 /// Hood subsystem constants
@@ -324,10 +323,10 @@ namespace HoodConstants
 // Cycler Subsystem Constants
 namespace CyclerConstants
 {
-    constexpr double kFeederPort = 14;
-    constexpr double kTurnTablePort = 10;
+    constexpr double kFeederPort = 30;
+    constexpr double kTurnTablePort = 31;
 
-    constexpr double kFeederSpeed = 0.800;
+    constexpr double kFeederSpeed = 0.20;
     constexpr double kTurnTableSpeed = 0.400;
 
     // Time to go from 0 to full throttle
@@ -342,8 +341,8 @@ namespace CyclerConstants
     constexpr double kMaxOut = 0.175;
 
     constexpr double kTimeout = 30;
-    constexpr double kInverted = true;
-    constexpr double kSensorPhase = true;
+    constexpr double kTurnTableInverted = false;
+    constexpr double kFeederInverted = true;
 
     constexpr double kDegreeStopRange = 0.125;
 
@@ -358,8 +357,6 @@ namespace CyclerConstants
     // Maximum rotation of the turntable relative to the turntable, in degrees
     constexpr double kMinAngle = 0;
     constexpr double kMaxAngle = 270;
-
-    constexpr double kAddedAngle = 10;
 
     // initial configured angle of the turntable relative to the turntable, in degrees
     constexpr double kStartingPositionDegrees = 135;
