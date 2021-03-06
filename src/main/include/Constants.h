@@ -107,10 +107,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
 
     // Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
-    constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
-    constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
+    constexpr double kFrontLeftOffset   = 2694.5; //2683.1; //2718.0; // 2.163;
+    constexpr double kFrontRightOffset  =  205.9; //187.3; //238.0; // 5.897;
+    constexpr double kRearRightOffset   = 1846.8; //1843.5; //1861.0; // 3.405;
+    constexpr double kRearLeftOffset    = 3833.3; //3696.1; // 37.0; // 0.351;
 
     // For MK2 swerve encoders
     //constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -173,7 +173,7 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(3.8); // 4.145 // units::meters_per_second_t(5.0);
+    constexpr auto kMaxSpeed = units::meters_per_second_t(2.0); // 4.145 // units::meters_per_second_t(5.0);
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(2.0);
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(4 * wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(4 * wpi::math::pi);

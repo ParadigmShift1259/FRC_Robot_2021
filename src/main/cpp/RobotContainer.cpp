@@ -47,7 +47,7 @@ RobotContainer::RobotContainer(Logger& log)
     //SetDefaultCommands();
 
     m_testNumber = 0;
-    m_testPower = 0.7;
+    m_testPower = 0.75;
     SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
     SmartDashboard::PutNumber("TEST_testPower", m_testPower);
 
