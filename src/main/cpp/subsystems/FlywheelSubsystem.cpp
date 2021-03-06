@@ -67,7 +67,7 @@ void FlywheelSubsystem::Periodic()
 void FlywheelSubsystem::SetRPM(double rpm)
 {
     // Ignore PIDF feedforward and substitute WPILib's SimpleMotorFeedforward class
-    double FF = m_flywheelFF.Calculate(rpm * kMPSPerRPM * 1_mps).to<double>();
+    double FF = m_flywheelFF.Calculate(rpm / kSecondsPerMinute * 1_mps).to<double>();
     m_flywheelPID.SetFF(0);
 
     m_setpoint = rpm;
