@@ -116,14 +116,10 @@ namespace DriveConstants
     // All gears should face outwards
 
 #ifdef Mk2
-    constexpr double kFrontLeftOffset   = 3.142; //6.412;           //3.142;         // 3.14;
-    constexpr double kFrontRightOffset  = 5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
-    constexpr double kRearLeftOffset    = 5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
-    constexpr double kRearRightOffset   = 0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
-    // constexpr double kFrontLeftOffset   = 3.142;
-    // constexpr double kFrontRightOffset  = 5.105 - wpi::math::pi;
-    // constexpr double kRearLeftOffset    = 1.8292;
-    // constexpr double kRearRightOffset   = 0.665 + wpi::math::pi;
+    constexpr double kFrontLeftOffset   = (6.28 - 3.14); //3.142; //6.412;           //3.142;         // 3.14;
+    constexpr double kFrontRightOffset  = (6.28 - 1.21); //5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
+    constexpr double kRearLeftOffset    = (6.28 - 0.36); //5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
+    constexpr double kRearRightOffset   = (6.28 - 5.67); //0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 #else
     //Mk3 swerve module
     constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
