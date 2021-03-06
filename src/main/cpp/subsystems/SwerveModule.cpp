@@ -120,9 +120,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 //#define TUNE_ABS_ENC
 #ifdef TUNE_ABS_ENC
     m_drivePIDController.SetReference(0.0, rev::ControlType::kVelocity);
-#endif
-// Set velocity reference of drivePIDController
-#ifndef TUNE_ABS_ENC    // Normal operation
+#else
     m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
 #endif
 
@@ -215,6 +213,11 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     // Eventually prefer angle 1 always during high speed to prevent 180s
     
     SmartDashboard::PutNumber("kTestSpeed", GetState().speed.to<double>());
+
+    bOutputReverse = false;
+
+    return angle1;
+    // Ignoring bottom code because not working for now, will implement later
 
     if (GetState().speed.to<double>() > DriveConstants::kMinTurnPrioritySpeed)
     {
