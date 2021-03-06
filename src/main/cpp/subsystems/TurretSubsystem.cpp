@@ -30,8 +30,8 @@ TurretSubsystem::TurretSubsystem()
 
 void TurretSubsystem::Periodic()
 {
-    SmartDashboard::PutNumber("Turret Current Angle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
-    SmartDashboard::PutNumber("Turret Desired Angle", m_turretmotor.GetClosedLoopTarget());   
+    SmartDashboard::PutNumber("D_T_CA", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
+    SmartDashboard::PutNumber("D_T_DA", m_turretmotor.GetClosedLoopTarget());   
 }
 
 void TurretSubsystem::TurnTo(double angle)

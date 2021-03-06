@@ -8,15 +8,11 @@ using namespace HoodConstants;
 using namespace std;
 using namespace frc;
 
-HoodSubsystem::HoodSubsystem() 
-    : m_servo(kPWMPort)
-{
-    SmartDashboard::PutNumber("Hood Servo Angle", 0);
-}
+HoodSubsystem::HoodSubsystem() : m_servo(kPWMPort) {}
 
 void HoodSubsystem::Periodic()
 {
-    SmartDashboard::PutNumber("Hood Servo Angle", m_servo.GetAngle());
+    SmartDashboard::PutNumber("D_H_Angle", m_servo.GetAngle());
 }
 
 void HoodSubsystem::Set(double position) 
