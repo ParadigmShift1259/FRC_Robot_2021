@@ -22,6 +22,11 @@
 #include "common/Util.h"
 #include "Logger.h"
 
+// Uncomment to directly set values to each swerve module
+//#define TUNE_MODULES
+// Uncomment to tune Rotation PID for Drive Subsystem
+//#define TUNE_ROTATION
+
 // For each enum here, add a string to c_headerNamesDriveSubsystem
 // and a line like this: 
 //      m_logData[EDriveSubSystemLogData::e???] = ???;
@@ -173,17 +178,17 @@ private:
     /// \name Swerve Modules
     /// The drive subsystem owns all 4 swerve modules
     ///@{
-#ifdef Mk2
+    #ifdef Mk2
     SwerveModule m_frontLeft;
     SwerveModule m_frontRight;
     SwerveModule m_rearRight;
     SwerveModule m_rearLeft;
-#else
+    #else
     SwerveModule2 m_frontLeft;
     SwerveModule2 m_frontRight;
     SwerveModule2 m_rearRight;
     SwerveModule2 m_rearLeft;
-#endif
+    #endif
 
     ///@}
 

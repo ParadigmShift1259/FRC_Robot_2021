@@ -9,15 +9,11 @@ using namespace IntakeConstants;
 using namespace std;
 using namespace frc;
 
-IntakeSubsystem::IntakeSubsystem() 
-    : m_motor(kMotorPort)
-{
-    SmartDashboard::PutNumber("Intake Motor Speed", 0);
-}
+IntakeSubsystem::IntakeSubsystem() : m_motor(kMotorPort) {}
 
 void IntakeSubsystem::Periodic()
 {
-    SmartDashboard::PutNumber("Intake Motor Speed", m_motor.Get());
+    SmartDashboard::PutNumber("D_I_Motor", m_motor.Get());
 }
 
 void IntakeSubsystem::Set(double speed) 
