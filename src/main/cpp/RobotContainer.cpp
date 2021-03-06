@@ -260,55 +260,17 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 */
     // auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(TestTrajLine, config);
     // auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBarrel, config);
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce, config);
-
-    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
-    
-    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    // {
-    //     std::cout << "i " << i;
-    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
-    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
-    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
-    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
-    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
-    // }
-// */
+    // auto exampleTrajectory1 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce1, config);
+    // auto exampleTrajectory2 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce2, config);
+    // auto exampleTrajectory3 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce3, config);
+    // auto exampleTrajectory4 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce4, config);
+    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavSlalom, config);
 
  /*
     auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
         TestTrajCircle2,
         config
     );
-//    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
-    
-    // Transform2d rot90 = Transform2d(Pose2d(0_m,0_m,0_deg), Pose2d(0_m,0_m,90_deg));
-    // Transform2d rot90 = Transform2d(Translation2d(), 90_deg);
-    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    //     {
-    //     std::cout << "pose " << i << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees();
-    //     exampleTrajectory.States()[i].pose.TransformBy(rot90); 
-    //     std::cout << " modified theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() <<  "\n";        
-    //     }
-        
-// */
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavBarrel,
-        config
-    );
-    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
-    
-    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    // {
-    //     std::cout << "i " << i;
-    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
-    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
-    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
-    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
-    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
-    // }
 */
 
     frc::ProfiledPIDController<units::radians> thetaController{
@@ -317,6 +279,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
     thetaController.EnableContinuousInput(units::radian_t(-wpi::math::pi), units::radian_t(wpi::math::pi));
 
+// /* // Comment out on bounce Path
     frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> swerveControllerCommand(
         exampleTrajectory,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
@@ -329,12 +292,78 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );
+// */
+
+/*
+    frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand1(
+        exampleTrajectory1,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        //[this]() { return m_drive.GetCurrentModuleStates(); },                  
+        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        GetDesiredRotation, //Comment out on SwerveControllerCommand1                                                      // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+*/
+
+/*
+    frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand2(
+        exampleTrajectory2,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        //[this]() { return m_drive.GetCurrentModuleStates(); },                  
+        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        GetDesiredRotation, //Comment out on SwerveControllerCommand1                                                      // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+*/
+
+/*
+    frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand3(
+        exampleTrajectory3,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        //[this]() { return m_drive.GetCurrentModuleStates(); },                  
+        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        GetDesiredRotation, //Comment out on SwerveControllerCommand1                                                      // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+*/
+
+/*
+    frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand4(
+        exampleTrajectory4,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        //[this]() { return m_drive.GetCurrentModuleStates(); },                  
+        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        GetDesiredRotation, //Comment out on SwerveControllerCommand1                                                      // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+*/
 
     // Reset odometry to the starting pose of the trajectory
-    m_drive.ResetOdometry(exampleTrajectory.InitialPose());
+    m_drive.ResetOdometry(exampleTrajectory.InitialPose()); //Comment out when running bounce p nath
+    // m_drive.ResetOdometry(exampleTrajectory1.InitialPose());
 
     return new frc2::SequentialCommandGroup(
-        std::move(swerveControllerCommand),
+        std::move(swerveControllerCommand), //Comment out when running bounce path
+        // std::move(getBounceSwerveControllerCommand1),
+        // std::move(getBounceSwerveControllerCommand2),
+        // std::move(getBounceSwerveControllerCommand3),
+        // std::move(getBounceSwerveControllerCommand4),
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),
