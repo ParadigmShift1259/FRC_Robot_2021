@@ -20,7 +20,7 @@
 using namespace ctre::phoenix;
 
 // Uncomment this to use Mk2 swerve drive instead of Mk3 swerve drive
-//#define Mk2
+#define Mk2
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
