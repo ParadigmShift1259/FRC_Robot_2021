@@ -32,6 +32,11 @@
 #include "Constants.h"
 #include "Logger.h"
 
+// Change this definition to load PID values to both drive and angle
+//#define TUNE_MODULE
+// Uncomment this to prevent swerve modules from driving
+//#define DISABLE_DRIVE
+
 using namespace rev;
 using namespace units;
 
@@ -56,24 +61,26 @@ public:
         turnPIDController.SetIZone(m_iz);
         turnPIDController.SetFF(m_ff);
         turnPIDController.SetOutputRange(m_min, m_max);
-        frc::SmartDashboard::PutNumber("Turn P Gain", m_p);
-        frc::SmartDashboard::PutNumber("Turn I Gain", m_i);
-        frc::SmartDashboard::PutNumber("Turn D Gain", m_d);
-        frc::SmartDashboard::PutNumber("Turn I Zone", m_iz);
-        frc::SmartDashboard::PutNumber("Turn Feed Forward", m_ff);
-        frc::SmartDashboard::PutNumber("Turn Max Output", m_max);
-        frc::SmartDashboard::PutNumber("Turn Min Output", m_min);
+        #ifdef TUNE_MODULE
+        frc::SmartDashboard::PutNumber("T_SM_TP", m_p);
+        frc::SmartDashboard::PutNumber("T_SM_TI", m_i);
+        frc::SmartDashboard::PutNumber("T_SM_TD", m_d);
+        frc::SmartDashboard::PutNumber("T_SM_TIZone", m_iz);
+        frc::SmartDashboard::PutNumber("T_SM_TFF", m_ff);
+        frc::SmartDashboard::PutNumber("T_SM_TMax", m_max);
+        frc::SmartDashboard::PutNumber("T_SM_TMin", m_min);
+        #endif
     }
 
     void LoadFromNetworkTable(CANPIDController& turnPIDController)
     {
-        double p = frc::SmartDashboard::GetNumber("Turn P Gain", 0.0);
-        double i = frc::SmartDashboard::GetNumber("Turn I Gain", 0.0);
-        double d = frc::SmartDashboard::GetNumber("Turn D Gain", 0.0);
-        double iz = frc::SmartDashboard::GetNumber("Turn I Zone", 0.0);
-        double ff = frc::SmartDashboard::GetNumber("Turn Feed Forward", 0.0);
-        double max = frc::SmartDashboard::GetNumber("Turn Max Output", 0.0);
-        double min = frc::SmartDashboard::GetNumber("Turn Min Output", 0.0);
+        double p = frc::SmartDashboard::GetNumber("T_SM_TP", 0.0);
+        double i = frc::SmartDashboard::GetNumber("T_SM_TI", 0.0);
+        double d = frc::SmartDashboard::GetNumber("T_SM_TD", 0.0);
+        double iz = frc::SmartDashboard::GetNumber("T_SM_TIZone", 0.0);
+        double ff = frc::SmartDashboard::GetNumber("T_SM_TFF", 0.0);
+        double max = frc::SmartDashboard::GetNumber("T_SM_TMax", 0.0);
+        double min = frc::SmartDashboard::GetNumber("T_SM_TMin", 0.0);
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
         if ((p != m_p)) { turnPIDController.SetP(p); m_p = p; }
@@ -94,7 +101,6 @@ public:
 class DrivePidParams
 {
     double m_p = 0.2;
-    //double m_i = 0.0;
     double m_d = 0.0;
     double m_ff = 0.3;
     double m_max = 1.0;
@@ -104,31 +110,29 @@ public:
    void Load(CANPIDController& drivePIDController)
     {
         drivePIDController.SetP(m_p);
-        // drivePIDController.SetI(m_i);
         drivePIDController.SetD(m_d);
         drivePIDController.SetFF(m_ff);
         drivePIDController.SetOutputRange(m_min, m_max);
-        frc::SmartDashboard::PutNumber("Drive P Gain", m_p);
-        //frc::SmartDashboard::PutNumber("Drive I Gain", m_i);
-        frc::SmartDashboard::PutNumber("Drive D Gain", m_d);
-        frc::SmartDashboard::PutNumber("Drive Feed Forward", m_ff);
-        frc::SmartDashboard::PutNumber("Drive Max Output", m_max);
-        frc::SmartDashboard::PutNumber("Drive Min Output", m_min);
+        #ifdef TUNE_MODULE
+        frc::SmartDashboard::PutNumber("T_SM_DP", m_p);
+        frc::SmartDashboard::PutNumber("T_SM_D", m_d);
+        frc::SmartDashboard::PutNumber("T_SM_DFF", m_ff);
+        frc::SmartDashboard::PutNumber("T_SM_DMax", m_max);
+        frc::SmartDashboard::PutNumber("T_SM_DMin", m_min);
+        #endif
     }
 
     void LoadFromNetworkTable(CANPIDController& drivePIDController)
     {
         // Retrieving drive PID values from SmartDashboard
-        double p = frc::SmartDashboard::GetNumber("Drive P Gain", 0.0);
-        //double i = frc::SmartDashboard::GetNumber("Drive I Gain", 0.0);
-        double d = frc::SmartDashboard::GetNumber("Drive D Gain", 0.0);
-        double ff = frc::SmartDashboard::GetNumber("Drive Feed Forward", 0.0);
-        double max = frc::SmartDashboard::GetNumber("Drive Max Output", 0.0);
-        double min = frc::SmartDashboard::GetNumber("Drive Min Output", 0.0);
+        double p = frc::SmartDashboard::GetNumber("T_SM_DP", 0.0);
+        double d = frc::SmartDashboard::GetNumber("T_SM_DD", 0.0);
+        double ff = frc::SmartDashboard::GetNumber("T_SM_DFF", 0.0);
+        double max = frc::SmartDashboard::GetNumber("T_SM_DMax", 0.0);
+        double min = frc::SmartDashboard::GetNumber("T_SM_DMin", 0.0);
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
         if ((p != m_p)) { drivePIDController.SetP(p); m_p = p; }
-        //if ((i != m_i)) { drivePIDController.SetI(i); m_i = i; }
         if ((d != m_d)) { drivePIDController.SetD(d); m_d = d; }
         if ((ff != m_ff)) { drivePIDController.SetFF(ff); m_ff = ff; }
         

@@ -82,24 +82,16 @@ frc::SwerveModuleState SwerveModule::GetState()
 void SwerveModule::Periodic()
 {
     double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
-    SmartDashboard::PutNumber(m_name, absAngle);
-
-    /* Used for tuning SwerveModule Turn PID
-    double P = SmartDashboard::GetNumber("TEST_TurnP", 0);
-    double I = SmartDashboard::GetNumber("TEST_TurnI", 0);
-    double D = SmartDashboard::GetNumber("TEST_TurnD", 0);
-
-    m_turnPIDController.SetP(P);
-    m_turnPIDController.SetI(I);
-    m_turnPIDController.SetD(D);
-    */
+    SmartDashboard::PutNumber("D_SM " + m_name, absAngle);
 }
 
 void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 {
+    #ifdef TUNE_MODULE
     // Retrieving turn PID values from SmartDashboard
     m_drivePidParams.LoadFromNetworkTable(m_drivePIDController);
     m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
+    #endif
 
     // Find absolute encoder and NEO encoder positions
     double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
@@ -116,13 +108,11 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     // Set position reference of turnPIDController
     double newPosition = currentPosition + minTurnRads;
 
-
-//#define TUNE_ABS_ENC
-#ifdef TUNE_ABS_ENC
+    #ifdef DISABLE_DRIVE
     m_drivePIDController.SetReference(0.0, rev::ControlType::kVelocity);
-#else
+    #else
     m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
-#endif
+    #endif
 
     // Set the angle unless module is coming to a full stop
     if (state.speed.to<double>() != 0.0)
@@ -151,11 +141,6 @@ void SwerveModule::ResetEncoders()
 
 double SwerveModule::VoltageToRadians(double voltage, double offset)
 {
-    //double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
-    //double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
-
-    //SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
-
     double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
 
@@ -212,7 +197,7 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     //TODO: FINISHED ROBOT TUNING
     // Eventually prefer angle 1 always during high speed to prevent 180s
     
-    SmartDashboard::PutNumber("kTestSpeed", GetState().speed.to<double>());
+    SmartDashboard::PutNumber("D_T_SM_Speed", GetState().speed.to<double>());
 
     bOutputReverse = false;
 

@@ -16,9 +16,6 @@ using namespace DriveConstants;
 using namespace std;
 using namespace frc;
 
-//#define TUNE_MODULE
-//#define TUNE_ROTATION
-
 DriveSubsystem::DriveSubsystem(Logger& log)
     : m_log(log)
     , m_logData(c_headerNamesDriveSubsystem, false, "")
@@ -90,7 +87,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
 {
 
-    #ifdef TUNE_MODULE
+    #ifdef TUNE_MODULES
     SmartDashboard::PutNumber("T_D_MFL", 0);
     SmartDashboard::PutNumber("T_D_MFR", 0);
     SmartDashboard::PutNumber("T_D_MRR", 0);
@@ -208,7 +205,7 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
     
-    #ifdef TUNE_MODULE
+    #ifdef TUNE_MODULES
     states[eFrontLeft].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFL", 0.0)));
     states[eFrontRight].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFR", 0.0)));
     states[eRearRight].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MRR", 0.0)));
