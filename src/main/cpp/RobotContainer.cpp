@@ -99,17 +99,17 @@ RobotContainer::RobotContainer(Logger& log)
 
             if (m_fieldRelative)
             {
-                m_drive.RotationDrive(units::meters_per_second_t(xInput), // TO DO: add teleOp const for max speed
-                            units::meters_per_second_t(yInput), // TO DO: add teleOp const for max speed
+                m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed), // TO DO: add teleOp const for max speed
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed), // TO DO: add teleOp const for max speed
                             xRot,
                             yRot,
                             m_fieldRelative);
             }
             else 
             {
-                m_drive.Drive(units::meters_per_second_t(xInput), // TO DO: add teleOp const for max speed
-                            units::meters_per_second_t(yInput), // TO DO: add teleOp const for max speed
-                            units::radians_per_second_t(rotInput),
+                m_drive.Drive(units::meters_per_second_t(xInput /** AutoConstants::kMaxSpeed*/), // TO DO: add teleOp const for max speed
+                            units::meters_per_second_t(yInput /** AutoConstants::kMaxSpeed*/), // TO DO: add teleOp const for max speed
+                            units::radians_per_second_t(rotInput /** AutoConstants::kMaxAngularSpeed*/),
                             m_fieldRelative);
             }
 
@@ -307,9 +307,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );
-*/
 
-/*
     frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand2(
         exampleTrajectory2,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
@@ -322,9 +320,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );
-*/
 
-/*
     frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand3(
         exampleTrajectory3,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
@@ -337,9 +333,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );
-*/
 
-/*
     frc2::SwerveControllerCommand<DriveConstants::kNumSwerveModules> getBounceSwerveControllerCommand4(
         exampleTrajectory4,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
