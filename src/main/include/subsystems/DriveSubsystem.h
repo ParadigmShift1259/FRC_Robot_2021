@@ -114,6 +114,20 @@ public:
     /// \return The pose.
     frc::Pose2d GetPose();
 
+    /// Returns 4 swerve module wheel states to update the odometry with
+    /// \return The 4 swerve module wheel states
+    SwerveModuleStates GetCurrentModuleStates()
+    {
+        SwerveModuleStates sms(
+            m_frontLeft.GetState(),
+            m_frontRight.GetState(),
+            m_rearRight.GetState(),
+            m_rearLeft.GetState()
+        );
+
+        return sms;
+    }
+
     /// Resets the odometry to the specified pose.
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
@@ -139,18 +153,6 @@ public:
         frc::Translation2d(-kWheelBase / 2, -kTrackWidth / 2)};   // -x, -y RR
 
 private:    
-    /// Get all 4 swerve module wheel speed to update the odometry with
-    SwerveModuleStates getCurrentWheelSpeeds()
-    {
-        SwerveModuleStates sms(
-            m_frontLeft.GetState(),
-            m_frontRight.GetState(),
-            m_rearRight.GetState(),
-            m_rearLeft.GetState()
-        );
-
-        return sms;
-    }
 
     /// \name Logging helpers
     /// Log important data to a file on the Roborio
