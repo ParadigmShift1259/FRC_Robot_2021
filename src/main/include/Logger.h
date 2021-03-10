@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 const std::string c_logFileBasePath = "/tmp/logfile";
 const std::string c_logFileExtension = ".csv";
@@ -178,17 +179,33 @@ class Logger
 
       if (!ints.empty() && !doubles.empty())
       {
-        logMsg(eInfo, source, m_formattedIntData.c_str(), m_formattedDoubleData.c_str());
+        m_formattedData = m_formattedIntData + m_formattedDoubleData;
       }
       else if (!ints.empty())
       {
-        logMsg(eInfo, source, m_formattedIntData.c_str());
+        m_formattedData = m_formattedIntData;
       }
       else
       {
-        logMsg(eInfo, source, m_formattedDoubleData.c_str());
+        m_formattedData = m_formattedDoubleData;
       }
-      
+
+      bool bDuplicateLine = false;
+      auto prev = m_duplicateMap.find(source);
+      if (prev == m_duplicateMap. end())
+      {
+          m_duplicateMap.insert(std::make_pair(source, m_formattedData));
+      }
+      else
+      {
+         bDuplicateLine = (prev->second == m_formattedData);
+      }
+
+      if (!bDuplicateLine)
+      {
+        logMsg(eInfo, source, m_formattedData.c_str());
+      }
+
       // Only update the dashboard once a second
       if (m_timer.HasPeriodPassed(1.0))
       {
@@ -214,8 +231,10 @@ class Logger
     void formatData(const vector<double>& data);
     void formatData(const vector<int>& data);
 
-    string m_formattedIntData;
-    string m_formattedDoubleData;
+    string m_formattedIntData;        //!< The vector of int as a comma delimited string
+    string m_formattedDoubleData;     //!< The vector of int as a comma delimited string
+    string m_formattedData;           //!< The final comma delimited string
+    using DuplicateCheckMap = std::unordered_map<std::string, std::string>;
+    DuplicateCheckMap m_duplicateMap; //!< Save the previous int string for duplicate checking
 };
-
 #endif /* SRC_Logger_H_ */

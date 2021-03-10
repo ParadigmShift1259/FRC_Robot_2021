@@ -115,7 +115,7 @@ void SwerveControllerCommand2<NumModules>::Execute() {
   double err_x = m_desiredState.pose.X().to<double>() - m_pose().X().to<double>();
   double err_y = m_desiredState.pose.Y().to<double>() - m_pose().Y().to<double>();
   double err_theta = m_desiredState.pose.Rotation().Degrees().to<double>() - m_pose().Rotation().Degrees().to<double>();
-  printf("t=%.3f: speed_cmd=%.3f, x err=%.3f, y err=%.3f, theta err=%.3f\n", curTime.to<double>(), m_desiredState.velocity, err_x, err_y, err_theta);
+  printf("t=%.3f: speed_cmd=%.3f, x err=%.3f, y err=%.3f, theta err=%.3f\n", curTime.to<double>(), m_desiredState.velocity.to<double>(), err_x, err_y, err_theta);
 
   // m_logData[ESwerveCtrlrCmdLogData::eTimeStep] = state.angle.Radians().to<double>();
   // m_logData[ESwerveCtrlrCmdLogData::eDesiredX] = m_desiredState.pose.X().to<double>();
