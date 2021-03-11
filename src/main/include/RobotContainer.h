@@ -11,6 +11,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/trajectory/Trajectory.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/PIDCommand.h>
@@ -89,6 +90,8 @@ private:
     nt::NetworkTableEntry m_inputRotentry;
 
     void ConfigureButtonBindings();
+
+    void PrintTrajectory(frc::Trajectory& trajectory);
 
     bool m_fieldRelative = false;
 
