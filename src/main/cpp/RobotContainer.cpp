@@ -252,7 +252,7 @@ void RobotContainer::ConfigureButtonBindings()
 
     // Runs sequence of tests for motors based on iterator and a power
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
-        TestCommands()
+        CyclerIntakeAgitation(&m_intake, &m_cycler)
     );
 
     #endif 
