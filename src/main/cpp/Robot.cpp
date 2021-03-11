@@ -85,20 +85,6 @@ void Robot::TeleopInit()
         m_autonomousCommand->Cancel();
         m_autonomousCommand = nullptr;
     }
-
-    /* Used for Debugging RotationDrive PID and SwerveModule Turn PID
-
-    SmartDashboard::PutNumber("kRotationP", DriveConstants::kRotationP);
-    SmartDashboard::PutNumber("kRotationI", DriveConstants::kRotationI);
-    SmartDashboard::PutNumber("kRotationD", DriveConstants::kRotationD);
-    SmartDashboard::PutNumber("kMaxRotation", DriveConstants::kMaxAbsoluteRotationSpeed);
-    SmartDashboard::PutNumber("kMaxRotationSpeed", DriveConstants::kMaxAbsoluteTurnableSpeed);
-    
-    SmartDashboard::PutNumber("TEST_TurnP", DriveConstants::kTurnP);
-    SmartDashboard::PutNumber("TEST_TurnI", DriveConstants::kTurnI);
-    SmartDashboard::PutNumber("TEST_TurnD", DriveConstants::kTurnD);
-
-    */
 }
 
 /**
