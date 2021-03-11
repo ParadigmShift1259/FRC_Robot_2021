@@ -51,8 +51,8 @@ RobotContainer::RobotContainer(Logger& log)
     m_testNumber = 0;
     m_testPower = 0;
 
-    SmartDashboard::PutNumber("TEST_testNumber", m_testNumber);
-    SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+    SmartDashboard::PutNumber("TEST_R_number", m_testNumber);
+    SmartDashboard::PutNumber("TEST_R_power", m_testPower);
 }
 
 void RobotContainer::Periodic()
@@ -237,7 +237,7 @@ void RobotContainer::ConfigureButtonBindings()
         frc2::InstantCommand(    
         [this] {
             m_testPower += 0.05;
-            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+            SmartDashboard::PutNumber("TEST_R_power", m_testPower);
         },
         {}
         )
@@ -247,7 +247,7 @@ void RobotContainer::ConfigureButtonBindings()
         frc2::InstantCommand(    
         [this] {
             m_testPower -= 0.05;
-            SmartDashboard::PutNumber("TEST_testPower", m_testPower);
+            SmartDashboard::PutNumber("TEST_R_power", m_testPower);
         },
         {}
         )

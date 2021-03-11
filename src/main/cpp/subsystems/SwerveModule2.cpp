@@ -78,23 +78,7 @@ frc::SwerveModuleState SwerveModule2::GetState()
 void SwerveModule2::Periodic()
 {
     EncoderToRadians();
-    SmartDashboard::PutNumber("TEST_Relative_Encoder" + m_name, m_turnRelativeEncoder.GetPosition());
-    SmartDashboard::PutNumber("TEST_Absolute_Encoder" + m_name, m_absAngle);
-    SmartDashboard::PutNumber("TEST_AbsRel_EncDiff" + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
-    SmartDashboard::PutNumber("Drive Encoder MPS" + m_name, CalcMetersPerSec().to<double>());
-    SmartDashboard::PutNumber("Drive Encoder TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
 
-/*
-    if (fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()) > 0.1 && 
-        fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()) < 2 * wpi::math::pi - 0.1)
-    {
-        printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-                m_absAngle, 
-                m_turnRelativeEncoder.GetPosition());
-        m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
-    }
-*/
     if (m_timer.Get() < 5)
     {
         printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
@@ -103,13 +87,21 @@ void SwerveModule2::Periodic()
                 m_turnRelativeEncoder.GetPosition());
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
+
+    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
+    SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
+    SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
+    SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 {
+    #ifdef TUNE_MODULE
     // Retrieving turn PID values from SmartDashboard
     m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
     m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
+    #endif
 
     // Find absolute encoder and NEO encoder positions
     //EncoderToRadians();
@@ -121,36 +113,19 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
     double direction = 1.0; // Sent to TalonFX
     if (bOutputReverse)
         direction = -1.0;
-    // m_driveMotor.SetInverted(bOutputReverse);
 
     // Set position reference of turnPIDController
     double newPosition = currentPosition + minTurnRads;
 
-//#define TUNE_ABS_ENC
-#ifdef TUNE_ABS_ENC
+    #ifdef DISABLE_DRIVE
     m_driveMotor.Set(TalonFXControlMode::Velocity, 0.0);
-#endif
-// Set velocity reference of drivePIDController
-#ifndef TUNE_ABS_ENC    // Normal operation
+    #else
     m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
-#endif
+    #endif
 
     // Set the angle unless module is coming to a full stop
     if (state.speed.to<double>() != 0.0)
-    {
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
-    }
-
-    // if (m_name == "FrontLeft")
-    // {
-    //     SmartDashboard::PutNumber("FL_DesiredAng", state.angle.Radians().to<double>());
-    //     SmartDashboard::PutNumber("FL_AbsAng", m_absAngle);
-    //     SmartDashboard::PutNumber("FL_MinTurn", minTurnRads);
-    //     SmartDashboard::PutNumber("FL_NeoPidRef", newPosition);
-    //     SmartDashboard::PutNumber("FL_NeoEnc", currentPosition);
-    //     SmartDashboard::PutNumber("FL_NeoEncVel", m_turnRelativeEncoder.GetVelocity());
-    //     SmartDashboard::PutNumber("FL_AppliedOut", m_turningMotor.GetAppliedOutput());
-    // }
 
     const std::string FuncModule = "Swerve" + m_name;
     m_logData[ESwerveModuleLogData2::eDesiredAngle] = state.angle.Radians().to<double>();
@@ -174,11 +149,8 @@ void SwerveModule2::ResetEncoders()
 void SwerveModule2::EncoderToRadians()
 {
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
-
-    SmartDashboard::PutNumber("TEST_Pulse Width " + m_name, pulseWidth);
-
-    double angle = fmod(pulseWidth * DriveConstants::kPulseWidthToRadians - m_offset + Math::kTau, Math::kTau);
     m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + Math::kTau, Math::kTau);
+    SmartDashboard::PutNumber("D_SM_PW " + m_name, pulseWidth);
     // Convert CW to CCW? m_absAngle = Math::kTau - m_absAngle;
 }
 
