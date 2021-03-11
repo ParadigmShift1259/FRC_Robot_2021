@@ -269,8 +269,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 2000; 
-    constexpr double kRampRPM = 15;
+    constexpr double kIdleRPM = 0;
 }
 
 // Turret Subsystem Constants
@@ -315,7 +314,7 @@ namespace TurretConstants
 namespace HoodConstants
 {
     /// PWM Port for hood servo
-    constexpr int kPWMPort = 13;
+    constexpr int kPWMPort = 51;
     constexpr double kTestServoSpeed = 0.14;
 
 }
@@ -328,38 +327,18 @@ namespace CyclerConstants
 
     constexpr double kFeederSpeed = 0.20;
     constexpr double kTurnTableSpeed = 0.400;
+    constexpr double kTurnTableHoneSpeed = 0.150;
+
+    constexpr double kSensorInvert = true;
 
     // Time to go from 0 to full throttle
     constexpr double kTurnTableRampRate = 0.75;
 
     constexpr double kTimePassed = 0.5;
 
-    constexpr double kFeederTimeout = 10;
-    constexpr double kFeederTimeoutAlt = 15;
-
-    constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.175;
-
     constexpr double kTimeout = 30;
     constexpr double kTurnTableInverted = false;
     constexpr double kFeederInverted = true;
-
-    constexpr double kDegreeStopRange = 0.125;
-
-    constexpr double kPulley = 2.7305;
-    constexpr double kSpinner = 29.845;
-
-    constexpr double kMotorRevPerRev = kPulley / kSpinner;
-    constexpr double kTicksPerRev = 4096.0;
-    constexpr double kDegreesPerRev = 360.0;
-    constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
-
-    // Maximum rotation of the turntable relative to the turntable, in degrees
-    constexpr double kMinAngle = 0;
-    constexpr double kMaxAngle = 270;
-
-    // initial configured angle of the turntable relative to the turntable, in degrees
-    constexpr double kStartingPositionDegrees = 135;
 }
 
 // Vision Subsystem Constants
@@ -378,7 +357,7 @@ namespace VisionConstants
 // Climber Subsystem constants
 namespace ClimberConstants
 {
-    constexpr double kMotorPort = 13;   // 0
+    constexpr double kMotorPort = 41;   // 0
     constexpr double kMotorReverseConstant = 1;
 
 }

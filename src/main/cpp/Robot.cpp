@@ -11,7 +11,8 @@
 #include <frc2/command/CommandScheduler.h>
 
 Robot::Robot()
-    : m_log(false)
+    : TimedRobot(0.05)
+    , m_log(false)
     , m_container(m_log)
 {
 }

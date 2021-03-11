@@ -34,7 +34,7 @@ FlywheelSubsystem::FlywheelSubsystem()
 
     m_flywheelencoder.SetVelocityConversionFactor(kWheelRevPerMotorRev);
 
-    m_setpoint = 0;
+    m_setpoint = kIdleRPM;
 
     #ifdef TUNE_FLYWHEEL
     SmartDashboard::PutNumber("T_F_S", 0);
@@ -66,18 +66,21 @@ void FlywheelSubsystem::Periodic()
     #endif
     SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
     SmartDashboard::PutNumber("T_F_At_Target", isAtRPM());
+    CalculateRPM();
 }
 
-void FlywheelSubsystem::SetRPM(double rpm)
-{
-    // Ignore PIDF feedforward and substitute WPILib's SimpleMotorFeedforward class
-    double FF = m_flywheelFF.Calculate(rpm / kSecondsPerMinute * 1_mps).to<double>();
-    m_flywheelPID.SetFF(0);
-
-    m_setpoint = rpm;
-    m_flywheelPID.SetReference(m_setpoint, ControlType::kVelocity, 0, FF);
+void FlywheelSubsystem::SetRPM(double setpoint) {
+    m_setpoint = setpoint;
 }
 
 bool FlywheelSubsystem::isAtRPM() {
     return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) <= kAllowedError;
+}
+
+void FlywheelSubsystem::CalculateRPM()
+{
+    // Ignore PIDF feedforward and substitute WPILib's SimpleMotorFeedforward class
+    double FF = m_flywheelFF.Calculate(m_setpoint / kSecondsPerMinute * 1_mps).to<double>();
+    m_flywheelPID.SetFF(0);
+    m_flywheelPID.SetReference(m_setpoint, ControlType::kVelocity, 0, FF);
 }
