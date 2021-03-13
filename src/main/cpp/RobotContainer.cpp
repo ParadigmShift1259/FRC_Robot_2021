@@ -28,7 +28,7 @@
 
 using namespace DriveConstants;
 
-RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
+RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
     : m_log(log)
     , m_drive(log, lowPrioritySkipCount)
     , m_flywheel()
@@ -57,8 +57,11 @@ RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
 
 void RobotContainer::Periodic()
 {
-    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    if (m_lowPrioritySkipCount % 5 == 0)    // 10 per second
+    {
+        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    }
 }
 
 void RobotContainer::SetDefaultCommands()

@@ -75,7 +75,7 @@ frc::SwerveModuleState SwerveModule2::GetState()
     return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
 }
 
-void SwerveModule2::Periodic(int& lowPrioritySkipCount)
+void SwerveModule2::Periodic(const int& lowPrioritySkipCount)
 {
     EncoderToRadians();
 

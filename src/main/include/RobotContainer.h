@@ -65,7 +65,7 @@
 class RobotContainer
 {
 public:
-    RobotContainer(Logger& log, int& lowPrioritySkipCount);
+    RobotContainer(Logger& log, const int& lowPrioritySkipCount);
 
     void Periodic();
 

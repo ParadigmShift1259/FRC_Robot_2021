@@ -16,7 +16,7 @@ using namespace DriveConstants;
 using namespace std;
 using namespace frc;
 
-DriveSubsystem::DriveSubsystem(Logger& log, int& lowPrioritySkipCount)
+DriveSubsystem::DriveSubsystem(Logger& log, const int& lowPrioritySkipCount)
     : m_log(log)
     , m_logData(c_headerNamesDriveSubsystem, false, "")
     , m_frontLeft
@@ -127,7 +127,7 @@ void DriveSubsystem::Periodic()
     m_rearRight.Periodic(m_lowPrioritySkipCount);
     m_rearLeft.Periodic(m_lowPrioritySkipCount);
 
-    if (m_lowPrioritySkipCount % 10 == 0)
+    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
     {
         m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
         m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();

@@ -10,7 +10,7 @@ class IntakeSubsystem : public frc2::SubsystemBase
 {
 public:
 
-    IntakeSubsystem();
+    IntakeSubsystem(const int& m_lowPrioritySkipCount);
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -21,4 +21,5 @@ public:
 
 private:    
     frc::Spark m_motor;
+    const int& m_lowPrioritySkipCount;
 };

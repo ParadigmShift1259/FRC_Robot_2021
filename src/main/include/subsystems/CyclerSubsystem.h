@@ -28,7 +28,7 @@ using namespace rev;
 class CyclerSubsystem : public frc2::SubsystemBase
 {
 public:
-    CyclerSubsystem();
+    CyclerSubsystem(const int& lowPrioritySkipCount);
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -55,4 +55,5 @@ private:
     TalonSRX m_turntablemotor;
     DigitalInput m_sensor;
     bool m_triggeredsensor;
+    const int& m_lowPrioritySkipCount;
 };
