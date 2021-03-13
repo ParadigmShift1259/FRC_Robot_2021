@@ -4,7 +4,10 @@
 
 using namespace IntakeConstants;
 
-IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem, double power) : m_intake(subsystem) {
+IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem, double power) 
+: m_intake(subsystem)
+, power(power)
+{
   AddRequirements({subsystem});
 }
 

@@ -5,7 +5,7 @@ CyclerIntakeAgitation::CyclerIntakeAgitation(IntakeSubsystem* intake, CyclerSubs
 {
   AddCommands(
     // Running intake
-    IntakeIngest(intake, power);
+    IntakeIngest(intake, power),
     // Agitate Cycler
     CyclerAgitation(cycler)
   );
