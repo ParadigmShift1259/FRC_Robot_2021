@@ -16,7 +16,7 @@ using namespace DriveConstants;
 using namespace std;
 using namespace frc;
 
-DriveSubsystem::DriveSubsystem(Logger& log)
+DriveSubsystem::DriveSubsystem(Logger& log, int& lowPrioritySkipCount)
     : m_log(log)
     , m_logData(c_headerNamesDriveSubsystem, false, "")
     , m_frontLeft
@@ -85,6 +85,7 @@ DriveSubsystem::DriveSubsystem(Logger& log)
     , m_canifier(DriveConstants::kCanifierID)
     , m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
+    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
 
     #ifdef TUNE_MODULES
@@ -121,19 +122,22 @@ void DriveSubsystem::Periodic()
    
     auto pose = m_odometry.GetPose();
 
-    m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
-    m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
-    m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
-    m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
-    m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
+    m_frontLeft.Periodic(m_lowPrioritySkipCount);
+    m_frontRight.Periodic(m_lowPrioritySkipCount);
+    m_rearRight.Periodic(m_lowPrioritySkipCount);
+    m_rearLeft.Periodic(m_lowPrioritySkipCount);
 
-    m_frontLeft.Periodic();
-    m_frontRight.Periodic();
-    m_rearRight.Periodic();
-    m_rearLeft.Periodic();
+    if (m_lowPrioritySkipCount % 10 == 0)
+    {
+        m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
+        m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
+        m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
+        m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
+        m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
+        m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
-    SmartDashboard::PutNumber("D_D_Rot", GetHeading());
+        SmartDashboard::PutNumber("D_D_Rot", GetHeading());
+    }
 }
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed

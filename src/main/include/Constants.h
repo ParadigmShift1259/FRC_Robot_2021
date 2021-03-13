@@ -44,19 +44,19 @@ namespace DriveConstants
     ///@{
     /// CAN IDs for swerve modules
 
-    constexpr int kCanifierID = 0;
+    constexpr int kCanifierID = 0;                       //!< CANifier CAN ID (for absolute encoder PWM inputs)
     
-    constexpr int kFrontLeftDriveMotorPort    = 1;          
-    constexpr int kFrontLeftTurningMotorPort  = 2;
+    constexpr int kFrontLeftDriveMotorPort    = 1;       //!< Front Left Drive CAN ID (TalonFX)   
+    constexpr int kFrontLeftTurningMotorPort  = 2;       //!< Front Left Turn CAN ID (SparkMAX)   
 
-    constexpr int kFrontRightDriveMotorPort   = 3;
-    constexpr int kFrontRightTurningMotorPort = 4;
+    constexpr int kFrontRightDriveMotorPort   = 3;       //!< Front Right Drive CAN ID (TalonFX)   
+    constexpr int kFrontRightTurningMotorPort = 4;       //!< Front Right Turn CAN ID (SparkMAX)
 
-    constexpr int kRearRightDriveMotorPort    = 5;
-    constexpr int kRearRightTurningMotorPort  = 6;
+    constexpr int kRearRightDriveMotorPort    = 5;       //!< Rear Right Drive CAN ID (TalonFX)   
+    constexpr int kRearRightTurningMotorPort  = 6;       //!< Rear Right Turn CAN ID (SparkMAX)
 
-    constexpr int kRearLeftDriveMotorPort     = 7;
-    constexpr int kRearLeftTurningMotorPort   = 8;
+    constexpr int kRearLeftDriveMotorPort     = 7;       //!< Rear Left Drive CAN ID (TalonFX)   
+    constexpr int kRearLeftTurningMotorPort   = 8;       //!< Rear Left Turn CAN ID (SparkMAX)
     ///@}
 
     /// \name Canifier PWM channels
@@ -231,7 +231,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 10;   // 0
+    constexpr double kMotorPort = 10;   // Intake rollers PWM channel (Spark)
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -243,7 +243,7 @@ namespace IntakeConstants
 // Flywheel Subsystem constants
 namespace FlywheelConstants
 {
-    constexpr double kMotorPort = 20;
+    constexpr double kMotorPort = 20;       //!< Flywheel CAN ID (SparkMAX)
 
     constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
@@ -269,14 +269,13 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 2000; 
-    constexpr double kRampRPM = 15;
+    constexpr double kIdleRPM = 0;
 }
 
 // Turret Subsystem Constants
 namespace TurretConstants
 {
-    constexpr double kMotorPort = 11;
+    constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
     constexpr double kP = 0.14114;
     constexpr double kI = 0.00085;
@@ -315,7 +314,7 @@ namespace TurretConstants
 namespace HoodConstants
 {
     /// PWM Port for hood servo
-    constexpr int kPWMPort = 13;
+    constexpr int kPWMPort = 9;                //!< Hood servo PWM channel (not installed, yet)
     constexpr double kTestServoSpeed = 0.14;
 
 }
@@ -323,43 +322,23 @@ namespace HoodConstants
 // Cycler Subsystem Constants
 namespace CyclerConstants
 {
-    constexpr double kFeederPort = 30;
-    constexpr double kTurnTablePort = 31;
+    constexpr double kFeederPort = 30;      //!< Feeder CAN ID (SparkMAX)
+    constexpr double kTurnTablePort = 31;   //!< Turn table CAN ID (TalonSRX)
 
     constexpr double kFeederSpeed = 0.20;
     constexpr double kTurnTableSpeed = 0.400;
+    constexpr double kTurnTableHoneSpeed = 0.150;
+
+    constexpr double kSensorInvert = true;
 
     // Time to go from 0 to full throttle
     constexpr double kTurnTableRampRate = 0.75;
 
     constexpr double kTimePassed = 0.5;
 
-    constexpr double kFeederTimeout = 10;
-    constexpr double kFeederTimeoutAlt = 15;
-
-    constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.175;
-
     constexpr double kTimeout = 30;
     constexpr double kTurnTableInverted = false;
     constexpr double kFeederInverted = true;
-
-    constexpr double kDegreeStopRange = 0.125;
-
-    constexpr double kPulley = 2.7305;
-    constexpr double kSpinner = 29.845;
-
-    constexpr double kMotorRevPerRev = kPulley / kSpinner;
-    constexpr double kTicksPerRev = 4096.0;
-    constexpr double kDegreesPerRev = 360.0;
-    constexpr double kRadiansPerRev = wpi::math::pi * 2.0;
-
-    // Maximum rotation of the turntable relative to the turntable, in degrees
-    constexpr double kMinAngle = 0;
-    constexpr double kMaxAngle = 270;
-
-    // initial configured angle of the turntable relative to the turntable, in degrees
-    constexpr double kStartingPositionDegrees = 135;
 }
 
 // Vision Subsystem Constants
@@ -378,7 +357,7 @@ namespace VisionConstants
 // Climber Subsystem constants
 namespace ClimberConstants
 {
-    constexpr double kMotorPort = 13;   // 0
+    constexpr double kMotorPort = 41;   // Climber CAN ID (TalonSRX? not installed)
     constexpr double kMotorReverseConstant = 1;
 
 }

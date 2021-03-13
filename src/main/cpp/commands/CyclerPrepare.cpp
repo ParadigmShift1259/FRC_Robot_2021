@@ -7,27 +7,26 @@ CyclerPrepare::CyclerPrepare(CyclerSubsystem* subsystem, bool* cyclerready)
  : m_cycler(subsystem)
  , m_cyclerready(cyclerready)
 {
-  AddRequirements({subsystem});
+    AddRequirements({subsystem});
+}
+
+void CyclerPrepare::Initialize() {
+    m_cycler->StartDetection();
 }
 
 void CyclerPrepare::Execute() {
-    // Sets the cycler to rotate until the paddle position is at the feeder position
-    // m_cycler->SetPaddlePosition();
-    if (fmod(m_cycler->GetAngle(), 360.0) > 2 || fmod(m_cycler->GetAngle(), 360.0) < -2) {
-        m_cycler->SetTurnTable(kTurnTableSpeed);
-        m_cycler->SetFeeder(0);
-    }
-
+    m_cycler->SetTurnTable(kTurnTableHoneSpeed);
+    m_cycler->SetFeeder(0);
 }
 
 bool CyclerPrepare::IsFinished() {
-    // m_cycler->AtSetpoint();
-    return fmod(m_cycler->GetAngle(), 360.0) < 2 || fmod(m_cycler->GetAngle(), 360.0) > -2;
+    return m_cycler->AtPosition();
 }
 
 void CyclerPrepare::End(bool interrupted) {
     if (!interrupted) {
-        *m_cyclerready = true;
+        //*m_cyclerready = true;
+        m_cycler->ResetSensor();
         m_cycler->SetFeeder(0);
         m_cycler->SetTurnTable(0);
     }

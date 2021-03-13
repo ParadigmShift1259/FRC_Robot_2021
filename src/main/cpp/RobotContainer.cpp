@@ -13,7 +13,7 @@
 
 // Commenting this out removes subsystem CAN errors
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
-#define SUBSYSTEMS
+//#define SUBSYSTEMS
 
 #ifdef PATHS
 #include "AutoNavBarrel.h"
@@ -28,10 +28,9 @@
 
 using namespace DriveConstants;
 
-RobotContainer::RobotContainer(Logger& log)
+RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
     : m_log(log)
-    , m_drive(log)
-#ifdef SUBSYSTEMS
+    , m_drive(log, lowPrioritySkipCount)
     , m_flywheel()
     , m_turret()
     // , m_hood()
@@ -39,7 +38,7 @@ RobotContainer::RobotContainer(Logger& log)
     , m_cycler()
     // , m_vision()
     // , m_climber()
-#endif
+    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
@@ -57,15 +56,16 @@ RobotContainer::RobotContainer(Logger& log)
 
 void RobotContainer::Periodic()
 {
-    m_testNumber = (int) SmartDashboard::GetNumber("TEST_R_number", 0);
-    m_testPower = SmartDashboard::GetNumber("TEST_R_power", 0);
-    m_drive.Periodic();
-    m_cycler.Periodic();
+    if (m_lowPrioritySkipCount % 10 == 0)
+    {
+        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    }
 }
 
 void RobotContainer::SetDefaultCommands()
 {
-        m_drive.SetDefaultCommand(frc2::RunCommand(
+    m_drive.SetDefaultCommand(frc2::RunCommand(
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
@@ -132,21 +132,11 @@ void RobotContainer::SetDefaultCommands()
     //     )
     // );
 
-    #ifdef SUBSYSTEMS
-
-    // m_turret.SetDefaultCommand(
-    //     frc2::RunCommand(
-    //         [this] {
-    //             m_turret.TurnTo(45);
-    //         }, {&m_turret}
-    //     )
-    // );
-
-    m_flywheel.SetDefaultCommand(
+    m_turret.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
-                m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
-            }, {&m_flywheel}
+                m_turret.TurnTo(45);
+            }, {&m_turret}
         )
     );
 
@@ -166,11 +156,22 @@ void RobotContainer::SetDefaultCommands()
     //     )
     // );
 
-    // m_cycler.SetDefaultCommand(
-    //     CyclerAgitation(&m_cycler)
-    // );
+    m_intake.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_intake.Set(0);
+            }, {&m_intake}
+        )
+    );
 
-    #endif
+    m_cycler.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_cycler.SetFeeder(0);
+                m_cycler.SetTurnTable(0);
+            }, {&m_cycler}
+        )
+    );
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
     m_inputXentry = tab.Add("X", 0).GetEntry();
@@ -227,8 +228,6 @@ void RobotContainer::ConfigureButtonBindings()
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
 
-    #ifdef SUBSYSTEMS
-
     // Increments / Decrements a test power value for TestCommands()
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
         frc2::InstantCommand(    
@@ -250,132 +249,92 @@ void RobotContainer::ConfigureButtonBindings()
         )
     );
 
+    static bool temporaryBoolean = false;
+
     // Runs sequence of tests for motors based on iterator and a power
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
-        TestCommands()
-    );
-
-    #endif 
-
-    /*
-
-    double c_buttonInputSpeed = 0.5;
-    units::second_t c_buttonInputTime = 1.25_s;
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
-        frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
-                        units::meters_per_second_t(0),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
-
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
-            frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(-c_buttonInputSpeed),
-                        units::meters_per_second_t(0),
-                        units::radians_per_second_t(0),
-                        false);
+        /*
+        frc2::InstantCommand(    
+            [this] {
+                printf("scheduling flywheel RPM ONE TIME\n");
+                m_flywheel.SetRPM(m_testPower * 1000.0);
             },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kX).WhenPressed(
-            frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(0),
-                        units::meters_per_second_t(c_buttonInputSpeed),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
-
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenPressed(
-            frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(0),
-                        units::meters_per_second_t(-c_buttonInputSpeed),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
-    */
+            {&m_flywheel}
+        )*/
+        CyclerPrepare(&m_cycler, &temporaryBoolean)
+    );
 }
 
 frc2::InstantCommand RobotContainer::TestCommands()
 {
-    return
-    frc2::InstantCommand(    
-        [this] {
-            m_cycler.SetFeeder(CyclerConstants::kFeederSpeed);
-            m_cycler.SetTurnTable(CyclerConstants::kTurnTableSpeed);
-        },
-        {&m_cycler, &m_flywheel}
-    );
-    switch(m_testNumber) {
-    case 0:
-        return 
-        frc2::InstantCommand(    
-            [this] {
-                m_intake.Set(m_testPower);
-            },
-            {&m_intake}
-        );
-    case 1:
-        return
-        frc2::InstantCommand(    
-            [this] {
-                m_cycler.SetFeeder(m_testPower);
-            },
-            {&m_cycler}
-        );
-    case 2:
-        return 
-        frc2::InstantCommand(    
-            [this] {
-                m_cycler.SetTurnTable(m_testPower);
-            },
-            {&m_cycler}
-        );
-    case 3:
-        return 
-        frc2::InstantCommand(    
-            [this] {
-                m_flywheel.SetRPM(m_testPower * 1000.0);
-            },
-            {&m_flywheel}
-        );
-        break;
-    case 4:
-        return 
-        frc2::InstantCommand(    
-            [this] {
-                m_hood.Set(m_testPower);
-            },
-            {&m_hood}
-        );
-        break;
-    case 5:
-        return
-        frc2::InstantCommand(    
-            [this] {
-                m_climber.Run(m_testPower);
-            },
-            {&m_climber}
-        );
-    }
+    // printf("%d", (int) SmartDashboard::GetNumber("TEST_testNumber", 0));
+    // m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+
+    // switch(m_testNumber) {
+    // case 0:
+    //     printf("case 0");
+    //     return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_intake.Set(m_testPower);
+    //         },
+    //         {&m_intake}
+    //     );
+    // case 1:
+    //     printf("case 1");
+    //     return
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_cycler.SetFeeder(m_testPower);
+    //         },
+    //         {&m_cycler}
+    //     );
+    // case 2:
+    //     printf("case 2");
+    //     return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_cycler.SetTurnTable(m_testPower);
+    //         },
+    //         {&m_cycler}
+    //     );
+    // case 3:
+    //     printf("case 3");
+    //     return
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_flywheel.SetRPM(m_testPower * 1000.0);
+    //         },
+    //         {&m_flywheel}
+    //     );
+    //     break;
+    // case 4:
+    //     printf("case 4");
+    //     return 
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_hood.Set(m_testPower);
+    //         },
+    //         {&m_hood}
+    //     );
+    //     break;
+    // case 5:
+    //     printf("case 5");
+    //     return
+    //     frc2::InstantCommand(    
+    //         [this] {
+    //             m_climber.Run(m_testPower);
+    //         },
+    //         {&m_climber}
+    //     );
+    // }
+    // printf("Default");
     return 
         frc2::InstantCommand(    
             [this] {
-                m_intake.Set(m_testPower);
+                // m_intake.Set(m_testPower);
             },
-            {&m_intake}
+            {/*&m_intake*/}
         );
 }
 

@@ -9,10 +9,12 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
+#include <frc/Watchdog.h>
 
 Robot::Robot()
+    //: TimedRobot(0.1_s)
     : m_log(false)
-    , m_container(m_log)
+    , m_container(m_log, m_lowPrioritySkipCount)
 {
 }
 
@@ -31,6 +33,7 @@ void Robot::RobotInit()
 void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
+    m_lowPrioritySkipCount++;
     m_container.Periodic();
 }
 
@@ -47,7 +50,7 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    m_container.Periodic();
+    //m_container.Periodic();
 }
 
 /**
