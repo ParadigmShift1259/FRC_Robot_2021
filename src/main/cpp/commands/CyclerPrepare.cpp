@@ -25,7 +25,7 @@ bool CyclerPrepare::IsFinished() {
 
 void CyclerPrepare::End(bool interrupted) {
     if (!interrupted) {
-        //*m_cyclerready = true;
+        *m_cyclerready = true;
         m_cycler->ResetSensor();
         m_cycler->SetFeeder(0);
         m_cycler->SetTurnTable(0);

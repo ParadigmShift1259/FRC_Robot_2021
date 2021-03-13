@@ -4,9 +4,9 @@
 
 using namespace IntakeConstants;
 
-IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem, double power) 
+IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem, bool* m_cyclerready) 
 : m_intake(subsystem)
-, power(power)
+, m_cyclerready(m_cyclerready)
 {
   printf("Initailized Intake Ingest command");
   AddRequirements({subsystem});
@@ -14,5 +14,6 @@ IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem, double power)
 
 void IntakeIngest::Execute() {
     printf("Running intake");
+    *m_cyclerready = false;
     m_intake->Set(kIngestHigh);
 }

@@ -91,11 +91,11 @@ private:
     DriveSubsystem m_drive;
     FlywheelSubsystem m_flywheel;
     TurretSubsystem m_turret;
-    // HoodSubsystem m_hood;
+    HoodSubsystem m_hood;
     IntakeSubsystem m_intake;
     CyclerSubsystem m_cycler;
-    //VisionSubsystem m_vision;
-    //ClimberSubsystem m_climber;
+    VisionSubsystem m_vision;
+    // ClimberSubsystem m_climber;
 
     // m_units::meters_per_second_t m_xInput;      //!< Last x input value
     // units::meters_per_second_t m_yInput;        //!< Last y input value
@@ -117,4 +117,5 @@ private:
     int m_testNumber;
     double m_testPower;
     int& m_lowPrioritySkipCount;
+    bool m_cyclerReady;
 };

@@ -345,9 +345,9 @@ namespace CyclerConstants
 namespace VisionConstants
 {
     // Mounting angle of the limelight, in degrees
-    constexpr double kMountingAngle = 18.0;
+    constexpr double kMountingAngle = 19.0;
     // Mounting height of the limelight from the ground, in inches
-    constexpr double kMountingHeight = 21.5;
+    constexpr double kMountingHeight = 22;
     // Target center height, in inches
     constexpr double kTargetHeight = 98.25;
     // Target width, in inches

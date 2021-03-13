@@ -33,15 +33,16 @@ RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
     , m_drive(log, lowPrioritySkipCount)
     , m_flywheel()
     , m_turret()
-    // , m_hood()
+    , m_hood()
     , m_intake()
     , m_cycler()
-    // , m_vision()
+    , m_vision()
     // , m_climber()
     , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
+    m_cyclerReady = false;
 
     // Configure the button bindings
     ConfigureButtonBindings();
@@ -192,9 +193,9 @@ void RobotContainer::ConfigureButtonBindings()
     //            D           //
 
     // Triggers Fire sequence
-    // frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
-    //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
-    // );
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_cyclerReady)
+    );
 
     // Triggers field relative driving
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
@@ -226,7 +227,7 @@ void RobotContainer::ConfigureButtonBindings()
     );
 
     // Increments / Decrements a test power value for TestCommands()
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+    /*frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
         frc2::InstantCommand(    
         [this] {
             m_testPower += 0.05;
@@ -244,17 +245,15 @@ void RobotContainer::ConfigureButtonBindings()
         },
         {}
         )
-    );
+    );*/
 
     // Runs sequence of tests for motors based on iterator and a power
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
-        CyclerIntakeAgitation(&m_intake, &m_cycler, m_testPower)   
+        CyclerIntakeAgitation(&m_intake, &m_cycler, &m_cyclerReady)   
     );
 
-    static bool m_tempBool = false;
-
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenPressed(
-        CyclerPrepare(&m_cycler, &m_tempBool)
+        CyclerPrepare(&m_cycler, &m_cyclerReady)
     );
 
     /*
