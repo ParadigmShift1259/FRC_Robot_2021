@@ -6,8 +6,9 @@
 
 using namespace TurretConstants;
 
-TurretSubsystem::TurretSubsystem() 
+TurretSubsystem::TurretSubsystem(const int& lowPrioritySkipCount) 
     : m_turretmotor(kMotorPort)
+    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     m_turretmotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeout);
     m_turretmotor.SetNeutralMode(NeutralMode::Brake);
@@ -35,10 +36,13 @@ TurretSubsystem::TurretSubsystem()
 
 void TurretSubsystem::Periodic()
 {
-    // SmartDashboard::PutNumber("D_T_CAngle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
-    // SmartDashboard::PutNumber("D_T_DAngle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
-    // SmartDashboard::PutNumber("D_T_Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
-    // SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
+    // if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    // {
+        // SmartDashboard::PutNumber("D_T_CAngle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
+        // SmartDashboard::PutNumber("D_T_DAngle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
+        // SmartDashboard::PutNumber("D_T_Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
+        // SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
+    //}
 
     // double p = frc::SmartDashboard::GetNumber("T_T_P", kP);
     // double i = frc::SmartDashboard::GetNumber("T_T_I", kI);

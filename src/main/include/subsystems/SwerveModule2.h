@@ -203,7 +203,7 @@ public:
 
     frc::SwerveModuleState GetState();
 
-    void Periodic(int& lowPrioritySkipCount);
+    void Periodic(const int& lowPrioritySkipCount);
 
     void SetDesiredState(frc::SwerveModuleState &state);
 

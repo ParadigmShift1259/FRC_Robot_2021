@@ -65,7 +65,7 @@
 class RobotContainer
 {
 public:
-    RobotContainer(Logger& log, int& lowPrioritySkipCount);
+    RobotContainer(Logger& log, const int& lowPrioritySkipCount);
 
     void Periodic();
 
@@ -116,5 +116,5 @@ private:
 
     int m_testNumber;
     double m_testPower;
-    int& m_lowPrioritySkipCount;
+    const int& m_lowPrioritySkipCount;
 };

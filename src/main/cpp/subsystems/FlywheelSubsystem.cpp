@@ -14,7 +14,7 @@ using namespace FlywheelConstants;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-FlywheelSubsystem::FlywheelSubsystem() 
+FlywheelSubsystem::FlywheelSubsystem(const int& lowPrioritySkipCount) 
     : m_flywheelmotor(kMotorPort, CANSparkMax::MotorType::kBrushless)
     , m_flywheelPID(m_flywheelmotor)
     , m_flywheelencoder(m_flywheelmotor)
@@ -23,6 +23,7 @@ FlywheelSubsystem::FlywheelSubsystem()
         kV * 1_V * 1_s / 1_m, 
         kA * 1_V * 1_s * 1_s / 1_m
     )
+    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     m_flywheelmotor.SetIdleMode(CANSparkMax::IdleMode::kCoast);
     m_flywheelmotor.SetClosedLoopRampRate(kRampRate);
@@ -64,8 +65,12 @@ void FlywheelSubsystem::Periodic()
     m_flywheelPID.SetI(i, 0);
     m_flywheelPID.SetD(d, 0);
     #endif
-    SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
-    SmartDashboard::PutNumber("T_F_At_Target", isAtRPM());
+
+    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    {
+        SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
+        SmartDashboard::PutNumber("T_F_At_Target", isAtRPM());
+    }
     CalculateRPM();
 }
 

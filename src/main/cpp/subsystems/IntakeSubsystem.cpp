@@ -9,11 +9,19 @@ using namespace IntakeConstants;
 using namespace std;
 using namespace frc;
 
-IntakeSubsystem::IntakeSubsystem() : m_motor(kMotorPort) {}
+IntakeSubsystem::IntakeSubsystem(const int& m_lowPrioritySkipCount) 
+    : m_motor(kMotorPort)
+    , m_lowPrioritySkipCount(m_lowPrioritySkipCount)
+{
+
+}
 
 void IntakeSubsystem::Periodic()
 {
-    SmartDashboard::PutNumber("D_I_Motor", m_motor.Get());
+    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    {
+        SmartDashboard::PutNumber("D_I_Motor", m_motor.Get());
+    }
 }
 
 void IntakeSubsystem::Set(double speed) 

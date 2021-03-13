@@ -28,14 +28,14 @@
 
 using namespace DriveConstants;
 
-RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
+RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
     : m_log(log)
     , m_drive(log, lowPrioritySkipCount)
-    , m_flywheel()
-    , m_turret()
+    , m_flywheel(lowPrioritySkipCount)
+    , m_turret(lowPrioritySkipCount)
     // , m_hood()
-    , m_intake()
-    , m_cycler()
+    , m_intake(lowPrioritySkipCount)
+    , m_cycler(lowPrioritySkipCount)
     // , m_vision()
     // , m_climber()
     , m_lowPrioritySkipCount(lowPrioritySkipCount)
@@ -56,8 +56,11 @@ RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
 
 void RobotContainer::Periodic()
 {
-    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    if (m_lowPrioritySkipCount % 5 == 0)    // 10 per second
+    {
+        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    }
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -253,7 +256,7 @@ void RobotContainer::ConfigureButtonBindings()
 
     static bool m_tempBool = false;
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenPressed(
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenReleased(
         CyclerPrepare(&m_cycler, &m_tempBool)
     );
 
