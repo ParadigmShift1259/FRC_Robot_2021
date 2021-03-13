@@ -196,7 +196,7 @@ void RobotContainer::ConfigureButtonBindings()
     //            D           //
 
     // Triggers Fire sequence
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenHeld(
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
         Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_cyclerReady)
     );
 
@@ -255,7 +255,7 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerIntakeAgitation(&m_intake, &m_cycler, &m_cyclerReady)   
     );
 
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenPressed(
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenReleased(
         CyclerPrepare(&m_cycler, &m_cyclerReady)
     );
 

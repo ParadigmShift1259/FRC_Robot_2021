@@ -8,7 +8,7 @@
 using namespace FlywheelConstants;
 
 // Enable to tune the flywheel constants
-//#define TUNE_FLYHEEL
+#define TUNE_FLYHEEL
 
 // Removes deprecated warning for CANEncoder and CANPIDController
 #pragma GCC diagnostic push
@@ -69,6 +69,7 @@ void FlywheelSubsystem::Periodic()
     if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
     {
         SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
+        SmartDashboard::PutNumber("T_F_Setpoint", m_setpoint);
         SmartDashboard::PutNumber("T_F_At_Target", isAtRPM());
     }
     CalculateRPM();

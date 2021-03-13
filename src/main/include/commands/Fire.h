@@ -22,6 +22,7 @@ public:
             IntakeSubsystem* intake, CyclerSubsystem* cycler, VisionSubsystem* vision,
             bool* m_cyclerready);
 private:
+    bool m_finished;
     bool m_turretready;
     bool* m_cyclerready;
 };

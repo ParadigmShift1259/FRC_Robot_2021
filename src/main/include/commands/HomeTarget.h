@@ -13,9 +13,12 @@
 class HomeTarget : public frc2::CommandHelper<frc2::CommandBase, HomeTarget> {
 public:
     explicit HomeTarget(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood, 
-                        VisionSubsystem* vision, bool* turretready);
+                        VisionSubsystem* vision, bool* turretready, bool* finished);
 
+    void Initialize() override;
     void Execute() override;
+    bool IsFinished() override;
+    void End(bool interrupted) override;
 
 private:
     FlywheelSubsystem* m_flywheel;
@@ -23,4 +26,5 @@ private:
     HoodSubsystem* m_hood;
     VisionSubsystem* m_vision;
     bool* m_turretready;
+    bool* m_finished;
 };

@@ -1,20 +1,29 @@
 #include "commands/HomeTarget.h"
 #include "Constants.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 HomeTarget::HomeTarget(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
-                        VisionSubsystem* vision, bool* turretready)
+                        VisionSubsystem* vision, bool* turretready, bool* finished)
  : m_flywheel(flywheel)
  , m_turret(turret)
  , m_hood(hood)
  , m_vision(vision)
  , m_turretready(turretready)
+ , m_finished(finished)
 {
   AddRequirements({flywheel, turret, hood, vision});
+  *m_turretready = false;
+}
+
+void HomeTarget::Initialize()
+{
+    *m_turretready = false;
 }
 
 void HomeTarget::Execute()
 {
     // Homes flywheel, turret, and hood to the right angles through a formula
+    SmartDashboard::PutBoolean("TEST_VIS_ACTIVE", m_vision->GetActive());
     if (!m_vision->GetActive())
         return;
 
@@ -27,8 +36,25 @@ void HomeTarget::Execute()
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);
 
+    SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->isAtRPM());
+    SmartDashboard::PutBoolean("TEST_AT_SET", m_turret->isAtSetpoint());
+
     // if at position, set turret ready to true
     if (m_flywheel->isAtRPM() && m_turret->isAtSetpoint()) {
         *m_turretready = true;
     }
+}
+
+bool HomeTarget::IsFinished()
+{
+    SmartDashboard::PutBoolean("TEST_FIRE_FINISIHED", *m_finished);
+    return *m_finished;
+}
+
+void HomeTarget::End(bool interrupted) {
+    *m_finished = false;
+    *m_turretready = false;
+    m_flywheel->SetRPM(FlywheelConstants::kIdleRPM);
+    m_hood->Set(0);
+    m_turret->TurnTo(TurretConstants::kStartingPositionDegrees);
 }

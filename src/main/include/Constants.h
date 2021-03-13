@@ -247,10 +247,10 @@ namespace FlywheelConstants
 
     constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
-    constexpr double kAllowedError = 20;
+    constexpr double kAllowedError = 50;
 
     constexpr double kP = 0.0008700;
-    constexpr double kI = 0;
+    constexpr double kI = 0.0000001;
     constexpr double kD = 0;
 
     constexpr double kMinOut = 0;
@@ -269,7 +269,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0;
+    constexpr double kIdleRPM = 1700;
 }
 
 // Turret Subsystem Constants
@@ -288,7 +288,7 @@ namespace TurretConstants
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kDegreeStopRange = 0.225;
+    constexpr double kDegreeStopRange = 0.5;
 
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
@@ -335,6 +335,7 @@ namespace CyclerConstants
     constexpr double kTurnTableRampRate = 0.75;
 
     constexpr double kTimePassed = 0.15;
+    constexpr double kTimeLaunch = 4.00;
 
     constexpr double kTimeout = 30;
     constexpr double kTurnTableInverted = false;
@@ -352,6 +353,9 @@ namespace VisionConstants
     constexpr double kTargetHeight = 98.25;
     // Target width, in inches
     constexpr double kTargetSize = 15;
+
+    constexpr double kMinTargetDistance = 70;
+    constexpr double kMaxTargetDistance = 380;
 }
 
 // Climber Subsystem constants

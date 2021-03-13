@@ -38,9 +38,13 @@ void VisionSubsystem::Periodic()
     m_dashboard->PutNumber("cameraFeed", m_camerachoice);
 
     m_active = m_networktable->GetNumber("tv", 0);
+    SmartDashboard::PutBoolean("TEST_VIS_ACTIVE_2", m_active);
 
     if (!m_led)
+    {
+        printf("No LED");
         m_active = false;
+    }
 
     if (!m_active)
     {
@@ -75,7 +79,7 @@ void VisionSubsystem::Periodic()
     {
         m_averageangle[i] = m_averageangle[i + 1];
     }
-    if ((m_distance < 110) || (m_distance > 380))
+    if ((m_distance < kMinTargetDistance) || (m_distance > kMaxTargetDistance))
         m_active = false;
 
     m_averageangle[2] = m_horizontalangle;
