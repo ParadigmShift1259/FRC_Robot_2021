@@ -8,9 +8,11 @@ IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem, double power)
 : m_intake(subsystem)
 , power(power)
 {
+  printf("Initailized Intake Ingest command");
   AddRequirements({subsystem});
 }
 
 void IntakeIngest::Execute() {
-    m_intake->Set(power);
+    printf("Running intake");
+    m_intake->Set(kIngestHigh);
 }

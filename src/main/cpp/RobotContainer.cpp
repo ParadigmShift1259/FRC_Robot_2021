@@ -56,11 +56,8 @@ RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
 
 void RobotContainer::Periodic()
 {
-    if (m_lowPrioritySkipCount % 10 == 0)
-    {
-        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
-    }
+    m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+    m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -254,6 +251,12 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerIntakeAgitation(&m_intake, &m_cycler, m_testPower)   
     );
 
+    static bool m_tempBool = false;
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenPressed(
+        CyclerPrepare(&m_cycler, &m_tempBool)
+    );
+
     /*
 
     double c_buttonInputSpeed = 0.5;
@@ -269,6 +272,7 @@ void RobotContainer::ConfigureButtonBindings()
             },
             {&m_drive}
         ).WithTimeout(c_buttonInputTime));
+    */
 }
 
 frc2::InstantCommand RobotContainer::TestCommands()
@@ -340,7 +344,7 @@ frc2::InstantCommand RobotContainer::TestCommands()
             [this] {
                 // m_intake.Set(m_testPower);
             },
-            {/*&m_intake*/}
+             {/*&m_intake*/}
         );
 }
 

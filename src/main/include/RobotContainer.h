@@ -44,6 +44,7 @@
 #include "commands/CyclerAgitation.h"
 #include "commands/Fire.h"
 #include "commands/CyclerIntakeAgitation.h"
+#include "commands/CyclerPrepare.h"
 
 #include "Constants.h"
 #include "Logger.h"

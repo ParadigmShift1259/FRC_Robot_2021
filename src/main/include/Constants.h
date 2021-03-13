@@ -231,13 +231,13 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 10;   // Intake rollers PWM channel (Spark)
+    constexpr double kMotorPort = 9;   // Intake rollers PWM channel (Spark)
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
-    constexpr double kIngestHigh = 0.6;
+    constexpr double kIngestHigh = 0.75;
     constexpr double kReleaseLow = -0.3;
-    constexpr double kReleaseHigh = -0.6;
+    constexpr double kReleaseHigh = -0.75;
 }
 
 // Flywheel Subsystem constants
@@ -314,7 +314,7 @@ namespace TurretConstants
 namespace HoodConstants
 {
     /// PWM Port for hood servo
-    constexpr int kPWMPort = 9;                //!< Hood servo PWM channel (not installed, yet)
+    constexpr int kPWMPort = 8;                //!< Hood servo PWM channel (not installed, yet)
     constexpr double kTestServoSpeed = 0.14;
 
 }
@@ -334,7 +334,7 @@ namespace CyclerConstants
     // Time to go from 0 to full throttle
     constexpr double kTurnTableRampRate = 0.75;
 
-    constexpr double kTimePassed = 0.5;
+    constexpr double kTimePassed = 0.15;
 
     constexpr double kTimeout = 30;
     constexpr double kTurnTableInverted = false;
