@@ -37,21 +37,21 @@ FlywheelSubsystem::FlywheelSubsystem(const int& lowPrioritySkipCount)
 
     m_setpoint = kIdleRPM;
 
-    #ifdef TUNE_FLYWHEEL
-    SmartDashboard::PutNumber("T_F_S", 0);
-    SmartDashboard::PutNumber("T_F_V", 0);
-    SmartDashboard::PutNumber("T_F_A", 0);
-    SmartDashboard::PutNumber("T_F_P", 0);
-    SmartDashboard::PutNumber("T_F_I", 0);
-    SmartDashboard::PutNumber("T_F_D", 0);
-    #endif
+    //#ifdef TUNE_FLYWHEEL
+    SmartDashboard::PutNumber("T_F_S", kS);
+    SmartDashboard::PutNumber("T_F_V", kV);
+    SmartDashboard::PutNumber("T_F_A", kA);
+    SmartDashboard::PutNumber("T_F_P", kP);
+    SmartDashboard::PutNumber("T_F_I", kI);
+    SmartDashboard::PutNumber("T_F_D", kD);
+    //#endif
 }
 
 #pragma GCC diagnostic pop
 
 void FlywheelSubsystem::Periodic()
 {
-    #ifdef TUNE_FLYWHEEL
+    //#ifdef TUNE_FLYWHEEL
     double s = SmartDashboard::GetNumber("T_F_S", 0);
     double v = SmartDashboard::GetNumber("T_F_V", 0);
     double a = SmartDashboard::GetNumber("T_F_A", 0);
@@ -64,7 +64,7 @@ void FlywheelSubsystem::Periodic()
     m_flywheelPID.SetP(p, 0);
     m_flywheelPID.SetI(i, 0);
     m_flywheelPID.SetD(d, 0);
-    #endif
+    //#endif
 
     if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
     {
@@ -77,10 +77,19 @@ void FlywheelSubsystem::Periodic()
 
 void FlywheelSubsystem::SetRPM(double setpoint) {
     m_setpoint = setpoint;
+    m_flywheelPID.SetIAccum(0);
 }
 
 bool FlywheelSubsystem::isAtRPM() {
     return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) <= kAllowedError;
+}
+
+bool FlywheelSubsystem::isAtRPMPositive()
+{
+    double error = m_flywheelencoder.GetVelocity() - m_setpoint;
+    // If error is negative, always return false
+    // RPM must be greater than the error with variance of Allowed Error
+    return signbit(error) ? false : (error <= kAllowedError);
 }
 
 void FlywheelSubsystem::CalculateRPM()

@@ -249,8 +249,12 @@ namespace FlywheelConstants
     // Total error allowed for the flywheel, in RPM
     constexpr double kAllowedError = 50;
 
-    constexpr double kP = 0.0008700;
-    constexpr double kI = 0.0000001;
+    // Additional multiplier applied to flywheel speed while firing 
+    // Ensures all ball trajectories are straight
+    constexpr double kFiringRPMMultiplier = 1.05;
+
+    constexpr double kP = 0.0002700;
+    constexpr double kI = 0.00000001;
     constexpr double kD = 0;
 
     constexpr double kMinOut = 0;
@@ -278,7 +282,7 @@ namespace TurretConstants
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
     constexpr double kP = 0.14114;
-    constexpr double kI = 0.00085;
+    constexpr double kI = 0.00025;
     constexpr double kD = 0.1375;
 
     constexpr double kMinOut = 0;
@@ -289,6 +293,7 @@ namespace TurretConstants
     constexpr double kSensorPhase = true;
 
     constexpr double kDegreeStopRange = 0.5;
+    constexpr double kDegreePIDStopRange = 0.35;
 
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
@@ -325,7 +330,7 @@ namespace CyclerConstants
     constexpr double kFeederPort = 30;      //!< Feeder CAN ID (SparkMAX)
     constexpr double kTurnTablePort = 31;   //!< Turn table CAN ID (TalonSRX)
 
-    constexpr double kFeederSpeed = 0.20;
+    constexpr double kFeederSpeed = 0.3;
     constexpr double kTurnTableSpeed = 0.400;
     constexpr double kTurnTableHoneSpeed = 0.150;
 

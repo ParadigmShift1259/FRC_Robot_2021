@@ -24,7 +24,7 @@ TurretSubsystem::TurretSubsystem(const int& lowPrioritySkipCount)
     m_turretmotor.ConfigPeakOutputForward(kMaxOut, kTimeout);
     m_turretmotor.ConfigPeakOutputReverse(kMaxOut * -1.0, kTimeout);
     //m_turretmotor.ConfigClosedloopRamp()
-    m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(kDegreeStopRange), kTimeout);
+    m_turretmotor.ConfigAllowableClosedloopError(0, DegreesToTicks(kDegreePIDStopRange), kTimeout);
 
     m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
     m_turretmotor.Set(ControlMode::Position, DegreesToTicks(kStartingPositionDegrees));
@@ -36,21 +36,20 @@ TurretSubsystem::TurretSubsystem(const int& lowPrioritySkipCount)
 
 void TurretSubsystem::Periodic()
 {
-    // if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
-    // {
-        // SmartDashboard::PutNumber("D_T_CAngle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
-        // SmartDashboard::PutNumber("D_T_DAngle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
-        // SmartDashboard::PutNumber("D_T_Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
-        // SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
-    //}
+    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    {
+        SmartDashboard::PutNumber("D_T_CAngle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
+        SmartDashboard::PutNumber("D_T_DAngle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
+        SmartDashboard::PutNumber("D_T_Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
+        SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
+    }
 
-    // double p = frc::SmartDashboard::GetNumber("T_T_P", kP);
-    // double i = frc::SmartDashboard::GetNumber("T_T_I", kI);
-    // double d = frc::SmartDashboard::GetNumber("T_T_D", kD);
-    // m_turretmotor.Config_kP(0, p, kTimeout);
-    // m_turretmotor.Config_kI(0, i, kTimeout);
-    // m_turretmotor.Config_kD(0, d, kTimeout);
-    m_turretmotor.Set(ControlMode::Position, DegreesToTicks(kStartingPositionDegrees));
+    double p = frc::SmartDashboard::GetNumber("T_T_P", kP);
+    double i = frc::SmartDashboard::GetNumber("T_T_I", kI);
+    double d = frc::SmartDashboard::GetNumber("T_T_D", kD);
+    m_turretmotor.Config_kP(0, p, kTimeout);
+    m_turretmotor.Config_kI(0, i, kTimeout);
+    m_turretmotor.Config_kD(0, d, kTimeout);
 }
 
 void TurretSubsystem::TurnTo(double angle)

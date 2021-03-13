@@ -56,4 +56,5 @@ private:
     DigitalInput m_sensor;
     bool m_triggeredsensor;
     const int& m_lowPrioritySkipCount;
+    bool m_interruptsenabled;
 };

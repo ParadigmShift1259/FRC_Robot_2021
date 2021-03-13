@@ -37,6 +37,8 @@ public:
 
     /// Returns whether or not the flywheel is at the desired RPM
     bool isAtRPM();
+    /// Returns whether or not the flywheel is at the desired RPM, but only positive side
+    bool isAtRPMPositive();
 
 protected:
     /// Calcultes the next desired RPM for the flywheel

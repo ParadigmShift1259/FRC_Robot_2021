@@ -6,11 +6,15 @@
 
 #include "subsystems/CyclerSubsystem.h"
 
+#include "commands/CyclerPrepare.h"
+
 #include "Constants.h"
 
 class CyclerLaunch : public frc2::CommandHelper<frc2::CommandBase, CyclerLaunch> {
 public:
-    explicit CyclerLaunch(CyclerSubsystem* subsystem, bool* turretready, bool* cyclerready, bool* finished);
+    explicit CyclerLaunch(CyclerSubsystem* subsystem, 
+                            bool* turretready, bool* cyclerready, 
+                            bool* firing, bool* finished);
 
     void Initialize() override;
     void Execute() override;
@@ -23,6 +27,6 @@ public:
     Timer m_timer;
     bool* m_turretready;
     bool* m_cyclerready;
+    bool* m_firing;
     bool* m_finished;
-    bool m_firing;
 };

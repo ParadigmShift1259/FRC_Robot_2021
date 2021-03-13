@@ -195,11 +195,6 @@ void RobotContainer::ConfigureButtonBindings()
     //           180          //
     //            D           //
 
-    // Triggers Fire sequence
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_cyclerReady)
-    );
-
     // Triggers field relative driving
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
         frc2::InstantCommand(    
@@ -249,6 +244,11 @@ void RobotContainer::ConfigureButtonBindings()
         {}
         )
     );*/
+
+    // Triggers Fire sequence
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_cyclerReady)
+    );
 
     // Runs sequence of tests for motors based on iterator and a power
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
