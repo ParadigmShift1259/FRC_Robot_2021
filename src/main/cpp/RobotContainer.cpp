@@ -249,20 +249,26 @@ void RobotContainer::ConfigureButtonBindings()
         )
     );
 
-    static bool temporaryBoolean = false;
-
     // Runs sequence of tests for motors based on iterator and a power
-    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
-        /*
-        frc2::InstantCommand(    
-            [this] {
-                printf("scheduling flywheel RPM ONE TIME\n");
-                m_flywheel.SetRPM(m_testPower * 1000.0);
-            },
-            {&m_flywheel}
-        )*/
-        CyclerPrepare(&m_cycler, &temporaryBoolean)
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
+        CyclerIntakeAgitation(&m_intake, &m_cycler, m_testPower)   
     );
+
+    /*
+
+    double c_buttonInputSpeed = 0.5;
+    units::second_t c_buttonInputTime = 1.25_s;
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
+        frc2::RunCommand(    
+            [this, c_buttonInputSpeed] {
+                m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
+                        units::meters_per_second_t(0),
+                        units::radians_per_second_t(0),
+                        false);
+            },
+            {&m_drive}
+        ).WithTimeout(c_buttonInputTime));
 }
 
 frc2::InstantCommand RobotContainer::TestCommands()
