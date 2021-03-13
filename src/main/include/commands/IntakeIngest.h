@@ -9,7 +9,7 @@
 
 class IntakeIngest : public frc2::CommandHelper<frc2::CommandBase, IntakeIngest> {
  public:
-  explicit IntakeIngest(IntakeSubsystem* subsystem);
+  explicit IntakeIngest(IntakeSubsystem* subsystem, double power);
 
   void Execute() override;
 
