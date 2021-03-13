@@ -75,24 +75,27 @@ frc::SwerveModuleState SwerveModule2::GetState()
     return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
 }
 
-void SwerveModule2::Periodic()
+void SwerveModule2::Periodic(int& lowPrioritySkipCount)
 {
-    EncoderToRadians();
+    // EncoderToRadians();
 
-    if (m_timer.Get() < 5)
+    // if (m_timer.Get() < 5)
+    // {
+    //     printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+    //             fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+    //             m_absAngle, 
+    //             m_turnRelativeEncoder.GetPosition());
+    //     m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
+    // }
+
+    if (lowPrioritySkipCount % 10 == 0)
     {
-        printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-                m_absAngle, 
-                m_turnRelativeEncoder.GetPosition());
-        m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
+        SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+        SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
+        SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
+        SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
+        SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
     }
-
-    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
-    SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
-    SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
-    SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
-    SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)

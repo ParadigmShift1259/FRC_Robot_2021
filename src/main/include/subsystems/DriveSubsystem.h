@@ -70,7 +70,7 @@ public:
         eRearRight
     };
 
-    DriveSubsystem(Logger& log);
+    DriveSubsystem(Logger& log, int& lowPrioritySkipCount);
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -204,4 +204,5 @@ private:
         DriveConstants::kRotationI,
         DriveConstants::kRotationD
     };
+    int& m_lowPrioritySkipCount;
 };
