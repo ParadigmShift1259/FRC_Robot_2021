@@ -77,16 +77,16 @@ frc::SwerveModuleState SwerveModule2::GetState()
 
 void SwerveModule2::Periodic(int& lowPrioritySkipCount)
 {
-    // EncoderToRadians();
+    EncoderToRadians();
 
-    // if (m_timer.Get() < 5)
-    // {
-    //     printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-    //             fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-    //             m_absAngle, 
-    //             m_turnRelativeEncoder.GetPosition());
-    //     m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
-    // }
+    if (m_timer.Get() < 5)
+    {
+        printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+                m_absAngle, 
+                m_turnRelativeEncoder.GetPosition());
+        m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
+    }
 
     if (lowPrioritySkipCount % 10 == 0)
     {
