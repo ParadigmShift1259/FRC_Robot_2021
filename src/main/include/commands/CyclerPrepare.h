@@ -11,6 +11,7 @@ class CyclerPrepare : public frc2::CommandHelper<frc2::CommandBase, CyclerPrepar
 public:
     explicit CyclerPrepare(CyclerSubsystem* subsystem, bool* cyclerready);
 
+    void Initialize() override;
     void Execute() override;
     bool IsFinished() override;
     void End(bool interrupted) override;

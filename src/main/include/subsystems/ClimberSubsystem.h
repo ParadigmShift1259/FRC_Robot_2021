@@ -21,5 +21,5 @@ public:
     void Run(double speed);
 
 private:    
-    TalonSRX m_motor;
+    //TalonSRX m_motor;
 };

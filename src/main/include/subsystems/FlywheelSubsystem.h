@@ -38,6 +38,10 @@ public:
     /// Returns whether or not the flywheel is at the desired RPM
     bool isAtRPM();
 
+protected:
+    /// Calcultes the next desired RPM for the flywheel
+    void CalculateRPM();
+
 private:
     CANSparkMax m_flywheelmotor;
     CANPIDController m_flywheelPID;
