@@ -46,6 +46,7 @@ void TurretSubsystem::Periodic()
     // m_turretmotor.Config_kP(0, p, kTimeout);
     // m_turretmotor.Config_kI(0, i, kTimeout);
     // m_turretmotor.Config_kD(0, d, kTimeout);
+    m_turretmotor.Set(ControlMode::Position, DegreesToTicks(kStartingPositionDegrees));
 }
 
 void TurretSubsystem::TurnTo(double angle)

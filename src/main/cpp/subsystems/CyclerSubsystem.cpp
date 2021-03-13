@@ -18,8 +18,8 @@ CyclerSubsystem::CyclerSubsystem()
 
 void CyclerSubsystem::Periodic()
 {
-    // SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
-    // SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
+    SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
+    SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
 }
 
 void CyclerSubsystem::SetFeeder(double speed)
@@ -40,6 +40,7 @@ void CyclerSubsystem::StartDetection() {
         printf("Interrupt\n");
         if (result == frc::InterruptableSensorBase::WaitResult::kFallingEdge) {
             m_triggeredsensor = true;
+            EndDetection();
         }
     });
     m_sensor.SetUpSourceEdge(false, true);
@@ -49,10 +50,14 @@ void CyclerSubsystem::StartDetection() {
 void CyclerSubsystem::EndDetection() {
     m_sensor.DisableInterrupts();
     m_sensor.CancelInterrupts();
-    m_triggeredsensor = false;
 }
 
 bool CyclerSubsystem::AtPosition()
 {
     return m_triggeredsensor;
+}
+
+void CyclerSubsystem::ResetSensor()
+{
+    m_triggeredsensor = false;
 }

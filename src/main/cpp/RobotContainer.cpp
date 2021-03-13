@@ -31,15 +31,13 @@ using namespace DriveConstants;
 RobotContainer::RobotContainer(Logger& log, int& lowPrioritySkipCount)
     : m_log(log)
     , m_drive(log, lowPrioritySkipCount)
-#ifdef SUBSYSTEMS
-    // , m_flywheel()
-    // , m_turret()
+    , m_flywheel()
+    , m_turret()
     // , m_hood()
-    // , m_intake()
-    // , m_cycler()
+    , m_intake()
+    , m_cycler()
     // , m_vision()
     // , m_climber()
-#endif
     , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     // Initialize all of your commands and subsystems here
@@ -134,15 +132,13 @@ void RobotContainer::SetDefaultCommands()
     //     )
     // );
 
-    #ifdef SUBSYSTEMS
-
-    // m_turret.SetDefaultCommand(
-    //     frc2::RunCommand(
-    //         [this] {
-    //             m_turret.TurnTo(45);
-    //         }, {&m_turret}
-    //     )
-    // );
+    m_turret.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_turret.TurnTo(45);
+            }, {&m_turret}
+        )
+    );
 
     // m_hood.SetDefaultCommand(
     //     frc2::RunCommand(
@@ -160,24 +156,22 @@ void RobotContainer::SetDefaultCommands()
     //     )
     // );
 
-    // m_intake.SetDefaultCommand(
-    //     frc2::RunCommand(
-    //         [this] {
-    //             m_intake.Set(0);
-    //         }, {&m_intake}
-    //     )
-    // );
+    m_intake.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_intake.Set(0);
+            }, {&m_intake}
+        )
+    );
 
-    // m_cycler.SetDefaultCommand(
-    //     frc2::RunCommand(
-    //         [this] {
-    //             m_cycler.SetFeeder(0);
-    //             m_cycler.SetTurnTable(0);
-    //         }, {&m_cycler}
-    //     )
-    // );
-
-    #endif
+    m_cycler.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_cycler.SetFeeder(0);
+                m_cycler.SetTurnTable(0);
+            }, {&m_cycler}
+        )
+    );
 
     ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
     m_inputXentry = tab.Add("X", 0).GetEntry();
@@ -234,8 +228,6 @@ void RobotContainer::ConfigureButtonBindings()
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
 
-    #ifdef SUBSYSTEMS
-
     // Increments / Decrements a test power value for TestCommands()
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
         frc2::InstantCommand(    
@@ -257,7 +249,7 @@ void RobotContainer::ConfigureButtonBindings()
         )
     );
 
-    bool temporaryBoolean = false;
+    static bool temporaryBoolean = false;
 
     // Runs sequence of tests for motors based on iterator and a power
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenPressed(
@@ -271,8 +263,6 @@ void RobotContainer::ConfigureButtonBindings()
         )*/
         CyclerPrepare(&m_cycler, &temporaryBoolean)
     );
-
-    #endif 
 }
 
 frc2::InstantCommand RobotContainer::TestCommands()

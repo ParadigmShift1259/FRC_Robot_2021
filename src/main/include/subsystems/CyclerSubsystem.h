@@ -47,6 +47,8 @@ public:
 
     /// Returns whether the cycler is at the launch position
     bool AtPosition();
+    /// Resets the triggered sensor back to false
+    void ResetSensor();
 
 private:    
     CANSparkMax m_feedermotor;

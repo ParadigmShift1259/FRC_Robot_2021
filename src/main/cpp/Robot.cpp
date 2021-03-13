@@ -9,9 +9,10 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
+#include <frc/Watchdog.h>
 
 Robot::Robot()
-    //: TimedRobot(0.05)
+    //: TimedRobot(0.1_s)
     : m_log(false)
     , m_container(m_log, m_lowPrioritySkipCount)
 {

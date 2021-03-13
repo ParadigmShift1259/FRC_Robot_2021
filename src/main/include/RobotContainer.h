@@ -88,11 +88,11 @@ private:
 
     // The robot's subsystems
     DriveSubsystem m_drive;
-    // FlywheelSubsystem m_flywheel;
-    // TurretSubsystem m_turret;
+    FlywheelSubsystem m_flywheel;
+    TurretSubsystem m_turret;
     // HoodSubsystem m_hood;
-    // IntakeSubsystem m_intake;
-    // CyclerSubsystem m_cycler;
+    IntakeSubsystem m_intake;
+    CyclerSubsystem m_cycler;
     //VisionSubsystem m_vision;
     //ClimberSubsystem m_climber;
 
