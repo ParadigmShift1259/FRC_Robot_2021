@@ -122,10 +122,14 @@ namespace DriveConstants
     constexpr double kRearRightOffset   = (6.28 - 5.67); //0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 #else
     //Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
-    constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
-    constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
+    // constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
+    // constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
+    // constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
+    // constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
+    constexpr double kFrontLeftOffset   = 2667.0;
+    constexpr double kFrontRightOffset  = 237.0;
+    constexpr double kRearRightOffset   = 1772.0;
+    constexpr double kRearLeftOffset    = 3696.1;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -235,7 +239,7 @@ namespace IntakeConstants
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
-    constexpr double kIngestHigh = 0.75;
+    constexpr double kIngestHigh = 0.70;
     constexpr double kReleaseLow = -0.3;
     constexpr double kReleaseHigh = -0.75;
 }
@@ -253,9 +257,9 @@ namespace FlywheelConstants
     // Ensures all ball trajectories are straight
     constexpr double kFiringRPMMultiplier = 1.05;
 
-    constexpr double kP = 0.0002700;
+    constexpr double kP = 0.001700;
     constexpr double kI = 0.00000001;
-    constexpr double kD = 0;
+    constexpr double kD = 0.000001;
 
     constexpr double kMinOut = 0;
     constexpr double kMaxOut = 1.0;
@@ -330,7 +334,7 @@ namespace CyclerConstants
     constexpr double kFeederPort = 30;      //!< Feeder CAN ID (SparkMAX)
     constexpr double kTurnTablePort = 31;   //!< Turn table CAN ID (TalonSRX)
 
-    constexpr double kFeederSpeed = 0.3;
+    constexpr double kFeederSpeed = 0.350;
     constexpr double kTurnTableSpeed = 0.400;
     constexpr double kTurnTableHoneSpeed = 0.150;
 
