@@ -35,10 +35,12 @@ public:
     /// Sets the flywheel to a desired rpm
     void SetRPM(double rpm);
 
+    /// Returns whether or not the flywheel in the zone to use the alternative "maintain" PID values
+    bool IsAtMaintainPID();
     /// Returns whether or not the flywheel is at the desired RPM
-    bool isAtRPM();
+    bool IsAtRPM();
     /// Returns whether or not the flywheel is at the desired RPM, but only positive side
-    bool isAtRPMPositive();
+    bool IsAtRPMPositive();
 
 protected:
     /// Calcultes the next desired RPM for the flywheel

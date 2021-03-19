@@ -31,6 +31,9 @@ FlywheelSubsystem::FlywheelSubsystem(const int& lowPrioritySkipCount)
     m_flywheelPID.SetP(kP, 0);
     m_flywheelPID.SetI(kI, 0);
     m_flywheelPID.SetD(kD, 0);
+    m_flywheelPID.SetP(kMP, 1);
+    m_flywheelPID.SetI(kMI, 1);
+    m_flywheelPID.SetD(kMD, 1);
     m_flywheelPID.SetOutputRange(kMinOut, kMaxOut);
 
     m_flywheelencoder.SetVelocityConversionFactor(kWheelRevPerMotorRev);
@@ -66,11 +69,14 @@ void FlywheelSubsystem::Periodic()
     m_flywheelPID.SetD(d, 0);
     //#endif
 
+    // Temporary for graphing RPM
+    SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
+    
     if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
     {
-        SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
+        //SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
         SmartDashboard::PutNumber("T_F_Setpoint", m_setpoint);
-        SmartDashboard::PutNumber("T_F_At_Target", isAtRPM());
+        SmartDashboard::PutNumber("T_F_At_Target", IsAtRPM());
     }
     CalculateRPM();
 }
@@ -80,11 +86,15 @@ void FlywheelSubsystem::SetRPM(double setpoint) {
     m_flywheelPID.SetIAccum(0);
 }
 
-bool FlywheelSubsystem::isAtRPM() {
+bool FlywheelSubsystem::IsAtMaintainPID() {
+    return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) <= kMaintainPIDError;
+}
+
+bool FlywheelSubsystem::IsAtRPM() {
     return fabs(m_flywheelencoder.GetVelocity() - m_setpoint) <= kAllowedError;
 }
 
-bool FlywheelSubsystem::isAtRPMPositive()
+bool FlywheelSubsystem::IsAtRPMPositive()
 {
     double error = m_flywheelencoder.GetVelocity() - m_setpoint;
     // If error is negative, always return false
@@ -97,5 +107,7 @@ void FlywheelSubsystem::CalculateRPM()
     // Ignore PIDF feedforward and substitute WPILib's SimpleMotorFeedforward class
     double FF = m_flywheelFF.Calculate(m_setpoint / kSecondsPerMinute * 1_mps).to<double>();
     m_flywheelPID.SetFF(0);
-    m_flywheelPID.SetReference(m_setpoint, ControlType::kVelocity, 0, FF);
+    // Choose "Maintain" PID set, or slot 1, if we're near the setpoint
+    int pidslot = IsAtMaintainPID() ? 1 : 0;
+    m_flywheelPID.SetReference(m_setpoint, ControlType::kVelocity, pidslot, FF);
 }

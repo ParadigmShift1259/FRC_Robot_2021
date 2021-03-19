@@ -31,7 +31,9 @@ void HomeTarget::Execute()
 
     double distance = m_vision->GetDistance();
     //y\ =\ 1687.747+15.8111x-0.0594079x^{2}+0.00008292342x^{3}
-    double flywheelspeed = 1687.747 + 15.8111 * distance - 0.0594079 * pow(distance, 2) + 0.00008292342 * pow(distance, 3);
+    // Increased flywheel at upper ends 3/18/21
+    //y\ =\ 1687.747+15.8111x-0.058079x^{2}+0.00008892342x^{3}
+    double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
     if (*m_firing)
         flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
     double hoodangle = 0.06286766 + (175598.7 - 0.06286766) / (1 + pow((distance / 0.6970016), 2.811798));
@@ -40,11 +42,11 @@ void HomeTarget::Execute()
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);
 
-    SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->isAtRPM());
+    SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->IsAtRPM());
     SmartDashboard::PutBoolean("TEST_AT_SET", m_turret->isAtSetpoint());
 
     // if at position, set turret ready to true
-    if (m_flywheel->isAtRPMPositive() && m_turret->isAtSetpoint()) {
+    if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint()) {
         *m_turretready = true;
     }
 }

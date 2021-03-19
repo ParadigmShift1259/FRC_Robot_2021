@@ -129,7 +129,7 @@ namespace DriveConstants
     constexpr double kFrontLeftOffset   = 2667.0;
     constexpr double kFrontRightOffset  = 237.0;
     constexpr double kRearRightOffset   = 1772.0;
-    constexpr double kRearLeftOffset    = 3696.1;
+    constexpr double kRearLeftOffset    = 3953.0; //0.0;//3696.1;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -252,14 +252,21 @@ namespace FlywheelConstants
     constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
     constexpr double kAllowedError = 50;
+    constexpr double kMaintainPIDError = 300;
 
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
     constexpr double kFiringRPMMultiplier = 1.05;
 
-    constexpr double kP = 0.001700;
-    constexpr double kI = 0.00000001;
-    constexpr double kD = 0.000001;
+    // Launch PID values, used to first get to setpoint
+    constexpr double kP = 0.0002700;
+    constexpr double kI = 0;
+    constexpr double kD = 0;
+
+    // Maintain PID values, used to adjust for error once the robot is shooting
+    constexpr double kMP = 0.001700;
+    constexpr double kMI = 0.00000001;
+    constexpr double kMD = 0.000001;
 
     constexpr double kMinOut = 0;
     constexpr double kMaxOut = 1.0;
@@ -323,9 +330,11 @@ namespace TurretConstants
 namespace HoodConstants
 {
     /// PWM Port for hood servo
-    constexpr int kPWMPort = 8;                //!< Hood servo PWM channel (not installed, yet)
+    constexpr int kPWMPort = 8;                //!< Hood servo PWM channel
     constexpr double kTestServoSpeed = 0.14;
-
+    // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
+    constexpr double kMax = .85;
+    constexpr double kMin = .0485;
 }
 
 // Cycler Subsystem Constants
