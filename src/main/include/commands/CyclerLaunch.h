@@ -13,7 +13,7 @@
 class CyclerLaunch : public frc2::CommandHelper<frc2::CommandBase, CyclerLaunch> {
 public:
     explicit CyclerLaunch(CyclerSubsystem* subsystem, 
-                            bool* turretready, bool* cyclerready, 
+                            bool* turretready,
                             bool* firing, bool* finished);
 
     void Initialize() override;
@@ -26,7 +26,6 @@ public:
     CyclerSubsystem* m_cycler;
     Timer m_timer;
     bool* m_turretready;
-    bool* m_cyclerready;
     bool* m_firing;
     bool* m_finished;
 };

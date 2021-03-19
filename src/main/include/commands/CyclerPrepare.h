@@ -9,7 +9,7 @@
 
 class CyclerPrepare : public frc2::CommandHelper<frc2::CommandBase, CyclerPrepare> {
 public:
-    explicit CyclerPrepare(CyclerSubsystem* subsystem, bool* cyclerready);
+    explicit CyclerPrepare(CyclerSubsystem* subsystem, bool reset);
 
     void Initialize() override;
     void Execute() override;
@@ -18,5 +18,5 @@ public:
 
  private:
     CyclerSubsystem* m_cycler;
-    bool* m_cyclerready;
+    bool reset;
 };

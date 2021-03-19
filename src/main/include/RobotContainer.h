@@ -117,5 +117,4 @@ private:
     int m_testNumber;
     double m_testPower;
     const int& m_lowPrioritySkipCount;
-    bool m_cyclerReady;
 };

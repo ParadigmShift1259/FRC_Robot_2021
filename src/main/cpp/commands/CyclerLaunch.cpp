@@ -4,11 +4,10 @@
 using namespace CyclerConstants;
 
 CyclerLaunch::CyclerLaunch(CyclerSubsystem* subsystem, 
-                            bool* turretready, bool* cyclerready, 
+                            bool* turretready, 
                             bool* firing, bool* finished)
  : m_cycler(subsystem)
  , m_turretready(turretready)
- , m_cyclerready(cyclerready)
  , m_firing(firing)
  , m_finished(finished)
 {
@@ -27,7 +26,7 @@ void CyclerLaunch::Initialize()
 
 void CyclerLaunch::Execute()
 {
-    if (*m_turretready && *m_cyclerready)
+    if (*m_turretready)
     {
         *m_firing = true;
         m_timer.Start();
