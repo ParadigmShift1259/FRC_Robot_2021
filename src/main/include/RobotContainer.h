@@ -71,6 +71,8 @@ public:
 
     frc2::Command *GetAutonomousCommand();
 
+    frc2::Command *GetAutonomousGSCommand();
+
     void ResetLog() { m_drive.ResetLog(); }
 
 private:
@@ -117,4 +119,6 @@ private:
     int m_testNumber;
     double m_testPower;
     const int& m_lowPrioritySkipCount;
+
+    bool m_isRedPath = false;
 };

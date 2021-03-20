@@ -6,6 +6,10 @@
 /*----------------------------------------------------------------------------*/
 
 #include "RobotContainer.h"
+#include "commands/DriveToBall.h"
+#include "commands/FindClosestBall.h"
+#include "commands/RotateToFindNextBall.h"
+
 
 // Commenting this out reduces build time by about half
 // However, includes are necessary to run trajectory paths
@@ -255,7 +259,7 @@ void RobotContainer::ConfigureButtonBindings()
     );
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenReleased(
-        CyclerPrepare(&m_cycler, true)
+        CyclerPrepare(&m_cycler, true).WithTimeout(CyclerConstants::kMaxCyclerTime)
     );
 
     /*
@@ -503,6 +507,28 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
     return new frc2::SequentialCommandGroup(
         std::move(swerveControllerCommand),
+        frc2::InstantCommand(
+            [this]() {
+                m_drive.Drive(units::meters_per_second_t(0.0),
+                              units::meters_per_second_t(0.0),
+                              units::radians_per_second_t(0.0), false);
+            },
+            {}
+        )
+    );
+}
+
+
+frc2::Command *RobotContainer::GetAutonomousGSCommand()
+{
+    FindClosestBall findClosestBall(&m_drive, &m_isRedPath);
+    DriveToBall driveToBall(&m_drive, &m_intake);
+    RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
+
+    return new frc2::SequentialCommandGroup(
+        std::move(findClosestBall),
+        std::move(driveToBall),
+        std::move(rotateToFindNextBall),
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),
