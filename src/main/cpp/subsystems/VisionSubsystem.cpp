@@ -36,6 +36,7 @@ VisionSubsystem::VisionSubsystem()
 void VisionSubsystem::Periodic()
 {
     m_dashboard->PutNumber("cameraFeed", m_camerachoice);
+    m_dashboard->PutNumber("D_V_Averaged Distance", m_avgdistance);
 
     m_active = m_networktable->GetNumber("tv", 0);
     SmartDashboard::PutBoolean("TEST_VIS_ACTIVE_2", m_active);
