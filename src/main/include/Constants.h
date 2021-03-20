@@ -351,7 +351,7 @@ namespace CyclerConstants
 
     constexpr double kFeederSpeed = 0.350;
     constexpr double kTurnTableSpeed = 0.400;
-    constexpr double kTurnTableHoneSpeed = 0.150;
+    constexpr double kTurnTableHoneSpeed = 0.180;
 
     constexpr double kSensorInvert = true;
 

@@ -42,7 +42,7 @@ void HomeTarget::Execute()
 
     m_turret->TurnToRelative(m_vision->GetAngle());
     m_flywheel->SetRPM(flywheelspeed);
-    m_hood->Set(hoodangle);
+    //m_hood->Set(hoodangle);
 
     SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->IsAtRPM());
     SmartDashboard::PutBoolean("TEST_AT_SET", m_turret->isAtSetpoint());
