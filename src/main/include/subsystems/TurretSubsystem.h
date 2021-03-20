@@ -57,4 +57,5 @@ protected:
 private:    
     TalonSRX m_turretmotor;
     const int& m_lowPrioritySkipCount;
+    double m_currentAngle;
 };

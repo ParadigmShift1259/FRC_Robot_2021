@@ -28,6 +28,7 @@ TurretSubsystem::TurretSubsystem(const int& lowPrioritySkipCount)
 
     m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
     m_turretmotor.Set(ControlMode::Position, DegreesToTicks(kStartingPositionDegrees));
+    m_currentAngle = kStartingPositionDegrees;
 
     frc::SmartDashboard::PutNumber("T_T_P", kP);
     frc::SmartDashboard::PutNumber("T_T_I", kI);
@@ -50,6 +51,8 @@ void TurretSubsystem::Periodic()
     m_turretmotor.Config_kP(0, p, kTimeout);
     m_turretmotor.Config_kI(0, i, kTimeout);
     m_turretmotor.Config_kD(0, d, kTimeout);
+
+    m_turretmotor.Set(ControlMode::Position, DegreesToTicks(m_currentAngle));
 }
 
 void TurretSubsystem::TurnTo(double angle)
@@ -58,9 +61,7 @@ void TurretSubsystem::TurnTo(double angle)
     angle = Util::ZeroTo360Degs(angle);
     // Turret is not set if desired angle is within the deadzone area
     if (angle >= kMinAngle && angle <= kMaxAngle)
-    {
-        m_turretmotor.Set(ControlMode::Position, DegreesToTicks(angle));
-    }
+        m_currentAngle = angle;
 }
 
 void TurretSubsystem::TurnToRobot(double robotAngle)

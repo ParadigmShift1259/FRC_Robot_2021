@@ -19,12 +19,14 @@ HomeTarget::HomeTarget(FlywheelSubsystem* flywheel, TurretSubsystem* turret, Hoo
 
 void HomeTarget::Initialize()
 {
+    *m_finished = false;
     *m_turretready = false;
 }
 
 void HomeTarget::Execute()
 {
     // Homes flywheel, turret, and hood to the right angles through a formula
+    printf("Running Home Target ...\n");
     SmartDashboard::PutBoolean("TEST_VIS_ACTIVE", m_vision->GetActive());
     if (!m_vision->GetActive())
         return;
