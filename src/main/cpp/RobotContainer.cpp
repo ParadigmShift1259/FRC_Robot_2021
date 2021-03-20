@@ -42,7 +42,6 @@ RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
-    m_cyclerReady = false;
 
     // Configure the button bindings
     ConfigureButtonBindings();
@@ -247,16 +246,16 @@ void RobotContainer::ConfigureButtonBindings()
 
     // Triggers Fire sequence
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kY).WhenPressed(
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_cyclerReady)
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
     );
 
     // Runs sequence of tests for motors based on iterator and a power
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenHeld(
-        CyclerIntakeAgitation(&m_intake, &m_cycler, &m_cyclerReady)   
+        CyclerIntakeAgitation(&m_intake, &m_cycler)   
     );
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenReleased(
-        CyclerPrepare(&m_cycler, &m_cyclerReady)
+        CyclerPrepare(&m_cycler, true)
     );
 
     /*

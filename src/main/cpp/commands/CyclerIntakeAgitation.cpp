@@ -1,11 +1,11 @@
 #include "commands/CyclerIntakeAgitation.h"
 #include "Constants.h"
 
-CyclerIntakeAgitation::CyclerIntakeAgitation(IntakeSubsystem* intake, CyclerSubsystem* cycler, bool* cyclerready)
+CyclerIntakeAgitation::CyclerIntakeAgitation(IntakeSubsystem* intake, CyclerSubsystem* cycler)
 {
   AddCommands(
     // Running intake
-    IntakeIngest(intake, cyclerready),
+    IntakeIngest(intake),
     // Agitate Cycler
     CyclerAgitation(cycler)
   );

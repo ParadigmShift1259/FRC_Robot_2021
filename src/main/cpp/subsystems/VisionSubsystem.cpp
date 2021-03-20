@@ -22,6 +22,7 @@ VisionSubsystem::VisionSubsystem()
 
     m_distance = 0;
     m_horizontalangle = 0;
+    m_direction = 0;
 
     m_averagedistance.reserve(3);
     m_avgdistance = 0;
@@ -58,6 +59,8 @@ void VisionSubsystem::Periodic()
 
     m_tx = m_networktable->GetNumber("tx", 0.0);
     m_ty = m_networktable->GetNumber("ty", 0.0);
+
+    m_direction = m_networktable->GetNumber("direction", 0.0);
 
     /*
     m_ta = m_networktable->GetNumber("ta", 0.0);
@@ -117,6 +120,10 @@ double VisionSubsystem::GetAngle()
     return m_horizontalangle;
 }
 
+VisionSubsystem::BallDirection VisionSubsystem::GetDirection()
+{
+    return BallDirection(m_direction);
+}
 
 void VisionSubsystem::SetLED(bool on)
 {
