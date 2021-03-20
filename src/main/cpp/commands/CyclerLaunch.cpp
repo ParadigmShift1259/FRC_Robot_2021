@@ -13,7 +13,6 @@ CyclerLaunch::CyclerLaunch(CyclerSubsystem* subsystem,
 {
   AddRequirements({subsystem});
   *m_firing = false;
-  *m_finished = false;
 }
 
 void CyclerLaunch::Initialize()
@@ -21,7 +20,6 @@ void CyclerLaunch::Initialize()
     printf("---------------------------------------- Starting Cycler Launch");
     m_timer.Reset();
     *m_firing = false;
-    *m_finished = false;
 }
 
 void CyclerLaunch::Execute()

@@ -43,8 +43,11 @@
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
 #include "commands/Fire.h"
+#include "commands/CyclerFire.h"
 #include "commands/CyclerIntakeAgitation.h"
 #include "commands/CyclerPrepare.h"
+#include "commands/Unjam.h"
+#include "commands/IntakeRelease.h"
 
 #include "Constants.h"
 #include "Logger.h"
@@ -85,7 +88,10 @@ private:
     Logger& m_log;
 
     // The driver's controller
-    frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
+    frc::XboxController m_primaryController{OIConstants::kPrimaryControllerPort};
+
+    // Turret controller
+    frc::XboxController m_secondaryController{OIConstants::kSecondaryControllerPort};
 
     // The robot's subsystems and commands are defined here...
 

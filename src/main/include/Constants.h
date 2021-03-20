@@ -21,6 +21,7 @@ using namespace ctre::phoenix;
 
 // Uncomment this to use Mk2 swerve drive instead of Mk3 swerve drive
 //#define Mk2
+#define DualJoysticks
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -229,7 +230,12 @@ namespace OIConstants
     constexpr double kDeadzoneY = 0.10;
     constexpr double kDeadzoneRot = 0.10;
     constexpr double kDeadzoneAbsRot = 0.50;
-    constexpr int kDriverControllerPort = 0;
+    constexpr int kPrimaryControllerPort = 0;
+#ifdef DualJoysticks
+    constexpr int kSecondaryControllerPort = 1;
+#else
+    constexpr int kSecondaryControllerPort = 0;
+#endif
 }  // namespace OIConstants
 
 // Intake Subsystem constants
@@ -241,7 +247,7 @@ namespace IntakeConstants
     constexpr double kIngestLow = 0.3;
     constexpr double kIngestHigh = 0.70;
     constexpr double kReleaseLow = -0.3;
-    constexpr double kReleaseHigh = -0.75;
+    constexpr double kReleaseHigh = -0.70;
 }
 
 // Flywheel Subsystem constants
@@ -297,7 +303,7 @@ namespace TurretConstants
     constexpr double kD = 0.1375;
 
     constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.275;
+    constexpr double kMaxOut = 0.200;
 
     constexpr double kTimeout = 30;
     constexpr double kInverted = true;

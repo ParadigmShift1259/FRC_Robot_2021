@@ -30,11 +30,11 @@ CyclerSubsystem::CyclerSubsystem(const int& lowPrioritySkipCount)
 
 void CyclerSubsystem::Periodic()
 {
-    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
-    {
-        SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
-        SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
-    }
+    // if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    // {
+    SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
+    SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
+    // }
     m_sensor.ClearError();
 }
 
@@ -50,7 +50,7 @@ void CyclerSubsystem::SetTurnTable(double speed)
 
 void CyclerSubsystem::StartDetection() {
     // printf("START DETECTION\n");
-    m_triggeredsensor = false;
+    //m_triggeredsensor = false;
     m_sensor.EnableInterrupts();
 }
 
