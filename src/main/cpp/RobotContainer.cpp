@@ -258,6 +258,14 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerPrepare(&m_cycler, true)
     );
 
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kBack).WhenHeld(
+        Unjam(&m_cycler, &m_intake)
+    );
+
+    frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kB).WhenHeld(
+        IntakeRelease(&m_intake)
+    );
+
     /*
 
     double c_buttonInputSpeed = 0.5;

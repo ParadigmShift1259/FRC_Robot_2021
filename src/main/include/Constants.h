@@ -241,7 +241,7 @@ namespace IntakeConstants
     constexpr double kIngestLow = 0.3;
     constexpr double kIngestHigh = 0.70;
     constexpr double kReleaseLow = -0.3;
-    constexpr double kReleaseHigh = -0.75;
+    constexpr double kReleaseHigh = -0.70;
 }
 
 // Flywheel Subsystem constants

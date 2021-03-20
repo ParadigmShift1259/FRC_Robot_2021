@@ -43,8 +43,11 @@
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
 #include "commands/Fire.h"
+#include "commands/CyclerFire.h"
 #include "commands/CyclerIntakeAgitation.h"
 #include "commands/CyclerPrepare.h"
+#include "commands/Unjam.h"
+#include "commands/IntakeRelease.h"
 
 #include "Constants.h"
 #include "Logger.h"

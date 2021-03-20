@@ -5,6 +5,7 @@ CyclerFire::CyclerFire(CyclerSubsystem* cycler, bool* turretready, bool* firing,
 {
     AddCommands(
         CyclerPrepare(cycler, false),
-        CyclerLaunch(cycler, turretready, firing, finished)
+        CyclerLaunch(cycler, turretready, firing, finished),
+        CyclerPrepare(cycler, true)
     );
 }
