@@ -13,11 +13,15 @@ CyclerAgitation::CyclerAgitation(CyclerSubsystem* subsystem)
   AddRequirements({subsystem});
 }
 
-void CyclerAgitation::Initialize(){
+void CyclerAgitation::Initialize()
+{
+    // Ensures that cycler position is not valid
+    m_cycler->ResetSensor();
     m_timer.Start();
 }
 
-void CyclerAgitation::Execute() {
+void CyclerAgitation::Execute()
+{
     if (m_timer.Get() <= kTimePassed * 1) {
         m_cycler->SetTurnTable(kTurnTableSpeed);
     }
