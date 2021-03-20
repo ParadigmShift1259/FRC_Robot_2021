@@ -16,6 +16,13 @@ using namespace frc;
 class VisionSubsystem : public frc2::SubsystemBase
 {
 public:
+    enum BallDirection : int
+    {
+        kLeft,
+        kRight,
+        kDefault
+    };
+    
     VisionSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
@@ -25,6 +32,8 @@ public:
     bool GetActive();
     /// Retrieves the distance calculation from the target via the limelight
     double GetDistance();
+    /// Retrieves left, right, or default for direction of ball to be used for enumeration
+    BallDirection GetDirection();
     /// Retrieves the angle calculation from the target via the limelight
     double GetAngle();
     /// Turns the limelight LED on or off
@@ -54,8 +63,10 @@ private:
 
     double m_distance;
     double m_horizontalangle;
+    int m_direction;
 
     vector<double> m_averagedistance;
     double m_avgdistance;
     double m_averageangle[3];
+
 };

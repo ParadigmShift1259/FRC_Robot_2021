@@ -140,11 +140,7 @@ public:
         m_rearLeft.ResetLog();
     }
 
-#ifdef Mk2
-    meter_t kTrackWidth = 21.5_in; //!< Distance between centers of right and left wheels on robot
-#else
     meter_t kTrackWidth = 23.5_in;
-#endif
     meter_t kWheelBase = 23.5_in;  //!< Distance between centers of front and back wheels on robot
 
     /// The kinematics object converts inputs into 4 individual swerve module turn angle and wheel speeds
@@ -178,17 +174,10 @@ private:
     /// \name Swerve Modules
     /// The drive subsystem owns all 4 swerve modules
     ///@{
-    #ifdef Mk2
-    SwerveModule m_frontLeft;
-    SwerveModule m_frontRight;
-    SwerveModule m_rearRight;
-    SwerveModule m_rearLeft;
-    #else
     SwerveModule2 m_frontLeft;
     SwerveModule2 m_frontRight;
     SwerveModule2 m_rearRight;
     SwerveModule2 m_rearLeft;
-    #endif
 
     ///@}
 
