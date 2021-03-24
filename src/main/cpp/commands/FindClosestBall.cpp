@@ -19,14 +19,17 @@ void FindClosestBall::Execute() {
         {
           *m_isRedPath = true;
           bPathKnown = true;
+          printf("Red Path Found\n");
         }
         else
         {
           *m_isRedPath = false;
           bPathKnown = true;
+          printf("Blue Path Found\n");
         }
       }
       m_bFoundBall = true;
+      printf("Ball Found\n");
     }
     else
     {
@@ -34,6 +37,7 @@ void FindClosestBall::Execute() {
       {
         *m_isRedPath = false;
         bPathKnown = true;
+        printf("Blue Path Found\n");
       } 
       
       m_drive->Drive(units::meters_per_second_t(0.5),

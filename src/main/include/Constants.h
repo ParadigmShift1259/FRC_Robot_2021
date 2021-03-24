@@ -123,14 +123,16 @@ namespace DriveConstants
     constexpr double kRearRightOffset   = (6.28 - 5.67); //0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 #else
     //Mk3 swerve module
-    // constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
-    // constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
-    // constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
-    // constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
-    constexpr double kFrontLeftOffset   = 2667.0;
-    constexpr double kFrontRightOffset  = 237.0;
-    constexpr double kRearRightOffset   = 1772.0;
-    constexpr double kRearLeftOffset    = 3953.0; //0.0;//3696.1;
+    //============================================LEAVE THESE ZEROES COMMENTED OUT!!!
+    // constexpr double kFrontLeftOffset   = 0.0;
+    // constexpr double kFrontRightOffset  = 0.0;
+    // constexpr double kRearRightOffset   = 0.0;
+    // constexpr double kRearLeftOffset    = 0.0;
+    //===============================================================================
+    constexpr double kFrontLeftOffset   = 2695.0;
+    constexpr double kFrontRightOffset  = 195.0;
+    constexpr double kRearRightOffset   = 1829.0;
+    constexpr double kRearLeftOffset    = 147.0;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -206,7 +208,7 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1);                 // 1.0   // 5.0
+    constexpr auto kMaxSpeed = units::meters_per_second_t(1.0);                 // 1.0   // 5.0
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);

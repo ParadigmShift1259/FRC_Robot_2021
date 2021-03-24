@@ -10,7 +10,8 @@ DriveToBall::DriveToBall(DriveSubsystem* driveSubsystem, IntakeSubsystem* intake
   AddRequirements({intakeSubsystem});
 }
 
-void DriveToBall::Execute() {
+void DriveToBall::Execute()
+{
     double dist = SmartDashboard::GetNumber("ZDistance", -1.0);
     if (!m_bAcceptVisionDist)
     {
@@ -47,18 +48,25 @@ void DriveToBall::Execute() {
     {
       m_bFinished = true;
     }
-
     else
     {    
       double angle = SmartDashboard::GetNumber("XAngle", 180.0);
-      if (angle != 180.0)
+      printf("Angle Degree %.3f\n", angle);
+      if (abs(angle) <= 5.0)
       {
-        units::degree_t angleDegree(angle);
         m_drive->Drive(units::meters_per_second_t(0.5),
-                    units::meters_per_second_t(0),
-                    units::radians_per_second_t(angleDegree / 0.02_s),
-                    false);      
+            units::meters_per_second_t(0),
+            units::radians_per_second_t(0),
+            false);
       }
+      // else if (angle != 180.0)
+      // {
+      //   units::degree_t angleDegree(-1.0 * angle);
+      //   m_drive->Drive(units::meters_per_second_t(0.5),
+      //               units::meters_per_second_t(0),
+      //               units::radians_per_second_t(angleDegree / 2.0_s),
+      //               false);      
+      // }
     }
 }
 

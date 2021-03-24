@@ -543,10 +543,14 @@ frc2::Command *RobotContainer::GetAutonomousGSCommand()
     DriveToBall driveToBall(&m_drive, &m_intake);
     RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
 
+    m_drive.ZeroHeading();
+    // Reset odometry to the starting pose of the trajectory
+    m_drive.ResetOdometry(frc::Pose2d(15.0_in, 90.0_in, frc::Rotation2d(0_deg)));
+
     return new frc2::SequentialCommandGroup(
         std::move(findClosestBall),
         std::move(driveToBall),
-        std::move(rotateToFindNextBall),
+        //std::move(rotateToFindNextBall),
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),
