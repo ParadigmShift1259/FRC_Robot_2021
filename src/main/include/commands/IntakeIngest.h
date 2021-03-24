@@ -9,11 +9,11 @@
 
 class IntakeIngest : public frc2::CommandHelper<frc2::CommandBase, IntakeIngest> {
  public:
-  explicit IntakeIngest(IntakeSubsystem* subsystem, bool* m_cyclerready);
+  explicit IntakeIngest(IntakeSubsystem* subsystem);
 
   void Execute() override;
   
-  bool* m_cyclerready;
+
 
  private:
   IntakeSubsystem* m_intake;

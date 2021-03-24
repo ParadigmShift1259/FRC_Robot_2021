@@ -3,11 +3,12 @@
 
 using namespace CyclerConstants;
 
-CyclerPrepare::CyclerPrepare(CyclerSubsystem* subsystem, bool* cyclerready)
+CyclerPrepare::CyclerPrepare(CyclerSubsystem* subsystem, bool reset)
  : m_cycler(subsystem)
- , m_cyclerready(cyclerready)
 {
     AddRequirements({subsystem});
+    if (reset)
+        m_cycler->ResetSensor();
 }
 
 void CyclerPrepare::Initialize() {
@@ -24,10 +25,11 @@ bool CyclerPrepare::IsFinished() {
 }
 
 void CyclerPrepare::End(bool interrupted) {
-    if (!interrupted) {
-        *m_cyclerready = true;
+    printf("Ending Prepare\n");
+    if (interrupted) {
         m_cycler->ResetSensor();
-        m_cycler->SetFeeder(0);
-        m_cycler->SetTurnTable(0);
     }
+    m_cycler->SetFeeder(0);
+    m_cycler->SetTurnTable(0);
+
 }

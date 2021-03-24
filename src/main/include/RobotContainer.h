@@ -43,8 +43,11 @@
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
 #include "commands/Fire.h"
+#include "commands/CyclerFire.h"
 #include "commands/CyclerIntakeAgitation.h"
 #include "commands/CyclerPrepare.h"
+#include "commands/Unjam.h"
+#include "commands/IntakeRelease.h"
 
 #include "Constants.h"
 #include "Logger.h"
@@ -71,6 +74,8 @@ public:
 
     frc2::Command *GetAutonomousCommand();
 
+    frc2::Command *GetAutonomousGSCommand();
+
     void ResetLog() { m_drive.ResetLog(); }
 
 private:
@@ -83,7 +88,10 @@ private:
     Logger& m_log;
 
     // The driver's controller
-    frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
+    frc::XboxController m_primaryController{OIConstants::kPrimaryControllerPort};
+
+    // Turret controller
+    frc::XboxController m_secondaryController{OIConstants::kSecondaryControllerPort};
 
     // The robot's subsystems and commands are defined here...
 
@@ -117,5 +125,6 @@ private:
     int m_testNumber;
     double m_testPower;
     const int& m_lowPrioritySkipCount;
-    bool m_cyclerReady;
+
+    bool m_isRedPath = false;
 };

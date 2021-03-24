@@ -22,6 +22,7 @@ VisionSubsystem::VisionSubsystem()
 
     m_distance = 0;
     m_horizontalangle = 0;
+    m_direction = 0;
 
     m_averagedistance.reserve(3);
     m_avgdistance = 0;
@@ -36,11 +37,16 @@ VisionSubsystem::VisionSubsystem()
 void VisionSubsystem::Periodic()
 {
     m_dashboard->PutNumber("cameraFeed", m_camerachoice);
+    m_dashboard->PutNumber("D_V_Averaged Distance", m_avgdistance);
 
     m_active = m_networktable->GetNumber("tv", 0);
+    SmartDashboard::PutBoolean("TEST_VIS_ACTIVE_2", m_active);
 
     if (!m_led)
+    {
+        printf("No LED");
         m_active = false;
+    }
 
     if (!m_active)
     {
@@ -53,6 +59,8 @@ void VisionSubsystem::Periodic()
 
     m_tx = m_networktable->GetNumber("tx", 0.0);
     m_ty = m_networktable->GetNumber("ty", 0.0);
+
+    m_direction = m_networktable->GetNumber("direction", 0.0);
 
     /*
     m_ta = m_networktable->GetNumber("ta", 0.0);
@@ -75,7 +83,7 @@ void VisionSubsystem::Periodic()
     {
         m_averageangle[i] = m_averageangle[i + 1];
     }
-    if ((m_distance < 110) || (m_distance > 380))
+    if ((m_distance < kMinTargetDistance) || (m_distance > kMaxTargetDistance))
         m_active = false;
 
     m_averageangle[2] = m_horizontalangle;
@@ -112,6 +120,10 @@ double VisionSubsystem::GetAngle()
     return m_horizontalangle;
 }
 
+VisionSubsystem::BallDirection VisionSubsystem::GetDirection()
+{
+    return BallDirection(m_direction);
+}
 
 void VisionSubsystem::SetLED(bool on)
 {

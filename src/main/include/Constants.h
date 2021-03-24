@@ -21,6 +21,7 @@ using namespace ctre::phoenix;
 
 // Uncomment this to use Mk2 swerve drive instead of Mk3 swerve drive
 //#define Mk2
+#define DualJoysticks
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -122,10 +123,16 @@ namespace DriveConstants
     constexpr double kRearRightOffset   = (6.28 - 5.67); //0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 #else
     //Mk3 swerve module
-    constexpr double kFrontLeftOffset   = 2683.1; //2718.0; // 2.163;
-    constexpr double kFrontRightOffset  =  187.3; //238.0; // 5.897;
-    constexpr double kRearRightOffset   = 1843.5; //1861.0; // 3.405;
-    constexpr double kRearLeftOffset    = 3696.1; // 37.0; // 0.351;
+    //============================================LEAVE THESE ZEROES COMMENTED OUT!!!
+    // constexpr double kFrontLeftOffset   = 0.0;
+    // constexpr double kFrontRightOffset  = 0.0;
+    // constexpr double kRearRightOffset   = 0.0;
+    // constexpr double kRearLeftOffset    = 0.0;
+    //===============================================================================
+    constexpr double kFrontLeftOffset   = 2695.0;
+    constexpr double kFrontRightOffset  = 195.0;
+    constexpr double kRearRightOffset   = 1829.0;
+    constexpr double kRearLeftOffset    = 147.0;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -201,7 +208,7 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1);                 // 1.0   // 5.0
+    constexpr auto kMaxSpeed = units::meters_per_second_t(1.0);                 // 1.0   // 5.0
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
@@ -225,7 +232,12 @@ namespace OIConstants
     constexpr double kDeadzoneY = 0.10;
     constexpr double kDeadzoneRot = 0.10;
     constexpr double kDeadzoneAbsRot = 0.50;
-    constexpr int kDriverControllerPort = 0;
+    constexpr int kPrimaryControllerPort = 0;
+#ifdef DualJoysticks
+    constexpr int kSecondaryControllerPort = 1;
+#else
+    constexpr int kSecondaryControllerPort = 0;
+#endif
 }  // namespace OIConstants
 
 // Intake Subsystem constants
@@ -235,9 +247,9 @@ namespace IntakeConstants
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
-    constexpr double kIngestHigh = 0.75;
+    constexpr double kIngestHigh = 0.70;
     constexpr double kReleaseLow = -0.3;
-    constexpr double kReleaseHigh = -0.75;
+    constexpr double kReleaseHigh = -0.70;
 }
 
 // Flywheel Subsystem constants
@@ -247,11 +259,22 @@ namespace FlywheelConstants
 
     constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
-    constexpr double kAllowedError = 20;
+    constexpr double kAllowedError = 50;
+    constexpr double kMaintainPIDError = 300;
 
-    constexpr double kP = 0.0008700;
+    // Additional multiplier applied to flywheel speed while firing 
+    // Ensures all ball trajectories are straight
+    constexpr double kFiringRPMMultiplier = 1.05;
+
+    // Launch PID values, used to first get to setpoint
+    constexpr double kP = 0.0002700;
     constexpr double kI = 0;
     constexpr double kD = 0;
+
+    // Maintain PID values, used to adjust for error once the robot is shooting
+    constexpr double kMP = 0.001700;
+    constexpr double kMI = 0.00000001;
+    constexpr double kMD = 0.000001;
 
     constexpr double kMinOut = 0;
     constexpr double kMaxOut = 1.0;
@@ -269,7 +292,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0;
+    constexpr double kIdleRPM = 1700;
 }
 
 // Turret Subsystem Constants
@@ -278,17 +301,18 @@ namespace TurretConstants
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
     constexpr double kP = 0.14114;
-    constexpr double kI = 0.00085;
+    constexpr double kI = 0.00025;
     constexpr double kD = 0.1375;
 
     constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.275;
+    constexpr double kMaxOut = 0.200;
 
     constexpr double kTimeout = 30;
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kDegreeStopRange = 0.225;
+    constexpr double kDegreeStopRange = 0.5;
+    constexpr double kDegreePIDStopRange = 0.35;
 
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
@@ -314,9 +338,11 @@ namespace TurretConstants
 namespace HoodConstants
 {
     /// PWM Port for hood servo
-    constexpr int kPWMPort = 8;                //!< Hood servo PWM channel (not installed, yet)
+    constexpr int kPWMPort = 8;                //!< Hood servo PWM channel
     constexpr double kTestServoSpeed = 0.14;
-
+    // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
+    constexpr double kMax = .85;
+    constexpr double kMin = .0485;
 }
 
 // Cycler Subsystem Constants
@@ -325,9 +351,10 @@ namespace CyclerConstants
     constexpr double kFeederPort = 30;      //!< Feeder CAN ID (SparkMAX)
     constexpr double kTurnTablePort = 31;   //!< Turn table CAN ID (TalonSRX)
 
-    constexpr double kFeederSpeed = 0.20;
+    constexpr double kFeederSpeed = 0.350;
     constexpr double kTurnTableSpeed = 0.400;
-    constexpr double kTurnTableHoneSpeed = 0.150;
+    constexpr double kTurnTableHoneSpeed = 0.200;
+    constexpr units::second_t kMaxCyclerTime = 5.0_s;
 
     constexpr double kSensorInvert = true;
 
@@ -335,6 +362,7 @@ namespace CyclerConstants
     constexpr double kTurnTableRampRate = 0.75;
 
     constexpr double kTimePassed = 0.15;
+    constexpr double kTimeLaunch = 4.00;
 
     constexpr double kTimeout = 30;
     constexpr double kTurnTableInverted = false;
@@ -352,6 +380,9 @@ namespace VisionConstants
     constexpr double kTargetHeight = 98.25;
     // Target width, in inches
     constexpr double kTargetSize = 15;
+
+    constexpr double kMinTargetDistance = 70;
+    constexpr double kMaxTargetDistance = 380;
 }
 
 // Climber Subsystem constants
