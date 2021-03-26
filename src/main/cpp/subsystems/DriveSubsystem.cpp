@@ -109,6 +109,9 @@ DriveSubsystem::DriveSubsystem(Logger& log, const int& lowPrioritySkipCount)
 
     m_rotationPIDController.SetTolerance(DriveConstants::kAbsoluteRotationTolerance);
     m_rotationPIDController.SetIntegratorRange(0, DriveConstants::kRotationIMaxRange);
+
+    m_lastHeading = 0;
+    m_rotationalInput = false;
 }
 
 void DriveSubsystem::Periodic()
@@ -127,14 +130,14 @@ void DriveSubsystem::Periodic()
     m_rearRight.Periodic(m_lowPrioritySkipCount);
     m_rearLeft.Periodic(m_lowPrioritySkipCount);
 
-    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    if (m_lowPrioritySkipCount % 1000 == 0)   // 5 per second
     {
         m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
         m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
         m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
         m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
         m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
-        m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
+        //m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
         SmartDashboard::PutNumber("D_D_Rot", GetHeading());
     }
@@ -142,52 +145,80 @@ void DriveSubsystem::Periodic()
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
                                 , meters_per_second_t ySpeed
+                                , radian_t rot
+                                , bool fieldRelative) 
+{  
+    double error = rot.to<double>() - GetHeadingAsRot2d().Radians().to<double>();
+    double desiredSet = Util::NegPiToPiRads(error);
+    double max = DriveConstants::kMaxAbsoluteRotationSpeed;
+    double maxTurn = DriveConstants::kMaxAbsoluteTurnableSpeed;
+
+    #ifdef TUNE_ROTATION
+    double P = SmartDashboard::GetNumber("T_D_RP", 0);
+    double I = SmartDashboard::GetNumber("T_D_RI", 0);
+    double D = SmartDashboard::GetNumber("T_D_RD", 0);
+    double m = SmartDashboard::GetNumber("T_D_RMax", 0);
+    double mTurn = SmartDashboard::GetNumber("T_D_RTMax", 0);
+
+    m_rotationPIDController.SetP(P);
+    m_rotationPIDController.SetI(I);
+    m_rotationPIDController.SetD(D);
+    max = m;
+    maxTurn = mTurn;
+    #endif
+
+    double desiredTurnRate = m_rotationPIDController.Calculate(0, desiredSet);
+
+    double currentTurnRate = GetTurnRate() * wpi::math::pi / 180;
+
+    // Prevent sharp turning if already fast going in a direction
+    if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate)))
+        desiredTurnRate *= -1.0;
+
+    // Power limiting
+    if (abs(desiredTurnRate) > max)
+        desiredTurnRate = signbit(desiredTurnRate) ? max * -1.0 : max;
+
+    // if (!m_rotationPIDController.AtSetpoint())
+        Drive(xSpeed, ySpeed, radians_per_second_t(desiredTurnRate), fieldRelative);
+    // else
+    //     Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
+}
+
+void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
+                                , meters_per_second_t ySpeed
                                 , double xRot
                                 , double yRot
                                 , bool fieldRelative) 
-{  
+{
     if (xRot != 0 || yRot != 0)
-	{
-        double rotPosition = atan2f(yRot, xRot);
-
-        double error = rotPosition - GetHeadingAsRot2d().Radians().to<double>();
-        double desiredSet = Util::NegPiToPiRads(error);
-        double max = DriveConstants::kMaxAbsoluteRotationSpeed;
-        double maxTurn = DriveConstants::kMaxAbsoluteTurnableSpeed;
-
-        #ifdef TUNE_ROTATION
-        double P = SmartDashboard::GetNumber("T_D_RP", 0);
-        double I = SmartDashboard::GetNumber("T_D_RI", 0);
-        double D = SmartDashboard::GetNumber("T_D_RD", 0);
-        double m = SmartDashboard::GetNumber("T_D_RMax", 0);
-        double mTurn = SmartDashboard::GetNumber("T_D_RTMax", 0);
-    
-        m_rotationPIDController.SetP(P);
-        m_rotationPIDController.SetI(I);
-        m_rotationPIDController.SetD(D);
-        max = m;
-        maxTurn = mTurn;
-        #endif
-
-        double desiredTurnRate = m_rotationPIDController.Calculate(0, desiredSet);
-
-        double currentTurnRate = GetTurnRate() * wpi::math::pi / 180;
-
-        // Prevent sharp turning if already fast going in a direction
-        if ((abs(currentTurnRate) >= maxTurn) && (signbit(desiredTurnRate) != signbit(currentTurnRate)))
-            desiredTurnRate *= -1.0;
-
-        // Power limiting
-        if (abs(desiredTurnRate) > max)
-            desiredTurnRate = signbit(desiredTurnRate) ? max * -1.0 : max;
-
-        if (!m_rotationPIDController.AtSetpoint())
-            Drive(xSpeed, ySpeed, radians_per_second_t(desiredTurnRate), fieldRelative);
-        else
-            Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
+    {
+        m_rotationalInput = true;
+        RotationDrive(xSpeed, ySpeed, radian_t(atan2f(yRot, xRot)), fieldRelative);
     }
     else
         Drive(xSpeed, ySpeed, radians_per_second_t(0), fieldRelative);
+    
+}
+
+void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
+                        , meters_per_second_t ySpeed
+                        , radians_per_second_t rot
+                        , bool fieldRelative)
+{
+    if (rot.to<double>() == 0 && m_rotationalInput)
+    {
+        m_rotationalInput = false;
+        m_lastHeading = GetHeadingAsRot2d().Radians().to<double>();
+    }
+    else
+    if (rot.to<double>() != 0)
+        m_rotationalInput = true;
+    
+    if (!m_rotationalInput)
+        RotationDrive(xSpeed, ySpeed, radian_t(m_lastHeading), fieldRelative);
+    else
+        Drive(xSpeed, ySpeed, rot, fieldRelative);
 }
 
 void DriveSubsystem::Drive(meters_per_second_t xSpeed
@@ -208,6 +239,10 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
     auto states = kDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
 
     kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
+
+    // Added to force correct slow left side, 3/24/21
+    states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
+    states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
     
     #ifdef TUNE_MODULES
     states[eFrontLeft].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFL", 0.0)));
@@ -222,8 +257,8 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     m_frontLeft.SetDesiredState(states[eFrontLeft]);
     m_frontRight.SetDesiredState(states[eFrontRight]);
-    m_rearRight.SetDesiredState(states[eRearRight]);
     m_rearLeft.SetDesiredState(states[eRearLeft]);
+    m_rearRight.SetDesiredState(states[eRearRight]);
 }
 
 void DriveSubsystem::SetModuleStates(SwerveModuleStates desiredStates)
@@ -279,4 +314,12 @@ double DriveSubsystem::PWMToPulseWidth(CANifier::PWMChannel pwmChannel)
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose)
 {
     m_odometry.ResetPosition(pose, GetHeadingAsRot2d());
+}
+
+void DriveSubsystem::ResetRelativeToAbsolute()
+{
+    m_frontLeft.ResetRelativeToAbsolute();
+    m_frontRight.ResetRelativeToAbsolute();
+    m_rearRight.ResetRelativeToAbsolute();
+    m_rearLeft.ResetRelativeToAbsolute();
 }

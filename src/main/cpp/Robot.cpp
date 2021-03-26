@@ -34,7 +34,7 @@ void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
     m_lowPrioritySkipCount++;
-    m_container.Periodic();
+    //m_container.Periodic();
 }
 
 /**

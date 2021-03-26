@@ -35,7 +35,7 @@
 #ifndef Mk2
 
 // Change this definition to load PID values to both drive and angle
-//#define TUNE_MODULE
+#define TUNE_MODULE
 // Uncomment this to prevent swerve modules from driving
 //#define DISABLE_DRIVE
 
@@ -104,6 +104,7 @@ void Load(CANPIDController& turnPIDController)
 class DrivePidParams2
 {
     double m_p = 0.0;
+    double m_i = 0.0;
     double m_d = 0.0;
     double m_ff = 0.047619;
     double m_max = 1.0;
@@ -119,7 +120,8 @@ public:
         driveMotor.ConfigPeakOutputReverse(m_min);
         #ifdef TUNE_MODULE
         frc::SmartDashboard::PutNumber("T_SM_DP", m_p);
-        frc::SmartDashboard::PutNumber("T_SM_D", m_d);
+        frc::SmartDashboard::PutNumber("T_SM_DI", m_i);
+        frc::SmartDashboard::PutNumber("T_SM_DD", m_d);
         frc::SmartDashboard::PutNumber("T_SM_DFF", m_ff);
         frc::SmartDashboard::PutNumber("T_SM_DMax", m_max);
         frc::SmartDashboard::PutNumber("T_SM_DMin", m_min);
@@ -130,6 +132,7 @@ public:
     {
         // Retrieving drive PID values from SmartDashboard
         double p = frc::SmartDashboard::GetNumber("T_SM_DP", 0.0);
+        double i = frc::SmartDashboard::GetNumber("T_SM_DI", 0.0);
         double d = frc::SmartDashboard::GetNumber("T_SM_DD", 0.0);
         double ff = frc::SmartDashboard::GetNumber("T_SM_DFF", 0.0);
         double max = frc::SmartDashboard::GetNumber("T_SM_DMax", 0.0);
@@ -137,6 +140,7 @@ public:
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
         if ((p != m_p)) { driveMotor.Config_kP(0, p); m_p = p; }
+        if ((i != m_i)) { driveMotor.Config_kI(0, i); m_i = i; }
         if ((d != m_d)) { driveMotor.Config_kD(0, d); m_d = d; }
         if ((ff != m_ff)) { driveMotor.Config_kF(0, ff); m_ff = ff; }
         
@@ -210,6 +214,9 @@ public:
     void ResetEncoders();
 
     void ResetLog() { m_logData.ResetHeaderLogged(); }
+
+
+    void ResetRelativeToAbsolute();
 
     // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
     static double ZeroTo2PiRads(double theta);

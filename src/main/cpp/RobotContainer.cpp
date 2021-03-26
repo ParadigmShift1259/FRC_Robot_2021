@@ -97,7 +97,7 @@ void RobotContainer::SetDefaultCommands()
             }
             else 
             {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::radians_per_second_t(rotInput),
                             m_fieldRelative);
@@ -137,8 +137,6 @@ void RobotContainer::SetDefaultCommands()
     // );
 
     m_turret.SetDefaultCommand(
-        
-        
         frc2::RunCommand(
             [this] {
                 auto turretXRot = m_secondaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
@@ -235,6 +233,15 @@ void RobotContainer::ConfigureButtonBindings()
     // Runs autonomous path in gyro
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhenPressed(
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    );
+
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_drive.ResetRelativeToAbsolute();
+        },
+        {&m_drive}
+        )
     );
 
     // Increments / Decrements a test power value for TestCommands()

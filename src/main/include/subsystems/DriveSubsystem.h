@@ -25,7 +25,7 @@
 // Uncomment to directly set values to each swerve module
 //#define TUNE_MODULES
 // Uncomment to tune Rotation PID for Drive Subsystem
-//#define TUNE_ROTATION
+#define TUNE_ROTATION
 
 // For each enum here, add a string to c_headerNamesDriveSubsystem
 // and a line like this: 
@@ -92,10 +92,28 @@ public:
     /// \param xSpeed        Speed of the robot in the x direction
     ///                      (forward/backwards).
     /// \param ySpeed        Speed of the robot in the y direction (sideways).
+    /// \param rot           Angle of the robot in radians
+    /// \param fieldRelative Whether the provided translational speeds are relative to the field.
+    void RotationDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radian_t rot, bool fieldRelative);
+
+    // Drives the robot with the right stick controlling the position angle of the robot
+    ///
+    /// \param xSpeed        Speed of the robot in the x direction
+    ///                      (forward/backwards).
+    /// \param ySpeed        Speed of the robot in the y direction (sideways).
     /// \param xRot          Angle of the robot on the x axis
     /// \param yRot          Angle of the robot on the y axis
     /// \param fieldRelative Whether the provided translational speeds are relative to the field.
     void RotationDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, double xRot, double yRot, bool fieldRelative);
+
+    /// Drives the robot and maintains robot angle with no rotational input
+    ///
+    /// \param xSpeed        Speed of the robot in the x direction
+    ///                      (forward/backwards).
+    /// \param ySpeed        Speed of the robot in the y direction (sideways).
+    /// \param rot           Angular rate of the robot.
+    /// \param fieldRelative Whether the provided x and y speeds are relative to the field.
+    void HeadingDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative);
 
     /// Resets the drive encoders to currently read a position of 0.
     void ResetEncoders();
@@ -139,6 +157,8 @@ public:
         m_rearRight.ResetLog();
         m_rearLeft.ResetLog();
     }
+
+    void ResetRelativeToAbsolute();
 
     meter_t kTrackWidth = 23.5_in;
     meter_t kWheelBase = 23.5_in;  //!< Distance between centers of front and back wheels on robot
@@ -193,5 +213,9 @@ private:
         DriveConstants::kRotationI,
         DriveConstants::kRotationD
     };
+
     const int& m_lowPrioritySkipCount;
+
+    double m_lastHeading;
+    bool m_rotationalInput;
 };
