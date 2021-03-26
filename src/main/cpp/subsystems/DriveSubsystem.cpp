@@ -16,76 +16,52 @@ using namespace DriveConstants;
 using namespace std;
 using namespace frc;
 
-DriveSubsystem::DriveSubsystem(Logger& log, const int& lowPrioritySkipCount)
-    : m_log(log)
-    , m_logData(c_headerNamesDriveSubsystem, false, "")
-    , m_frontLeft
+DriveSubsystem::DriveSubsystem()
+    : m_frontLeft
       {
           kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
-#ifdef Mk2
-        , kFrontLeftTurningEncoderPort
-#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kFrontLeftPWM
-#endif
         , kFrontLeftDriveMotorReversed
         , kFrontLeftOffset
         , std::string("FrontLeft")
-        , log
       }
 
     , m_frontRight
       {
           kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
-#ifdef Mk2
-        , kFrontRightTurningEncoderPort
-#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kFrontRightPWM
-#endif
         , kFrontRightDriveMotorReversed
         , kFrontRightOffset
         , std::string("FrontRight")
-        , log
       }
 
     , m_rearRight
       {
           kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
-#ifdef Mk2
-        , kRearRightTurningEncoderPort
-#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kRearRightPWM
-#endif
         , kRearRightDriveMotorReversed
         , kRearRightOffset
         , std::string("RearRight")
-        , log
       }
-
     , m_rearLeft
       {
           kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
-#ifdef Mk2
-        , kRearLeftTurningEncoderPort
-#else
         , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
         , kRearLeftPWM
-#endif
         , kRearLeftDriveMotorReversed
         , kRearLeftOffset
         , std::string("RearLeft")
-        , log
       }
     , m_canifier(DriveConstants::kCanifierID)
     , m_gyro(0)
     , m_odometry{kDriveKinematics, GetHeadingAsRot2d(), frc::Pose2d()}
-    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
 
     #ifdef TUNE_MODULES
@@ -122,22 +98,12 @@ void DriveSubsystem::Periodic()
    
     auto pose = m_odometry.GetPose();
 
-    m_frontLeft.Periodic(m_lowPrioritySkipCount);
-    m_frontRight.Periodic(m_lowPrioritySkipCount);
-    m_rearRight.Periodic(m_lowPrioritySkipCount);
-    m_rearLeft.Periodic(m_lowPrioritySkipCount);
+    m_frontLeft.Periodic();
+    m_frontRight.Periodic();
+    m_rearRight.Periodic();
+    m_rearLeft.Periodic();
 
-    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
-    {
-        m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
-        m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
-        m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
-        m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-        m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
-        m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
-
-        SmartDashboard::PutNumber("D_D_Rot", GetHeading());
-    }
+    SmartDashboard::PutNumber("D_D_Rot", GetHeading());
 }
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
@@ -195,10 +161,6 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
-    m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
-    m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
-    m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
-
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)
         chassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetHeadingAsRot2d());
