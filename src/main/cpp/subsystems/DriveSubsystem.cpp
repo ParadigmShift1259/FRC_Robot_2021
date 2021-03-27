@@ -260,6 +260,9 @@ double DriveSubsystem::GetTurnRate()
 
 frc::Pose2d DriveSubsystem::GetPose()
 {
+    SmartDashboard::PutNumber("T_D_Odo_X", m_odometry.GetPose().X().to<double>());
+    SmartDashboard::PutNumber("T_D_Odo_Y", m_odometry.GetPose().Y().to<double>());
+    SmartDashboard::PutNumber("T_D_Odo_Angle", m_odometry.GetPose().Rotation().Degrees().to<double>());
     return m_odometry.GetPose();
 }
 

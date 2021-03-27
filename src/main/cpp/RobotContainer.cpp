@@ -18,7 +18,7 @@
 // Commenting this out removes subsystem CAN errors
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
 //#define SUBSYSTEMS
-
+#include "TestTraj.h"
 #ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
@@ -185,14 +185,30 @@ void RobotContainer::ConfigureButtonBindings()
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
 
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
-        frc2::InstantCommand(    
-        [this] {
-            m_drive.ResetRelativeToAbsolute();
-        },
-        {&m_drive}
-        )
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kFront))
     );
+
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kX).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kLeft))
+    );
+
+        frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kB).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kRight))
+    );
+
+        frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kBack))
+    );
+
+    // frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
+    //     frc2::InstantCommand(    
+    //     [this] {
+    //         m_drive.ResetRelativeToAbsolute();
+    //     },
+    //     {&m_drive}
+    //     )
+    // );
 
     // Triggers Fire sequence
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kY).WhenPressed(
@@ -372,6 +388,75 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 }
 
+frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
+{
+    // Set up config for trajectory
+    frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
+    // Add kinematics to ensure max speed is actually obeyed
+    config.SetKinematics(m_drive.kDriveKinematics);
+    frc::Trajectory exampleTrajectory;
+
+    switch (direction)
+    {
+        case kFront:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajFront,
+                config
+            );
+            break;
+        case kLeft:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajLeft,
+                config
+            );
+            break;
+        case kRight:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajRight,
+                config
+            );
+            break;
+        case kBack:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajBack,
+                config
+            );
+            break;
+    }
+
+    frc::ProfiledPIDController<units::radians> thetaController{
+        AutoConstants::kPThetaController, 0, 0,
+        AutoConstants::kThetaControllerConstraints};
+
+    thetaController.EnableContinuousInput(units::radian_t(-wpi::math::pi), units::radian_t(wpi::math::pi));
+
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> swerveControllerCommand(
+        exampleTrajectory,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        //GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+
+    // Reset odometry to the starting pose of the trajectory
+    m_drive.ResetOdometry(exampleTrajectory.InitialPose());
+
+    return new frc2::SequentialCommandGroup(
+        std::move(swerveControllerCommand),
+        frc2::InstantCommand(
+            [this]() {
+                m_drive.Drive(units::meters_per_second_t(0.0),
+                              units::meters_per_second_t(0.0),
+                              units::radians_per_second_t(0.0), false);
+            },
+            {}
+        )
+    );
+}
 
 frc2::Command *RobotContainer::GetAutonomousGSCommand()
 {

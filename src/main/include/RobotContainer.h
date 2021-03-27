@@ -73,6 +73,9 @@ public:
 
     frc2::Command *GetAutonomousCommand();
 
+    enum Direction { kFront, kLeft, kRight, kBack };
+    frc2::Command *GetDriveTestCommand(Direction direction);
+
     frc2::Command *GetAutonomousGSCommand();
 
 private:
