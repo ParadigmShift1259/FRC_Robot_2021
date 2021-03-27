@@ -25,8 +25,7 @@ SwerveModule::SwerveModule(int driveMotorChannel,
                            const int turningEncoderPort,
                            bool driveMotorReversed,
                            double offset,
-                           const std::string& name,
-                           Logger& log)
+                           const std::string& name)
     : m_offset(offset)
     , m_name(name)
     , m_driveMotor(driveMotorChannel, CANSparkMax::MotorType::kBrushless)
@@ -34,8 +33,6 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     , m_driveEncoder(m_driveMotor)
     , m_turnNeoEncoder(m_turningMotor)
     , m_turningEncoder(turningEncoderPort)
-    , m_logData(c_headerNamesSwerveModule, false, name)
-    , m_log(log)
 {
     m_driveMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
     m_turningMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
@@ -119,19 +116,6 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
     {
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
     }
-
-    const std::string FuncModule = "Swerve" + m_name;
-    m_logData[ESwerveModuleLogData::eDesiredAngle] = state.angle.Radians().to<double>();
-    m_logData[ESwerveModuleLogData::eTurnEncVolts] = m_turningEncoder.GetVoltage();
-    m_logData[ESwerveModuleLogData::eTurnEncAngle] = absAngle;
-    m_logData[ESwerveModuleLogData::eMinTurnRads] = minTurnRads;
-    m_logData[ESwerveModuleLogData::eTurnNeoPidRefPos] = newPosition;
-    m_logData[ESwerveModuleLogData::eTurnNeoEncoderPos] = currentPosition;
-    m_logData[ESwerveModuleLogData::eTurnOutputDutyCyc] = m_turningMotor.GetAppliedOutput();
-    m_logData[ESwerveModuleLogData::eDrivePidRefSpeed] = state.speed.to<double>();
-    m_logData[ESwerveModuleLogData::eDriveEncVelocity] = m_driveEncoder.GetVelocity();
-    m_logData[ESwerveModuleLogData::eDriveOutputDutyCyc] = m_driveMotor.GetAppliedOutput();
-    m_log.logData<ESwerveModuleLogData>(FuncModule.c_str(), m_logData);
 }
 
 void SwerveModule::ResetEncoders()

@@ -38,7 +38,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/CyclerSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
-#include "subsystems/ClimberSubsystem.h"
+// #include "subsystems/ClimberSubsystem.h"
 
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
@@ -50,7 +50,6 @@
 #include "commands/IntakeRelease.h"
 
 #include "Constants.h"
-#include "Logger.h"
 
 #include <iostream>
 #include <wpi/Path.h>
@@ -68,7 +67,7 @@
 class RobotContainer
 {
 public:
-    RobotContainer(Logger& log, const int& lowPrioritySkipCount);
+    RobotContainer();
 
     void Periodic();
 
@@ -76,16 +75,12 @@ public:
 
     frc2::Command *GetAutonomousGSCommand();
 
-    void ResetLog() { m_drive.ResetLog(); }
-
 private:
     double Deadzone(double inputValue, double deadzone)
     {
         // If the input is small return 0
         return abs(inputValue) <= deadzone ? 0 : inputValue;
     }    
-    
-    Logger& m_log;
 
     // The driver's controller
     frc::XboxController m_primaryController{OIConstants::kPrimaryControllerPort};
@@ -105,26 +100,9 @@ private:
     VisionSubsystem m_vision;
     // ClimberSubsystem m_climber;
 
-    // m_units::meters_per_second_t m_xInput;      //!< Last x input value
-    // units::meters_per_second_t m_yInput;        //!< Last y input value
-    // units::radians_per_second_t m_rotInput;     //!< Last rotation input value
-
-     // The chooser for the autonomous routin;
-    frc::SendableChooser<frc2::Command *> m_chooser;
-
-    nt::NetworkTableEntry m_inputXentry;
-    nt::NetworkTableEntry m_inputYentry;
-    nt::NetworkTableEntry m_inputRotentry;
-
     void SetDefaultCommands();
     void ConfigureButtonBindings();
-    frc2::InstantCommand TestCommands();
 
     bool m_fieldRelative = false;
-
-    int m_testNumber;
-    double m_testPower;
-    const int& m_lowPrioritySkipCount;
-
     bool m_isRedPath = false;
 };

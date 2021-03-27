@@ -30,7 +30,6 @@
 #include <string>
 
 #include "Constants.h"
-#include "Logger.h"
 
 #ifndef Mk2
 
@@ -39,6 +38,7 @@
 // Uncomment this to prevent swerve modules from driving
 //#define DISABLE_DRIVE
 
+using namespace frc;
 using namespace rev;
 using namespace units;
 using namespace ctre::phoenix::motorcontrol;
@@ -154,43 +154,6 @@ public:
     }
 };
 
-// For each enum here, add a string to c_headerNamesSwerveModule2
-// and a line like this: 
-//      m_logData[ESwerveModuleLogData::e???] = ???;
-// to SwerveModule2::Periodic
-enum class ESwerveModuleLogData2 : int
-{
-      eFirstInt
-    , eLastInt = eFirstInt
-
-    , eFirstDouble
-    , eDesiredAngle = eFirstDouble
-    , eTurnEncVolts
-    , eTurnEncAngle
-    , eMinTurnRads
-    , eTurnNeoPidRefPos
-    , eTurnNeoEncoderPos
-    , eTurnOutputDutyCyc
-    , eDrivePidRefSpeed
-    , eDriveEncVelocity
-    , eDriveOutputDutyCyc
-    , eLastDouble
-};
-
-const std::vector<std::string> c_headerNamesSwerveModule2
-{
-      "desiredAngle"
-    , "turnEncVolts"
-    , "turnEncAngle"
-    , "minTurnRads"
-    , "turnNeoPidRefPos"
-    , "turnNeoEncoderPos"
-    , "turnOutputDutyCyc"
-    , "drivePidRefSpeed"
-    , "driveEncVelocity"
-    , "driveOutputDutyCyc"
-};
-
 class SwerveModule2
 {
     using radians_per_second_squared_t = compound_unit<radians, inverse<squared<second>>>;
@@ -202,19 +165,15 @@ public:
                 , CANifier::PWMChannel pwmChannel
                 , bool driveEncoderReversed
                 , double offSet
-                , const std::string& name
-                , Logger& log);
+                , const std::string& name);
 
     frc::SwerveModuleState GetState();
 
-    void Periodic(const int& lowPrioritySkipCount);
+    void Periodic();
 
     void SetDesiredState(frc::SwerveModuleState &state);
 
     void ResetEncoders();
-
-    void ResetLog() { m_logData.ResetHeaderLogged(); }
-
 
     void ResetRelativeToAbsolute();
 
@@ -223,18 +182,6 @@ public:
 
     // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
     static double NegPiToPiRads(double theta);
-
-    // Used to confirm the encoder and motor direction are in sync
-    // units::volt_t m_tempVoltage = 0.1_V; 
-    // void TemporaryRunTurnMotor()
-    // {
-    //     m_turningMotor.SetVoltage(m_tempVoltage);
-    //     m_tempVoltage += 0.1_V; 
-    //     if ( m_tempVoltage > 5.0_V)
-    //     {
-    //          m_tempVoltage = 0.1_V;
-    //     }
-    // }
 
 private:
     void EncoderToRadians();
@@ -245,12 +192,6 @@ private:
     double MinTurnRads(double init, double final, bool& bOutputReverse);
     meters_per_second_t CalcMetersPerSec();
     double CalcTicksPer100Ms(meters_per_second_t speed);
-
-    // We have to use meters here instead of radians due to the fact that
-    // ProfiledPIDController's constraints only take in meters per second and
-    // meters per second squared.
-    //static constexpr radians_per_second_t kModuleMaxAngularVelocity = radians_per_second_t(wpi::math::pi);                                           // radians per second
-    //static constexpr unit_t<radians_per_second_squared_t> kModuleMaxAngularAcceleration = unit_t<radians_per_second_squared_t>(wpi::math::pi * 2.0); // radians per second squared
 
     double m_offset;
     std::string m_name;
@@ -269,10 +210,6 @@ private:
     CANifier::PWMChannel m_pwmChannel;
 
     Timer m_timer;
-
-    using LogData = LogDataT<ESwerveModuleLogData2>;
-    LogData m_logData;
-    Logger& m_log;
 };
 
 #endif

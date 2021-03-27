@@ -30,7 +30,6 @@
 #include <string>
 
 #include "Constants.h"
-#include "Logger.h"
 
 // Change this definition to load PID values to both drive and angle
 //#define TUNE_MODULE
@@ -145,43 +144,6 @@ public:
     }
 };
 
-// For each enum here, add a string to c_headerNamesSwerveModule
-// and a line like this: 
-//      m_logData[ESwerveModuleLogData::e???] = ???;
-// to SwerveModule::Periodic
-enum class ESwerveModuleLogData : int
-{
-      eFirstInt
-    , eLastInt = eFirstInt
-
-    , eFirstDouble
-    , eDesiredAngle = eFirstDouble
-    , eTurnEncVolts
-    , eTurnEncAngle
-    , eMinTurnRads
-    , eTurnNeoPidRefPos
-    , eTurnNeoEncoderPos
-    , eTurnOutputDutyCyc
-    , eDrivePidRefSpeed
-    , eDriveEncVelocity
-    , eDriveOutputDutyCyc
-    , eLastDouble
-};
-
-const std::vector<std::string> c_headerNamesSwerveModule
-{
-      "desiredAngle"
-    , "turnEncVolts"
-    , "turnEncAngle"
-    , "minTurnRads"
-    , "turnNeoPidRefPos"
-    , "turnNeoEncoderPos"
-    , "turnOutputDutyCyc"
-    , "drivePidRefSpeed"
-    , "driveEncVelocity"
-    , "driveOutputDutyCyc"
-};
-
 class SwerveModule
 {
     using radians_per_second_squared_t = compound_unit<radians, inverse<squared<second>>>;
@@ -192,8 +154,7 @@ public:
                 , const int turningEncoderPort
                 , bool driveEncoderReversed
                 , double offSet
-                , const std::string& name
-                , Logger& log);
+                , const std::string& name);
 
     frc::SwerveModuleState GetState();
 
@@ -202,8 +163,6 @@ public:
     void SetDesiredState(frc::SwerveModuleState &state);
 
     void ResetEncoders();
-
-    void ResetLog() { m_logData.ResetHeaderLogged(); }
 
     // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
     static double ZeroTo2PiRads(double theta);
@@ -244,10 +203,6 @@ private:
 
     nt::NetworkTableEntry m_nteAbsEncTuningOffset;
     nt::NetworkTableEntry m_nteAbsEncTuningVoltage;
-
-    using LogData = LogDataT<ESwerveModuleLogData>;
-    LogData m_logData;
-    Logger& m_log;
 };
 
 #endif

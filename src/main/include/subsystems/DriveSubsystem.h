@@ -17,47 +17,13 @@
 #include <ctre/phoenix.h>
 
 #include "Constants.h"
-#include "SwerveModule.h"
 #include "SwerveModule2.h"
 #include "common/Util.h"
-#include "Logger.h"
 
 // Uncomment to directly set values to each swerve module
 //#define TUNE_MODULES
 // Uncomment to tune Rotation PID for Drive Subsystem
-#define TUNE_ROTATION
-
-// For each enum here, add a string to c_headerNamesDriveSubsystem
-// and a line like this: 
-//      m_logData[EDriveSubSystemLogData::e???] = ???;
-// to DriveSubsystem::Periodic
-enum class EDriveSubSystemLogData : int
-{
-    eFirstInt
-  , eLastInt = eFirstInt
-
-  , eFirstDouble
-  , eInputX = eFirstDouble
-  , eInputY
-  , eInputRot
-  , eOdoX
-  , eOdoY
-  , eOdoRot
-  , eLastDouble
-  , eGyroRot
-  , eGyroRotRate
-};
-
-const std::vector<std::string> c_headerNamesDriveSubsystem{
-       "InputX"
-     , "InputY"
-     , "InputRot"
-     , "OdoX"
-     , "OdoY"
-     , "OdoRot"
-     , "eGyroRot"
-     , "eGyroRotRate"
-};
+//#define TUNE_ROTATION
 
 class DriveSubsystem : public frc2::SubsystemBase
 {
@@ -70,7 +36,7 @@ public:
         eRearRight
     };
 
-    DriveSubsystem(Logger& log, const int& lowPrioritySkipCount);
+    DriveSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -148,16 +114,6 @@ public:
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
 
-    /// The log header flag must be reset everyt time the robot is enabled
-    void ResetLog()
-    { 
-        m_logData.ResetHeaderLogged();
-        m_frontLeft.ResetLog();
-        m_frontRight.ResetLog();
-        m_rearRight.ResetLog();
-        m_rearLeft.ResetLog();
-    }
-
     void ResetRelativeToAbsolute();
 
     meter_t kTrackWidth = 23.5_in;
@@ -183,14 +139,6 @@ private:
         return sms;
     }
 
-    /// \name Logging helpers
-    /// Log important data to a file on the Roborio
-    ///@{
-    using LogData = LogDataT<EDriveSubSystemLogData>;
-    Logger& m_log;
-    LogData m_logData;
-    ///@}
-
     /// \name Swerve Modules
     /// The drive subsystem owns all 4 swerve modules
     ///@{
@@ -213,8 +161,6 @@ private:
         DriveConstants::kRotationI,
         DriveConstants::kRotationD
     };
-
-    const int& m_lowPrioritySkipCount;
 
     double m_lastHeading;
     bool m_rotationalInput;

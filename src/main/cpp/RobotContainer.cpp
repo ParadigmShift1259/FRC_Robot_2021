@@ -32,17 +32,15 @@
 
 using namespace DriveConstants;
 
-RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
-    : m_log(log)
-    , m_drive(log, lowPrioritySkipCount)
-    , m_flywheel(lowPrioritySkipCount)
-    , m_turret(lowPrioritySkipCount)
+RobotContainer::RobotContainer()
+    : m_drive()
+    , m_flywheel()
+    , m_turret()
     , m_hood()
-    , m_intake(lowPrioritySkipCount)
-    , m_cycler(lowPrioritySkipCount)
+    , m_intake()
+    , m_cycler()
     , m_vision()
     // , m_climber()
-    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
@@ -50,21 +48,10 @@ RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
     // Configure the button bindings
     ConfigureButtonBindings();
     SetDefaultCommands();
-
-    m_testNumber = 0;
-    m_testPower = 0;
-
-    SmartDashboard::PutNumber("TEST_R_number", m_testNumber);
-    SmartDashboard::PutNumber("TEST_R_power", m_testPower);
 }
 
 void RobotContainer::Periodic()
 {
-    if (m_lowPrioritySkipCount % 5 == 0)    // 10 per second
-    {
-        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
-    }
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -82,10 +69,6 @@ void RobotContainer::SetDefaultCommands()
                 xRot = 0;
                 yRot = 0;
             }
-
-            m_inputXentry.SetDouble(xInput);
-            m_inputYentry.SetDouble(yInput);
-            m_inputRotentry.SetDouble(rotInput);
 
             if (m_fieldRelative)
             {
@@ -106,35 +89,6 @@ void RobotContainer::SetDefaultCommands()
         },
         {&m_drive}
     ));
-
-    // m_drive.SetDefaultCommand(
-    //     DriveDefault(&m_drive, 
-    //         [this] {
-    //             double x = Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-    //             m_inputXentry.SetDouble(x);
-    //             return x;
-    //         },
-    //         [this] {
-    //             double y = Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
-    //             m_inputYentry.SetDouble(y);
-    //             return y;
-    //         },
-    //         [this] {
-    //             double rot = Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
-    //             m_inputRotentry.SetDouble(rot);
-    //             return rot;
-    //         },
-    //         [this] {
-    //             return m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
-    //         }, 
-    //         [this] {
-    //             return m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0;
-    //         },
-    //         [this] {
-    //             return m_fieldRelative;
-    //         }
-    //     )
-    // );
 
     m_turret.SetDefaultCommand(
         frc2::RunCommand(
@@ -184,11 +138,6 @@ void RobotContainer::SetDefaultCommands()
             }, {&m_cycler}
         )
     );
-
-    ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
-    m_inputXentry = tab.Add("X", 0).GetEntry();
-    m_inputYentry = tab.Add("Y", 0).GetEntry();
-    m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
 
 
@@ -207,12 +156,13 @@ void RobotContainer::ConfigureButtonBindings()
     //            D           //
 
     // Triggers field relative driving
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
         frc2::InstantCommand(    
             [this] { m_fieldRelative = true; },
             {}
         )
     );
+
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(
         frc2::InstantCommand(    
             [this] { m_fieldRelative = false; },
@@ -244,27 +194,6 @@ void RobotContainer::ConfigureButtonBindings()
         )
     );
 
-    // Increments / Decrements a test power value for TestCommands()
-    /*frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
-        frc2::InstantCommand(    
-        [this] {
-            m_testPower += 0.05;
-            SmartDashboard::PutNumber("TEST_R_power", m_testPower);
-        },
-        {}
-        )
-    );
-
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kX).WhenPressed(
-        frc2::InstantCommand(    
-        [this] {
-            m_testPower -= 0.05;
-            SmartDashboard::PutNumber("TEST_R_power", m_testPower);
-        },
-        {}
-        )
-    );*/
-
     // Triggers Fire sequence
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kY).WhenPressed(
         Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
@@ -286,96 +215,6 @@ void RobotContainer::ConfigureButtonBindings()
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kB).WhenHeld(
         IntakeRelease(&m_intake)
     );
-
-    /*
-
-    double c_buttonInputSpeed = 0.5;
-    units::second_t c_buttonInputTime = 1.25_s;
-
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
-        frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
-                        units::meters_per_second_t(0),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
-    */
-}
-
-frc2::InstantCommand RobotContainer::TestCommands()
-{
-    // printf("%d", (int) SmartDashboard::GetNumber("TEST_testNumber", 0));
-    // m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-
-    // switch(m_testNumber) {
-    // case 0:
-    //     printf("case 0");
-    //     return 
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_intake.Set(m_testPower);
-    //         },
-    //         {&m_intake}
-    //     );
-    // case 1:
-    //     printf("case 1");
-    //     return
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_cycler.SetFeeder(m_testPower);
-    //         },
-    //         {&m_cycler}
-    //     );
-    // case 2:
-    //     printf("case 2");
-    //     return 
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_cycler.SetTurnTable(m_testPower);
-    //         },
-    //         {&m_cycler}
-    //     );
-    // case 3:
-    //     printf("case 3");
-    //     return
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_flywheel.SetRPM(m_testPower * 1000.0);
-    //         },
-    //         {&m_flywheel}
-    //     );
-    //     break;
-    // case 4:
-    //     printf("case 4");
-    //     return 
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_hood.Set(m_testPower);
-    //         },
-    //         {&m_hood}
-    //     );
-    //     break;
-    // case 5:
-    //     printf("case 5");
-    //     return
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_climber.Run(m_testPower);
-    //         },
-    //         {&m_climber}
-    //     );
-    // }
-    // printf("Default");
-    return 
-        frc2::InstantCommand(    
-            [this] {
-                // m_intake.Set(m_testPower);
-            },
-             {/*&m_intake*/}
-        );
 }
 
 // frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
@@ -391,33 +230,13 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     // Add kinematics to ensure max speed is actually obeyed
     config.SetKinematics(m_drive.kDriveKinematics);
 
-/*
-    // An example trajectory to follow.  All units in meters.
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        // Start at the origin facing the +X direction
-        frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        {frc::Translation2d(1_m, 1_m), frc::Translation2d(2_m, 1_m)},
-        // End 3 meters straight ahead of where we started, facing forward
-        frc::Pose2d(3_m, 1_m, frc::Rotation2d(0_deg)),
-        // Pass the config
-        config
-    );
-*/
-
-// /*
     wpi::SmallString<64> deployDirectory;
     frc::filesystem::GetDeployDirectory(deployDirectory);
     wpi::sys::path::append(deployDirectory, "paths/output"); //Has the projects that are created in meters
     wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
 
     frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
-    /*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        TestTrajLine,
-        config
-    );
-    */
+ 
     // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
     
     // for (int i = 0; i < exampleTrajectory.States().size(); i++)
@@ -522,7 +341,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
         frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
         thetaController,                                                        // frc::ProfiledPIDController<units::radians>
-        // GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        //GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
         {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
     );
@@ -548,7 +367,7 @@ frc2::Command *RobotContainer::GetAutonomousGSCommand()
 {
     FindClosestBall findClosestBall(&m_drive, &m_isRedPath);
     DriveToBall driveToBall(&m_drive, &m_intake);
-    RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
+    // RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
 
     m_drive.ZeroHeading();
     // Reset odometry to the starting pose of the trajectory
