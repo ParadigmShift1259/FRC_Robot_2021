@@ -14,24 +14,19 @@
 
 #include "Constants.h"
 
-#ifndef Mk2
-
 SwerveModule2::SwerveModule2(int driveMotorChannel, 
                            int turningMotorChannel,
                            GetPulseWidthCallback pulseWidthCallback,
                            CANifier::PWMChannel pwmChannel,
                            bool driveMotorReversed,
                            double offset,
-                           const std::string& name,
-                           Logger& log)
+                           const std::string& name)
     : m_offset(offset)
     , m_name(name)
     , m_driveMotor(driveMotorChannel)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_pulseWidthCallback(pulseWidthCallback)
     , m_pwmChannel(pwmChannel)
-    , m_logData(c_headerNamesSwerveModule2, false, name) // 2nd arg  false no log shadow
-    , m_log(log)
 {
     StatorCurrentLimitConfiguration statorLimit { true, ModuleConstants::kMotorCurrentLimit, ModuleConstants::kMotorCurrentLimit, 2 };
     m_driveMotor.ConfigStatorCurrentLimit(statorLimit);
@@ -56,15 +51,6 @@ SwerveModule2::SwerveModule2(int driveMotorChannel,
     m_drivePidParams.Load(m_driveMotor);
     m_turnPidParams.Load(m_turnPIDController);
 
-    ShuffleboardTab& tab = Shuffleboard::GetTab("AbsEncTuning");
-    std::string nteName = m_name + " offset";
-    wpi::StringMap<std::shared_ptr<nt::Value>> sliderPropMap
-    {
-          std::make_pair("Min", nt::Value::MakeDouble(0.0))
-        , std::make_pair("Max", nt::Value::MakeDouble(Math::kTau))
-        , std::make_pair("Block increment", nt::Value::MakeDouble(wpi::math::pi / 180))
-    };
-
     m_timer.Reset();
     m_timer.Start();
 }
@@ -75,7 +61,7 @@ frc::SwerveModuleState SwerveModule2::GetState()
     return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
 }
 
-void SwerveModule2::Periodic(const int& lowPrioritySkipCount)
+void SwerveModule2::Periodic()
 {
     EncoderToRadians();
 
@@ -88,14 +74,11 @@ void SwerveModule2::Periodic(const int& lowPrioritySkipCount)
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
 
-    if (lowPrioritySkipCount % 10 == 0)
-    {
-        SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
-        SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
-        SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
-        SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
-        SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
-    }
+    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
+    SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
+    SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
+    SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
@@ -130,19 +113,6 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 
 
     SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
-
-    const std::string FuncModule = "Swerve" + m_name;
-    m_logData[ESwerveModuleLogData2::eDesiredAngle] = state.angle.Radians().to<double>();
-    m_logData[ESwerveModuleLogData2::eTurnEncVolts] = m_turningMotor.GetAnalog().GetVoltage();
-    m_logData[ESwerveModuleLogData2::eTurnEncAngle] = m_absAngle;
-    m_logData[ESwerveModuleLogData2::eMinTurnRads] = minTurnRads;
-    m_logData[ESwerveModuleLogData2::eTurnNeoPidRefPos] = newPosition;
-    m_logData[ESwerveModuleLogData2::eTurnNeoEncoderPos] = currentPosition;
-    m_logData[ESwerveModuleLogData2::eTurnOutputDutyCyc] = m_turningMotor.GetAppliedOutput();
-    m_logData[ESwerveModuleLogData2::eDrivePidRefSpeed] = state.speed.to<double>();
-    m_logData[ESwerveModuleLogData2::eDriveEncVelocity] = CalcMetersPerSec().to<double>();
-    m_logData[ESwerveModuleLogData2::eDriveOutputDutyCyc] = m_driveMotor.GetMotorOutputVoltage();
-    // m_log.logData<ESwerveModuleLogData2>(FuncModule.c_str(), m_logData);
 }
 
 void SwerveModule2::ResetEncoders()
@@ -209,18 +179,18 @@ double SwerveModule2::MinTurnRads(double init, double final, bool& bOutputRevers
     // Choose the smallest angle and determine reverse flag
     //TODO: FINISHED ROBOT TUNING
     // Eventually prefer angle 1 always during high speed to prevent 180s
-    if (fabs(angle1) <= 2 * fabs(angle2))
-    {
+    // if (fabs(angle1) <= 2 * fabs(angle2))
+    // {
         bOutputReverse = false;
 
         return angle1;
-    } 
-    else
-    {
-        bOutputReverse = true;
+    // } 
+    // else
+    // {
+    //     bOutputReverse = true;
 
-        return angle2;
-    }
+    //     return angle2;
+    // }
 }
 
 meters_per_second_t SwerveModule2::CalcMetersPerSec()
@@ -233,5 +203,3 @@ double SwerveModule2::CalcTicksPer100Ms(meters_per_second_t speed)
 {
    return speed.to<double>() / ModuleConstants::kDriveEncoderMetersPerSec;
 }
-
-#endif

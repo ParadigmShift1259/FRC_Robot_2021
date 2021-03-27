@@ -6,9 +6,8 @@
 
 using namespace TurretConstants;
 
-TurretSubsystem::TurretSubsystem(const int& lowPrioritySkipCount) 
+TurretSubsystem::TurretSubsystem() 
     : m_turretmotor(kMotorPort)
-    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     m_turretmotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeout);
     m_turretmotor.SetNeutralMode(NeutralMode::Brake);
@@ -33,6 +32,7 @@ TurretSubsystem::TurretSubsystem(const int& lowPrioritySkipCount)
     frc::SmartDashboard::PutNumber("T_T_P", kP);
     frc::SmartDashboard::PutNumber("T_T_I", kI);
     frc::SmartDashboard::PutNumber("T_T_D", kD);
+    frc::SmartDashboard::PutNumber("T_T_Max", kMaxOut);
 }
 
 void TurretSubsystem::Periodic()

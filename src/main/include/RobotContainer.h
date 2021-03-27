@@ -38,7 +38,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/CyclerSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
-#include "subsystems/ClimberSubsystem.h"
+// #include "subsystems/ClimberSubsystem.h"
 
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
@@ -50,7 +50,6 @@
 #include "commands/IntakeRelease.h"
 
 #include "Constants.h"
-#include "Logger.h"
 
 #include <iostream>
 #include <wpi/Path.h>
@@ -68,13 +67,14 @@
 class RobotContainer
 {
 public:
-    RobotContainer(Logger& log, const int& lowPrioritySkipCount);
+    RobotContainer();
 
     void Periodic();
 
     frc2::Command *GetAutonomousCommand();
 
-    frc2::Command *GetAutonomousGSCommand();
+    enum Direction { kFront, kLeft, kRight, kBack };
+    frc2::Command *GetDriveTestCommand(Direction direction);
 
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);
@@ -87,8 +87,6 @@ private:
         // If the input is small return 0
         return abs(inputValue) <= deadzone ? 0 : inputValue;
     }    
-    
-    Logger& m_log;
 
     // The driver's controller
     frc::XboxController m_primaryController{OIConstants::kPrimaryControllerPort};
@@ -108,27 +106,15 @@ private:
     VisionSubsystem m_vision;
     // ClimberSubsystem m_climber;
 
-    // m_units::meters_per_second_t m_xInput;      //!< Last x input value
-    // units::meters_per_second_t m_yInput;        //!< Last y input value
-    // units::radians_per_second_t m_rotInput;     //!< Last rotation input value
-
-     // The chooser for the autonomous routin;
-    frc::SendableChooser<frc2::Command *> m_chooser;
-
-    nt::NetworkTableEntry m_inputXentry;
-    nt::NetworkTableEntry m_inputYentry;
-    nt::NetworkTableEntry m_inputRotentry;
-
     void SetDefaultCommands();
     void ConfigureButtonBindings();
 
     bool m_fieldRelative = false;
-
     bool m_turretready = false;
     bool m_firing = false;
     bool m_finished = false;
 
     const int& m_lowPrioritySkipCount;
-
+ 
     bool m_isRedPath = false;
 };

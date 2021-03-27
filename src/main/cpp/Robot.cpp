@@ -12,9 +12,7 @@
 #include <frc/Watchdog.h>
 
 Robot::Robot()
-    //: TimedRobot(0.1_s)
-    : m_log(false)
-    , m_container(m_log, m_lowPrioritySkipCount)
+    : m_container()
 {
 }
 
@@ -33,8 +31,6 @@ void Robot::RobotInit()
 void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
-    m_lowPrioritySkipCount++;
-    //m_container.Periodic();
 }
 
 /**
@@ -50,7 +46,6 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    //m_container.Periodic();
 }
 
 /**
@@ -76,7 +71,7 @@ void Robot::AutonomousPeriodic()
 }
 
 void Robot::TeleopInit()
-{
+{s
     // m_container.ResetLog();
     // m_log.openLog();
     // m_log.logMsg(eInfo, __func__, "Starting Teleop");

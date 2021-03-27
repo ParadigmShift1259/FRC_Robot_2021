@@ -18,7 +18,7 @@ using namespace frc;
 class TurretSubsystem : public frc2::SubsystemBase
 {
 public:
-    TurretSubsystem(const int& lowPrioritySkipCount);
+    TurretSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -58,6 +58,5 @@ protected:
 
 private:    
     TalonSRX m_turretmotor;
-    const int& m_lowPrioritySkipCount;
     double m_currentAngle;
 };
