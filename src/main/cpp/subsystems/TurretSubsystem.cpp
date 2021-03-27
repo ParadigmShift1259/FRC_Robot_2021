@@ -37,14 +37,10 @@ TurretSubsystem::TurretSubsystem()
 
 void TurretSubsystem::Periodic()
 {
-    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
-    {
-        SmartDashboard::PutNumber("D_T_CAngle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
-        SmartDashboard::PutNumber("D_T_DAngle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
-        SmartDashboard::PutNumber("D_T_Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
-        SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
-    }
-
+    SmartDashboard::PutNumber("D_T_CAngle", TicksToDegrees(m_turretmotor.GetSelectedSensorPosition()));
+    SmartDashboard::PutNumber("D_T_DAngle", TicksToDegrees(m_turretmotor.GetClosedLoopTarget()));
+    SmartDashboard::PutNumber("D_T_Error", TicksToDegrees(m_turretmotor.GetClosedLoopError(0)));
+    SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
     m_turretmotor.Set(ControlMode::Position, DegreesToTicks(m_currentAngle));
 }
 

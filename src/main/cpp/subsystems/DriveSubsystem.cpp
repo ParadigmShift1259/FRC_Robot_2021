@@ -99,23 +99,20 @@ void DriveSubsystem::Periodic()
    
     auto pose = m_odometry.GetPose();
 
-    m_frontLeft.Periodic(m_lowPrioritySkipCount);
-    m_frontRight.Periodic(m_lowPrioritySkipCount);
-    m_rearRight.Periodic(m_lowPrioritySkipCount);
-    m_rearLeft.Periodic(m_lowPrioritySkipCount);
+    m_frontLeft.Periodic();
+    m_frontRight.Periodic();
+    m_rearRight.Periodic();
+    m_rearLeft.Periodic();
 
-    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
-    {
-        m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
-        m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
-        m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
-        m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-        m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
-        //m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
-        SmartDashboard::PutNumber("D_D_Rot", GetHeading());
+    // m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
+    // m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
+    // m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
+    // m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
+    // m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
+    //m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
-    }
+    SmartDashboard::PutNumber("D_D_Rot", GetHeading());
 }
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
@@ -209,9 +206,9 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
-    m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
-    m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
-    m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
+    // m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
+    // m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
+    // m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
 
     rot = radians_per_second_t(rot.to<double>() * DriveConstants::kDriveAngularSpeed.to<double>());
 

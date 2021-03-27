@@ -72,11 +72,10 @@ public:
     void Periodic();
 
     frc2::Command *GetAutonomousCommand();
+    frc2::Command *GetAutonomousGSCommand();
 
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);
-
-    void ResetLog() { m_drive.ResetLog(); }
 
 private:
     double Deadzone(double inputValue, double deadzone)
@@ -110,8 +109,6 @@ private:
     bool m_turretready = false;
     bool m_firing = false;
     bool m_finished = false;
-
-    const int& m_lowPrioritySkipCount;
  
     bool m_isRedPath = false;
 };
