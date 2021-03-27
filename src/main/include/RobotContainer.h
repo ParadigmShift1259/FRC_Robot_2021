@@ -76,9 +76,6 @@ public:
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);
 
-    enum Direction { kFront, kLeft, kRight, kBack };
-    frc2::Command *GetDriveTestCommand(Direction direction);
-
     void ResetLog() { m_drive.ResetLog(); }
 
 private:
