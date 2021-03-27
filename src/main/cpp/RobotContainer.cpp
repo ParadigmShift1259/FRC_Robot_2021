@@ -18,12 +18,21 @@
 
 #ifdef PATHS
 #include "AutoNavBarrel.h"
+#include "AutoNavBounce.h"
+#include "AutoNavSlalom.h"
+#include "GSLayout1Path1.h"
+#include "GSLayout1Path2.h"
+#include "GSLayout2Path1.h"
+#include "GSLayout2Path2.h"
+#include "TestTraj.h"
 #endif
 
 using namespace DriveConstants;
 
-RobotContainer::RobotContainer()
-    : m_drive()
+RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
+    : m_log(log)
+    , m_drive(log, lowPrioritySkipCount)
+    , m_lowPrioritySkipCount(lowPrioritySkipCount)
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
@@ -31,9 +40,22 @@ RobotContainer::RobotContainer()
     // Configure the button bindings
     ConfigureButtonBindings();
     SetDefaultCommands();
+
+    m_testNumber = 0;
+    m_testPower = 0;
+
+    SmartDashboard::PutNumber("TEST_R_number", m_testNumber);
+    SmartDashboard::PutNumber("TEST_R_power", m_testPower);
 }
 
-void RobotContainer::Periodic(){}
+void RobotContainer::Periodic()
+{
+    if (m_lowPrioritySkipCount % 5 == 0)    // 10 per second
+    {
+        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
+        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
+    }
+}
 
 void RobotContainer::SetDefaultCommands()
 {
@@ -51,6 +73,10 @@ void RobotContainer::SetDefaultCommands()
                 yRot = 0;
             }
 
+            m_inputXentry.SetDouble(xInput);
+            m_inputYentry.SetDouble(yInput);
+            m_inputRotentry.SetDouble(rotInput);
+
             if (m_fieldRelative)
             {
                 m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
@@ -61,7 +87,7 @@ void RobotContainer::SetDefaultCommands()
             }
             else 
             {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::radians_per_second_t(rotInput),
                             m_fieldRelative);
@@ -70,13 +96,30 @@ void RobotContainer::SetDefaultCommands()
         },
         {&m_drive}
     ));
+
+    ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
+    m_inputXentry = tab.Add("X", 0).GetEntry();
+    m_inputYentry = tab.Add("Y", 0).GetEntry();
+    m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
 
 
 void RobotContainer::ConfigureButtonBindings()
 {
+    //            U           //
+    //            0           //
+    //            |           //
+    //    UL 315\ | /45 UR    //
+    //           \|/          //
+    // L 270------+------90 R //
+    //           /|\          //
+    //    DL 225/ | \135 DR   //
+    //            |           //
+    //           180          //
+    //            D           //
+
     // Triggers field relative driving
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
         frc2::InstantCommand(    
             [this] { m_fieldRelative = true; },
             {}
@@ -103,12 +146,26 @@ void RobotContainer::ConfigureButtonBindings()
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhenPressed(
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
+
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_drive.ResetRelativeToAbsolute();
+        },
+        {&m_drive}
+        )
+    );
 }
+
+
+// frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
+    //m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
+
     // Set up config for trajectory
     frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
     // Add kinematics to ensure max speed is actually obeyed
@@ -144,6 +201,22 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
     return new frc2::SequentialCommandGroup(
         std::move(swerveControllerCommand),
+        frc2::InstantCommand(
+            [this]() {
+                m_drive.Drive(units::meters_per_second_t(0.0),
+                              units::meters_per_second_t(0.0),
+                              units::radians_per_second_t(0.0), false);
+            },
+            {}
+        )
+    );
+}
+
+
+frc2::Command *RobotContainer::GetAutonomousGSCommand()
+{
+
+    return new frc2::SequentialCommandGroup(
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),

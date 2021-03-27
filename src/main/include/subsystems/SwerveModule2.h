@@ -30,13 +30,15 @@
 #include <string>
 
 #include "Constants.h"
+#include "Logger.h"
+
+#ifndef Mk2
 
 // Change this definition to load PID values to both drive and angle
-//#define TUNE_MODULE
+#define TUNE_MODULE
 // Uncomment this to prevent swerve modules from driving
 //#define DISABLE_DRIVE
 
-using namespace frc;
 using namespace rev;
 using namespace units;
 using namespace ctre::phoenix::motorcontrol;
@@ -112,7 +114,6 @@ public:
    void Load(TalonFX& driveMotor)
     {
         driveMotor.Config_kP(0, m_p);
-        driveMotor.Config_kI(0, m_i);
         driveMotor.Config_kD(0, m_d);
         driveMotor.Config_kF(0, m_ff);
         driveMotor.ConfigPeakOutputForward(m_max);
@@ -130,12 +131,12 @@ public:
     void LoadFromNetworkTable(TalonFX& driveMotor)
     {
         // Retrieving drive PID values from SmartDashboard
-        double p =      frc::SmartDashboard::GetNumber("T_SM_DP", 0.0);
-        double i =      frc::SmartDashboard::GetNumber("T_SM_DI", 0);
-        double d =      frc::SmartDashboard::GetNumber("T_SM_DD", 0.0);
-        double ff =     frc::SmartDashboard::GetNumber("T_SM_DFF", 0.0);
-        double max =    frc::SmartDashboard::GetNumber("T_SM_DMax", 0.0);
-        double min =    frc::SmartDashboard::GetNumber("T_SM_DMin", 0.0);
+        double p = frc::SmartDashboard::GetNumber("T_SM_DP", 0.0);
+        double i = frc::SmartDashboard::GetNumber("T_SM_DI", 0.0);
+        double d = frc::SmartDashboard::GetNumber("T_SM_DD", 0.0);
+        double ff = frc::SmartDashboard::GetNumber("T_SM_DFF", 0.0);
+        double max = frc::SmartDashboard::GetNumber("T_SM_DMax", 0.0);
+        double min = frc::SmartDashboard::GetNumber("T_SM_DMin", 0.0);
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
         if ((p != m_p)) { driveMotor.Config_kP(0, p); m_p = p; }
@@ -153,6 +154,43 @@ public:
     }
 };
 
+// For each enum here, add a string to c_headerNamesSwerveModule2
+// and a line like this: 
+//      m_logData[ESwerveModuleLogData::e???] = ???;
+// to SwerveModule2::Periodic
+enum class ESwerveModuleLogData2 : int
+{
+      eFirstInt
+    , eLastInt = eFirstInt
+
+    , eFirstDouble
+    , eDesiredAngle = eFirstDouble
+    , eTurnEncVolts
+    , eTurnEncAngle
+    , eMinTurnRads
+    , eTurnNeoPidRefPos
+    , eTurnNeoEncoderPos
+    , eTurnOutputDutyCyc
+    , eDrivePidRefSpeed
+    , eDriveEncVelocity
+    , eDriveOutputDutyCyc
+    , eLastDouble
+};
+
+const std::vector<std::string> c_headerNamesSwerveModule2
+{
+      "desiredAngle"
+    , "turnEncVolts"
+    , "turnEncAngle"
+    , "minTurnRads"
+    , "turnNeoPidRefPos"
+    , "turnNeoEncoderPos"
+    , "turnOutputDutyCyc"
+    , "drivePidRefSpeed"
+    , "driveEncVelocity"
+    , "driveOutputDutyCyc"
+};
+
 class SwerveModule2
 {
     using radians_per_second_squared_t = compound_unit<radians, inverse<squared<second>>>;
@@ -164,21 +202,39 @@ public:
                 , CANifier::PWMChannel pwmChannel
                 , bool driveEncoderReversed
                 , double offSet
-                , const std::string& name);
+                , const std::string& name
+                , Logger& log);
 
     frc::SwerveModuleState GetState();
 
-    void Periodic();
+    void Periodic(const int& lowPrioritySkipCount);
 
     void SetDesiredState(frc::SwerveModuleState &state);
 
     void ResetEncoders();
+
+    void ResetLog() { m_logData.ResetHeaderLogged(); }
+
+
+    void ResetRelativeToAbsolute();
 
     // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
     static double ZeroTo2PiRads(double theta);
 
     // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
     static double NegPiToPiRads(double theta);
+
+    // Used to confirm the encoder and motor direction are in sync
+    // units::volt_t m_tempVoltage = 0.1_V; 
+    // void TemporaryRunTurnMotor()
+    // {
+    //     m_turningMotor.SetVoltage(m_tempVoltage);
+    //     m_tempVoltage += 0.1_V; 
+    //     if ( m_tempVoltage > 5.0_V)
+    //     {
+    //          m_tempVoltage = 0.1_V;
+    //     }
+    // }
 
 private:
     void EncoderToRadians();
@@ -203,8 +259,8 @@ private:
     TalonFX m_driveMotor;
     CANSparkMax m_turningMotor;
 
-    DrivePidParams2 m_drivePidParams;
-    TurnPidParams2 m_turnPidParams;
+    DrivePidParams2   m_drivePidParams;
+    TurnPidParams2   m_turnPidParams;
 
     CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, 
                                                                           ModuleConstants::kTurnEncoderCPR);
@@ -213,4 +269,10 @@ private:
     CANifier::PWMChannel m_pwmChannel;
 
     Timer m_timer;
+
+    using LogData = LogDataT<ESwerveModuleLogData2>;
+    LogData m_logData;
+    Logger& m_log;
 };
+
+#endif

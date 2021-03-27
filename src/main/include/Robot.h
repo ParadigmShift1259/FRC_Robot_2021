@@ -10,6 +10,7 @@
 #include <frc/TimedRobot.h>
 #include <frc2/command/Command.h>
 
+#include "Logger.h"
 #include "RobotContainer.h"
 
 class Robot : public frc::TimedRobot
@@ -28,6 +29,9 @@ public:
     void TestPeriodic() override;
 
 private:
+    Logger m_log;
+    int m_lowPrioritySkipCount = 0;     //!< Increasing counter to sometimes skip things like dashboard updates and logging
+
     // Have it null by default so that if testing teleop it
     // doesn't have undefined behavior and potentially crash.
     frc2::Command *m_autonomousCommand = nullptr;
