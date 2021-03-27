@@ -166,7 +166,7 @@ namespace DriveConstants
 
     constexpr double kMaxAbsoluteRotationSpeed = 3.5;
     constexpr double kMaxAbsoluteTurnableSpeed = 3;
-    constexpr double kAbsoluteRotationTolerance = 0.04;
+    constexpr double kAbsoluteRotationTolerance = 0.07;
 
     constexpr double kMinTurnPrioritySpeed = 0.4;
 
