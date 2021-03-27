@@ -27,7 +27,7 @@ class FlywheelSubsystem : public frc2::SubsystemBase
 {
 public:
 
-    FlywheelSubsystem(const int& lowPrioritySkipCount);
+    FlywheelSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -55,5 +55,4 @@ private:
 
     // Current desired setpoint of the flywheel in RPM
     double m_setpoint;
-    const int& m_lowPrioritySkipCount;
 };

@@ -14,24 +14,19 @@
 
 #include "Constants.h"
 
-#ifndef Mk2
-
 SwerveModule2::SwerveModule2(int driveMotorChannel, 
                            int turningMotorChannel,
                            GetPulseWidthCallback pulseWidthCallback,
                            CANifier::PWMChannel pwmChannel,
                            bool driveMotorReversed,
                            double offset,
-                           const std::string& name,
-                           Logger& log)
+                           const std::string& name)
     : m_offset(offset)
     , m_name(name)
     , m_driveMotor(driveMotorChannel)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_pulseWidthCallback(pulseWidthCallback)
     , m_pwmChannel(pwmChannel)
-    , m_logData(c_headerNamesSwerveModule2, false, name) // 2nd arg  false no log shadow
-    , m_log(log)
 {
     StatorCurrentLimitConfiguration statorLimit { true, ModuleConstants::kMotorCurrentLimit, ModuleConstants::kMotorCurrentLimit, 2 };
     m_driveMotor.ConfigStatorCurrentLimit(statorLimit);
@@ -56,15 +51,6 @@ SwerveModule2::SwerveModule2(int driveMotorChannel,
     m_drivePidParams.Load(m_driveMotor);
     m_turnPidParams.Load(m_turnPIDController);
 
-    ShuffleboardTab& tab = Shuffleboard::GetTab("AbsEncTuning");
-    std::string nteName = m_name + " offset";
-    wpi::StringMap<std::shared_ptr<nt::Value>> sliderPropMap
-    {
-          std::make_pair("Min", nt::Value::MakeDouble(0.0))
-        , std::make_pair("Max", nt::Value::MakeDouble(Math::kTau))
-        , std::make_pair("Block increment", nt::Value::MakeDouble(wpi::math::pi / 180))
-    };
-
     m_timer.Reset();
     m_timer.Start();
 }
@@ -75,7 +61,7 @@ frc::SwerveModuleState SwerveModule2::GetState()
     return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
 }
 
-void SwerveModule2::Periodic(const int& lowPrioritySkipCount)
+void SwerveModule2::Periodic()
 {
     EncoderToRadians();
 
@@ -88,23 +74,18 @@ void SwerveModule2::Periodic(const int& lowPrioritySkipCount)
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
 
-    if (lowPrioritySkipCount % 10 == 0)
-    {
-        SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
-        SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
-        SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
-        SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
-        SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
-    }
+    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
+    SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
+    SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
+    SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 {
-    #ifdef TUNE_MODULE
     // Retrieving turn PID values from SmartDashboard
-    m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
-    m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
-    #endif
+    // m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
+    // m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
 
     // Find absolute encoder and NEO encoder positions
     //EncoderToRadians();
@@ -130,23 +111,13 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
     if (state.speed.to<double>() != 0.0)
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
 
-    const std::string FuncModule = "Swerve" + m_name;
-    m_logData[ESwerveModuleLogData2::eDesiredAngle] = state.angle.Radians().to<double>();
-    m_logData[ESwerveModuleLogData2::eTurnEncVolts] = m_turningMotor.GetAnalog().GetVoltage();
-    m_logData[ESwerveModuleLogData2::eTurnEncAngle] = m_absAngle;
-    m_logData[ESwerveModuleLogData2::eMinTurnRads] = minTurnRads;
-    m_logData[ESwerveModuleLogData2::eTurnNeoPidRefPos] = newPosition;
-    m_logData[ESwerveModuleLogData2::eTurnNeoEncoderPos] = currentPosition;
-    m_logData[ESwerveModuleLogData2::eTurnOutputDutyCyc] = m_turningMotor.GetAppliedOutput();
-    m_logData[ESwerveModuleLogData2::eDrivePidRefSpeed] = state.speed.to<double>();
-    m_logData[ESwerveModuleLogData2::eDriveEncVelocity] = CalcMetersPerSec().to<double>();
-    m_logData[ESwerveModuleLogData2::eDriveOutputDutyCyc] = m_driveMotor.GetMotorOutputVoltage();
-    m_log.logData<ESwerveModuleLogData2>(FuncModule.c_str(), m_logData);
+
+    SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
 }
 
 void SwerveModule2::ResetEncoders()
 {
-    m_driveMotor.SetSelectedSensorPosition(0.0); 
+    m_driveMotor.SetSelectedSensorPosition(0.0);
 }
 
 void SwerveModule2::EncoderToRadians()
@@ -155,6 +126,15 @@ void SwerveModule2::EncoderToRadians()
     m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + Math::kTau, Math::kTau);
     SmartDashboard::PutNumber("D_SM_PW " + m_name, pulseWidth);
     // Convert CW to CCW? m_absAngle = Math::kTau - m_absAngle;
+}
+
+void SwerveModule2::ResetRelativeToAbsolute()
+{
+    printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+                m_absAngle, 
+                m_turnRelativeEncoder.GetPosition());
+    m_turnRelativeEncoder.SetPosition(m_absAngle);
 }
 
 // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
@@ -191,20 +171,20 @@ double SwerveModule2::MinTurnRads(double init, double final, bool& bOutputRevers
 
     // The shortest turn angle may be acheived by reversing the motor output direction
     double angle1 = final - init;
-    //double angle2 = final + wpi::math::pi - init;
+    double angle2 = final + wpi::math::pi - init;
 
     angle1 = NegPiToPiRads(angle1);
-    //angle2 = NegPiToPiRads(angle2);
+    angle2 = NegPiToPiRads(angle2);
 
     // Choose the smallest angle and determine reverse flag
     //TODO: FINISHED ROBOT TUNING
     // Eventually prefer angle 1 always during high speed to prevent 180s
-    //if (fabs(angle1) <= 2 * fabs(angle2))
-    {
+    // if (fabs(angle1) <= 2 * fabs(angle2))
+    // {
         bOutputReverse = false;
 
         return angle1;
-    } 
+    // } 
     // else
     // {
     //     bOutputReverse = true;
@@ -223,5 +203,3 @@ double SwerveModule2::CalcTicksPer100Ms(meters_per_second_t speed)
 {
    return speed.to<double>() / ModuleConstants::kDriveEncoderMetersPerSec;
 }
-
-#endif

@@ -92,6 +92,8 @@ namespace DriveConstants
     constexpr bool kFrontRightDriveMotorReversed = false;
     constexpr bool kRearRightDriveMotorReversed  = false;
 #endif
+
+    constexpr double kLeftMultipler = 1.21951; // 1.149425;
     ///@}
 
     constexpr bool kGyroReversed = false;
@@ -132,7 +134,7 @@ namespace DriveConstants
     constexpr double kFrontLeftOffset   = 2695.0;
     constexpr double kFrontRightOffset  = 195.0;
     constexpr double kRearRightOffset   = 1829.0;
-    constexpr double kRearLeftOffset    = 147.0;
+    constexpr double kRearLeftOffset    = 234.0; //362.891; //147.0;
 #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -156,15 +158,15 @@ namespace DriveConstants
     /// \name Robot Rotation PID Controller
     ///@{
     /// Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
-    constexpr double kRotationP = 2;
+    constexpr double kRotationP = 6;
     constexpr double kRotationI = 0;
-    constexpr double kRotationIMaxRange = 0.30;
-    constexpr double kRotationD = 0.05;
+    constexpr double kRotationIMaxRange = 0;
+    constexpr double kRotationD = 0.25;
     ///@}
 
-    constexpr double kMaxAbsoluteRotationSpeed = 2.5;
-    constexpr double kMaxAbsoluteTurnableSpeed = 1.5;
-    constexpr double kAbsoluteRotationTolerance = 0.04;
+    constexpr double kMaxAbsoluteRotationSpeed = 3.5;
+    constexpr double kMaxAbsoluteTurnableSpeed = 3;
+    constexpr double kAbsoluteRotationTolerance = 0.07;
 
     constexpr double kMinTurnPrioritySpeed = 0.4;
 
@@ -208,7 +210,7 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1.0);                 // 1.0   // 5.0
+    constexpr auto kMaxSpeed = units::meters_per_second_t(1.5);                 // 1.0   // 5.0
     constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
@@ -292,7 +294,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 1700;
+    constexpr double kIdleRPM = 0; // 1700
 }
 
 // Turret Subsystem Constants
@@ -300,12 +302,12 @@ namespace TurretConstants
 {
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
-    constexpr double kP = 0.14114;
-    constexpr double kI = 0.00025;
-    constexpr double kD = 0.1375;
+    constexpr double kP = 0.38114;
+    constexpr double kI = 0.00065;
+    constexpr double kD = 19.6;
 
     constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.200;
+    constexpr double kMaxOut = 0.700;
 
     constexpr double kTimeout = 30;
     constexpr double kInverted = true;

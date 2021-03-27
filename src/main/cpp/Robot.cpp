@@ -12,9 +12,7 @@
 #include <frc/Watchdog.h>
 
 Robot::Robot()
-    //: TimedRobot(0.1_s)
-    : m_log(false)
-    , m_container(m_log, m_lowPrioritySkipCount)
+    : m_container()
 {
 }
 
@@ -33,8 +31,6 @@ void Robot::RobotInit()
 void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
-    m_lowPrioritySkipCount++;
-    m_container.Periodic();
 }
 
 /**
@@ -44,13 +40,10 @@ void Robot::RobotPeriodic()
  */
 void Robot::DisabledInit()
 {
-    m_log.logMsg(eInfo, __func__, "Disabling");
-    m_log.closeLog();
 }
 
 void Robot::DisabledPeriodic()
 {
-    //m_container.Periodic();
 }
 
 /**
@@ -59,10 +52,6 @@ void Robot::DisabledPeriodic()
  */
 void Robot::AutonomousInit()
 {
-    m_container.ResetLog();
-    m_log.openLog();
-    m_log.logMsg(eInfo, __func__, "Starting Autonomous");
-
     //m_autonomousCommand = m_container.GetAutonomousCommand();
     m_autonomousCommand = m_container.GetAutonomousGSCommand();
 
@@ -77,10 +66,6 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    m_container.ResetLog();
-    m_log.openLog();
-    m_log.logMsg(eInfo, __func__, "Starting Teleop");
-
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

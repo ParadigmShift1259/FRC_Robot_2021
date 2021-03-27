@@ -18,7 +18,7 @@ using namespace frc;
 class TurretSubsystem : public frc2::SubsystemBase
 {
 public:
-    TurretSubsystem(const int& lowPrioritySkipCount);
+    TurretSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -45,6 +45,8 @@ public:
     /// Returns whether or not the turret is at the desired setpoint
     bool isAtSetpoint();
 
+    void SetNewPIDValues();
+
 protected:
     /// Converts motor ticks into turret rotation, in degrees
     /// \param ticks        Number of ticks to be converted
@@ -56,6 +58,5 @@ protected:
 
 private:    
     TalonSRX m_turretmotor;
-    const int& m_lowPrioritySkipCount;
     double m_currentAngle;
 };

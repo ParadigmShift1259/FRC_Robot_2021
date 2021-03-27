@@ -30,15 +30,15 @@
 #include <string>
 
 #include "Constants.h"
-#include "Logger.h"
 
 #ifndef Mk2
 
 // Change this definition to load PID values to both drive and angle
-//#define TUNE_MODULE
+#define TUNE_MODULE
 // Uncomment this to prevent swerve modules from driving
 //#define DISABLE_DRIVE
 
+using namespace frc;
 using namespace rev;
 using namespace units;
 using namespace ctre::phoenix::motorcontrol;
@@ -104,6 +104,7 @@ void Load(CANPIDController& turnPIDController)
 class DrivePidParams2
 {
     double m_p = 0.0;
+    double m_i = 0.0;
     double m_d = 0.0;
     double m_ff = 0.047619;
     double m_max = 1.0;
@@ -119,7 +120,8 @@ public:
         driveMotor.ConfigPeakOutputReverse(m_min);
         #ifdef TUNE_MODULE
         frc::SmartDashboard::PutNumber("T_SM_DP", m_p);
-        frc::SmartDashboard::PutNumber("T_SM_D", m_d);
+        frc::SmartDashboard::PutNumber("T_SM_DI", m_i);
+        frc::SmartDashboard::PutNumber("T_SM_DD", m_d);
         frc::SmartDashboard::PutNumber("T_SM_DFF", m_ff);
         frc::SmartDashboard::PutNumber("T_SM_DMax", m_max);
         frc::SmartDashboard::PutNumber("T_SM_DMin", m_min);
@@ -130,6 +132,7 @@ public:
     {
         // Retrieving drive PID values from SmartDashboard
         double p = frc::SmartDashboard::GetNumber("T_SM_DP", 0.0);
+        double i = frc::SmartDashboard::GetNumber("T_SM_DI", 0.0);
         double d = frc::SmartDashboard::GetNumber("T_SM_DD", 0.0);
         double ff = frc::SmartDashboard::GetNumber("T_SM_DFF", 0.0);
         double max = frc::SmartDashboard::GetNumber("T_SM_DMax", 0.0);
@@ -137,6 +140,7 @@ public:
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
         if ((p != m_p)) { driveMotor.Config_kP(0, p); m_p = p; }
+        if ((i != m_i)) { driveMotor.Config_kI(0, i); m_i = i; }
         if ((d != m_d)) { driveMotor.Config_kD(0, d); m_d = d; }
         if ((ff != m_ff)) { driveMotor.Config_kF(0, ff); m_ff = ff; }
         
@@ -150,43 +154,6 @@ public:
     }
 };
 
-// For each enum here, add a string to c_headerNamesSwerveModule2
-// and a line like this: 
-//      m_logData[ESwerveModuleLogData::e???] = ???;
-// to SwerveModule2::Periodic
-enum class ESwerveModuleLogData2 : int
-{
-      eFirstInt
-    , eLastInt = eFirstInt
-
-    , eFirstDouble
-    , eDesiredAngle = eFirstDouble
-    , eTurnEncVolts
-    , eTurnEncAngle
-    , eMinTurnRads
-    , eTurnNeoPidRefPos
-    , eTurnNeoEncoderPos
-    , eTurnOutputDutyCyc
-    , eDrivePidRefSpeed
-    , eDriveEncVelocity
-    , eDriveOutputDutyCyc
-    , eLastDouble
-};
-
-const std::vector<std::string> c_headerNamesSwerveModule2
-{
-      "desiredAngle"
-    , "turnEncVolts"
-    , "turnEncAngle"
-    , "minTurnRads"
-    , "turnNeoPidRefPos"
-    , "turnNeoEncoderPos"
-    , "turnOutputDutyCyc"
-    , "drivePidRefSpeed"
-    , "driveEncVelocity"
-    , "driveOutputDutyCyc"
-};
-
 class SwerveModule2
 {
     using radians_per_second_squared_t = compound_unit<radians, inverse<squared<second>>>;
@@ -198,36 +165,23 @@ public:
                 , CANifier::PWMChannel pwmChannel
                 , bool driveEncoderReversed
                 , double offSet
-                , const std::string& name
-                , Logger& log);
+                , const std::string& name);
 
     frc::SwerveModuleState GetState();
 
-    void Periodic(const int& lowPrioritySkipCount);
+    void Periodic();
 
     void SetDesiredState(frc::SwerveModuleState &state);
 
     void ResetEncoders();
 
-    void ResetLog() { m_logData.ResetHeaderLogged(); }
+    void ResetRelativeToAbsolute();
 
     // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
     static double ZeroTo2PiRads(double theta);
 
     // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
     static double NegPiToPiRads(double theta);
-
-    // Used to confirm the encoder and motor direction are in sync
-    // units::volt_t m_tempVoltage = 0.1_V; 
-    // void TemporaryRunTurnMotor()
-    // {
-    //     m_turningMotor.SetVoltage(m_tempVoltage);
-    //     m_tempVoltage += 0.1_V; 
-    //     if ( m_tempVoltage > 5.0_V)
-    //     {
-    //          m_tempVoltage = 0.1_V;
-    //     }
-    // }
 
 private:
     void EncoderToRadians();
@@ -238,12 +192,6 @@ private:
     double MinTurnRads(double init, double final, bool& bOutputReverse);
     meters_per_second_t CalcMetersPerSec();
     double CalcTicksPer100Ms(meters_per_second_t speed);
-
-    // We have to use meters here instead of radians due to the fact that
-    // ProfiledPIDController's constraints only take in meters per second and
-    // meters per second squared.
-    //static constexpr radians_per_second_t kModuleMaxAngularVelocity = radians_per_second_t(wpi::math::pi);                                           // radians per second
-    //static constexpr unit_t<radians_per_second_squared_t> kModuleMaxAngularAcceleration = unit_t<radians_per_second_squared_t>(wpi::math::pi * 2.0); // radians per second squared
 
     double m_offset;
     std::string m_name;
@@ -262,10 +210,6 @@ private:
     CANifier::PWMChannel m_pwmChannel;
 
     Timer m_timer;
-
-    using LogData = LogDataT<ESwerveModuleLogData2>;
-    LogData m_logData;
-    Logger& m_log;
 };
 
 #endif

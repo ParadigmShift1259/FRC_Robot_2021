@@ -3,11 +3,10 @@
 
 using namespace CyclerConstants;
 
-CyclerSubsystem::CyclerSubsystem(const int& lowPrioritySkipCount)
+CyclerSubsystem::CyclerSubsystem()
     : m_feedermotor(kFeederPort, CANSparkMax::MotorType::kBrushless)
     , m_turntablemotor(kTurnTablePort)
     , m_sensor(0)
-    , m_lowPrioritySkipCount(lowPrioritySkipCount)
     , m_interruptsenabled(false)
 {
     m_turntablemotor.SetNeutralMode(NeutralMode::Brake);
@@ -30,11 +29,8 @@ CyclerSubsystem::CyclerSubsystem(const int& lowPrioritySkipCount)
 
 void CyclerSubsystem::Periodic()
 {
-    // if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
-    // {
     SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
     SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
-    // }
     m_sensor.ClearError();
 }
 
