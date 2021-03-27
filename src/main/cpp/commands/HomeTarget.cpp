@@ -25,13 +25,15 @@ void HomeTarget::Initialize()
 
 void HomeTarget::Execute()
 {
+    printf("Home Target running...\n");
     // Homes flywheel, turret, and hood to the right angles through a formula
-    printf("Running Home Target ...\n");
     SmartDashboard::PutBoolean("TEST_VIS_ACTIVE", m_vision->GetActive());
     if (!m_vision->GetActive())
         return;
+    printf("Vision Working...\n");
 
     double distance = m_vision->GetDistance();
+    printf("Retrieved Distance\n");
     //y\ =\ 1687.747+15.8111x-0.0594079x^{2}+0.00008292342x^{3}
     // Increased flywheel at upper ends 3/18/21
     //y\ =\ 1687.747+15.8111x-0.058079x^{2}+0.00008892342x^{3}
@@ -42,6 +44,7 @@ void HomeTarget::Execute()
 
     m_turret->TurnToRelative(m_vision->GetAngle());
     m_flywheel->SetRPM(flywheelspeed);
+    printf("Set turret and flywheel\n");
     //m_hood->Set(hoodangle);
 
     SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->IsAtRPM());
@@ -49,17 +52,25 @@ void HomeTarget::Execute()
 
     // if at position, set turret ready to true
     if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint()) {
+        printf("Shooting All Ready\n");
         *m_turretready = true;
     }
+    printf("Finished full loop\n");
 }
 
 bool HomeTarget::IsFinished()
 {
+    printf("Running Home Target...\n");
     SmartDashboard::PutBoolean("TEST_FIRE_FINISIHED", *m_finished);
+    printf("Finished %s\n", *m_finished ? "true" : "false");
     return *m_finished;
 }
 
 void HomeTarget::End(bool interrupted) {
+    printf("Shooting Ended\n");
+    if (interrupted) {
+        printf("Shooting interrupted\n");
+    }
     *m_finished = false;
     *m_turretready = false;
     m_flywheel->SetRPM(FlywheelConstants::kIdleRPM);

@@ -17,13 +17,13 @@ CyclerLaunch::CyclerLaunch(CyclerSubsystem* subsystem,
 
 void CyclerLaunch::Initialize()
 {
-    printf("---------------------------------------- Starting Cycler Launch");
     m_timer.Reset();
     *m_firing = false;
 }
 
 void CyclerLaunch::Execute()
 {
+    printf("Cycler Launch running...\n");
     if (*m_turretready)
     {
         *m_firing = true;
@@ -46,8 +46,15 @@ bool CyclerLaunch::IsFinished() {
 }
 
 void CyclerLaunch::End(bool interrupted) {
+    printf("CyclerLaunch Ended\n");
+    if (interrupted) {
+        printf("CyclerLaunch Interrupted\n");
+    }
+    else {
+        *m_finished = true;
+    }
+
     *m_firing = false;
-    *m_finished = true;
     m_timer.Stop();
     m_cycler->ResetSensor();
     m_cycler->SetFeeder(0);

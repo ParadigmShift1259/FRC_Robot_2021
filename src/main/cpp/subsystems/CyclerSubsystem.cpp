@@ -61,6 +61,7 @@ void CyclerSubsystem::EndDetection() {
 
 bool CyclerSubsystem::AtPosition()
 {
+    printf("Checked Cycler end\n");
     return m_triggeredsensor;
 }
 

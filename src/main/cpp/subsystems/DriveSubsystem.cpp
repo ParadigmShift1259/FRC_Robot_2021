@@ -206,6 +206,12 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
+    if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 && rot.to<double>() == 0)
+    {
+        Drive(xSpeed, ySpeed, rot, fieldRelative);
+        return;
+    }
+
     if (rot.to<double>() == 0 && m_rotationalInput)
     {
         m_rotationalInput = false;
@@ -230,6 +236,8 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
     m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
     m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
 
+    rot = radians_per_second_t(rot.to<double>() * DriveConstants::kDriveAngularSpeed.to<double>());
+
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)
         chassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetHeadingAsRot2d());
@@ -238,7 +246,7 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     auto states = kDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
 
-    kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
+    kDriveKinematics.NormalizeWheelSpeeds(&states, DriveConstants::kDriveSpeed);
 
     // Added to force correct slow left side, 3/24/21
     states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
