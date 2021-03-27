@@ -76,7 +76,10 @@ public:
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);
 
-    frc2::Command *GetAutonomousGSCommand();
+    enum Direction { kFront, kLeft, kRight, kBack };
+    frc2::Command *GetDriveTestCommand(Direction direction);
+
+    void ResetLog() { m_drive.ResetLog(); }
 
 private:
     double Deadzone(double inputValue, double deadzone)
@@ -107,5 +110,11 @@ private:
     void ConfigureButtonBindings();
 
     bool m_fieldRelative = false;
+    bool m_turretready = false;
+    bool m_firing = false;
+    bool m_finished = false;
+
+    const int& m_lowPrioritySkipCount;
+ 
     bool m_isRedPath = false;
 };

@@ -13,20 +13,22 @@ HomeTarget::HomeTarget(FlywheelSubsystem* flywheel, TurretSubsystem* turret, Hoo
  , m_firing(firing)
  , m_finished(finished)
 {
-  AddRequirements({flywheel, turret, hood, vision});
-  *m_turretready = false;
+    AddRequirements({flywheel, turret, hood, vision});
+    *m_turretready = false;
+    *m_firing = false;
+    *m_finished = false;
 }
 
 void HomeTarget::Initialize()
 {
-    *m_finished = false;
     *m_turretready = false;
+    *m_firing = false;
+    *m_finished = false;
 }
 
 void HomeTarget::Execute()
 {
     // Homes flywheel, turret, and hood to the right angles through a formula
-    printf("Running Home Target ...\n");
     SmartDashboard::PutBoolean("TEST_VIS_ACTIVE", m_vision->GetActive());
     if (!m_vision->GetActive())
         return;
@@ -38,11 +40,14 @@ void HomeTarget::Execute()
     double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
     if (*m_firing)
         flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
-    double hoodangle = 0.06286766 + (175598.7 - 0.06286766) / (1 + pow((distance / 0.6970016), 2.811798));
-
+    // Quintic regression calculated 3/27
+    // https://mycurvefit.com/
+    //y=11.20831-0.2645223*x+0.002584349*x^{2}-0.00001250923*x^{3}+2.986403\cdot10^{-8}*x^{4}-2.81104\cdot10^{-11}*x^{5}
+    double hoodangle = 11.20831 - 0.2645223 * distance + 0.002584349 * pow(distance, 2) - 0.00001250923 * pow(distance, 3) + 2.986403E-8 * pow(distance, 4) - 2.81104E-11 * pow(distance, 5);
+    printf("Hood set %.3f\n", hoodangle);
     m_turret->TurnToRelative(m_vision->GetAngle());
     m_flywheel->SetRPM(flywheelspeed);
-    //m_hood->Set(hoodangle);
+    m_hood->Set(hoodangle);
 
     SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->IsAtRPM());
     SmartDashboard::PutBoolean("TEST_AT_SET", m_turret->isAtSetpoint());
@@ -63,6 +68,6 @@ void HomeTarget::End(bool interrupted) {
     *m_finished = false;
     *m_turretready = false;
     m_flywheel->SetRPM(FlywheelConstants::kIdleRPM);
-    m_hood->Set(0);
+    m_hood->Set(HoodConstants::kMax);
     m_turret->TurnTo(TurretConstants::kStartingPositionDegrees);
 }

@@ -99,11 +99,23 @@ void DriveSubsystem::Periodic()
    
     auto pose = m_odometry.GetPose();
 
-    m_frontLeft.Periodic();
-    m_frontRight.Periodic();
-    m_rearRight.Periodic();
-    m_rearLeft.Periodic();
-    SmartDashboard::PutNumber("D_D_Rot", GetHeading());
+    m_frontLeft.Periodic(m_lowPrioritySkipCount);
+    m_frontRight.Periodic(m_lowPrioritySkipCount);
+    m_rearRight.Periodic(m_lowPrioritySkipCount);
+    m_rearLeft.Periodic(m_lowPrioritySkipCount);
+
+    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
+    {
+        m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
+        m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
+        m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
+        m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
+        m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
+        //m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
+
+        SmartDashboard::PutNumber("D_D_Rot", GetHeading());
+
+    }
 }
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
@@ -169,6 +181,14 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
+    SmartDashboard::PutBoolean("D_D_RotationInput", m_rotationalInput);
+    SmartDashboard::PutNumber("D_D_lastHeading", m_lastHeading);
+    if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 && rot.to<double>() == 0)
+    {
+        Drive(xSpeed, ySpeed, rot, fieldRelative);
+        return;
+    }
+
     if (rot.to<double>() == 0 && m_rotationalInput)
     {
         m_rotationalInput = false;
@@ -189,6 +209,12 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
+    m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
+    m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
+    m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
+
+    rot = radians_per_second_t(rot.to<double>() * DriveConstants::kDriveAngularSpeed.to<double>());
+
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)
         chassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetHeadingAsRot2d());
@@ -197,11 +223,11 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     auto states = kDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
 
-    kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
+    kDriveKinematics.NormalizeWheelSpeeds(&states, DriveConstants::kDriveSpeed);
 
-    // Added to force correct slow left side, 3/24/21
-    states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
-    states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
+    // // Added to force correct slow left side, 3/24/21
+    // states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
+    // states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
     
     #ifdef TUNE_MODULES
     states[eFrontLeft].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFL", 0.0)));

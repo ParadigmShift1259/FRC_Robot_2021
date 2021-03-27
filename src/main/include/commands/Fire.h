@@ -19,9 +19,10 @@
 class Fire : public frc2::CommandHelper<frc2::ParallelCommandGroup, Fire> {
 public:
     Fire(   FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
-            IntakeSubsystem* intake, CyclerSubsystem* cycler, VisionSubsystem* vision);
+            IntakeSubsystem* intake, CyclerSubsystem* cycler, VisionSubsystem* vision,
+            bool* m_turretready, bool* m_firing, bool* m_finished);
 private:
-    bool m_turretready;
-    bool m_firing;
-    bool m_finished;
+    bool* m_turretready;
+    bool* m_firing;
+    bool* m_finished;
 };

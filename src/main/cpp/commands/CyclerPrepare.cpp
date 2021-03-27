@@ -25,7 +25,6 @@ bool CyclerPrepare::IsFinished() {
 }
 
 void CyclerPrepare::End(bool interrupted) {
-    printf("Ending Prepare\n");
     if (interrupted) {
         m_cycler->ResetSensor();
     }

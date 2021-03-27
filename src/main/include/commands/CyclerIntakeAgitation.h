@@ -13,5 +13,5 @@
 
 class CyclerIntakeAgitation : public frc2::CommandHelper<frc2::ParallelCommandGroup, CyclerIntakeAgitation> {
 public:
-    CyclerIntakeAgitation(IntakeSubsystem* intake, CyclerSubsystem* cycler);
+    CyclerIntakeAgitation(IntakeSubsystem* intake, CyclerSubsystem* cycler, double speed);
 };

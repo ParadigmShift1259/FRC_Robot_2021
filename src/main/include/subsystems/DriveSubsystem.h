@@ -25,6 +25,38 @@
 // Uncomment to tune Rotation PID for Drive Subsystem
 //#define TUNE_ROTATION
 
+// For each enum here, add a string to c_headerNamesDriveSubsystem
+// and a line like this: 
+//      m_logData[EDriveSubSystemLogData::e???] = ???;
+// to DriveSubsystem::Periodic
+enum class EDriveSubSystemLogData : int
+{
+    eFirstInt
+  , eLastInt = eFirstInt
+
+  , eFirstDouble
+  , eInputX = eFirstDouble
+  , eInputY
+  , eInputRot
+  , eOdoX
+  , eOdoY
+  , eOdoRot
+  , eLastDouble
+  , eGyroRot
+  , eGyroRotRate
+};
+
+const std::vector<std::string> c_headerNamesDriveSubsystem{
+       "InputX"
+     , "InputY"
+     , "InputRot"
+     , "OdoX"
+     , "OdoY"
+     , "OdoRot"
+     , "eGyroRot"
+     , "eGyroRotRate"
+};
+
 class DriveSubsystem : public frc2::SubsystemBase
 {
 public:

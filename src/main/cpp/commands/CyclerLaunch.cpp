@@ -12,14 +12,18 @@ CyclerLaunch::CyclerLaunch(CyclerSubsystem* subsystem,
  , m_finished(finished)
 {
   AddRequirements({subsystem});
+  *m_turretready = false;
   *m_firing = false;
+  *m_finished = false;
 }
 
 void CyclerLaunch::Initialize()
 {
-    printf("---------------------------------------- Starting Cycler Launch");
     m_timer.Reset();
+    m_timer.Stop();
+    *m_turretready = false;
     *m_firing = false;
+    *m_finished = false;
 }
 
 void CyclerLaunch::Execute()
@@ -35,6 +39,11 @@ void CyclerLaunch::Execute()
         m_cycler->SetTurnTable(kTurnTableSpeed);
         m_cycler->SetFeeder(kFeederSpeed);
     }
+    else
+    {
+        m_cycler->SetTurnTable(0);
+        m_cycler->SetFeeder(0);
+    }
 
 
     SmartDashboard::PutBoolean("TEST_READY_TO_FIRE", *m_turretready);
@@ -46,8 +55,8 @@ bool CyclerLaunch::IsFinished() {
 }
 
 void CyclerLaunch::End(bool interrupted) {
-    *m_firing = false;
     *m_finished = true;
+    *m_firing = false;
     m_timer.Stop();
     m_cycler->ResetSensor();
     m_cycler->SetFeeder(0);

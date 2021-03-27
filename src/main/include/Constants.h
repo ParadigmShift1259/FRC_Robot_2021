@@ -60,6 +60,10 @@ namespace DriveConstants
     constexpr int kRearLeftTurningMotorPort   = 8;       //!< Rear Left Turn CAN ID (SparkMAX)
     ///@}
 
+    /// \name Teleop Drive Constraints
+    constexpr auto kDriveSpeed = units::meters_per_second_t(1.5);
+    constexpr auto kDriveAngularSpeed = units::radians_per_second_t(wpi::math::pi);
+
     /// \name Canifier PWM channels
     ///@{
     /// PWM channels for the canifier
@@ -81,49 +85,34 @@ namespace DriveConstants
     /// \name Drive wheel reversal (inverting) flags
     ///@{
     /// To keep the swerve module bevel gear facing inwards we need to reverse the right side
-#ifdef Mk2
+    #ifdef Mk2
     constexpr bool kFrontLeftDriveMotorReversed  = false;
     constexpr bool kRearLeftDriveMotorReversed   = false;
     constexpr bool kFrontRightDriveMotorReversed = true;
     constexpr bool kRearRightDriveMotorReversed  = true;
-#else
+    #else
     constexpr bool kFrontLeftDriveMotorReversed  = true;
     constexpr bool kRearLeftDriveMotorReversed   = true;
     constexpr bool kFrontRightDriveMotorReversed = false;
     constexpr bool kRearRightDriveMotorReversed  = false;
-#endif
+    #endif
 
     constexpr double kLeftMultipler = 1.21951; // 1.149425;
     ///@}
 
     constexpr bool kGyroReversed = false;
 
-    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or
-    // theoretically for *your* robot's drive. The RobotPy Characterization
-    // Toolsuite provides a convenient tool for obtaining these values for your
-    // robot.
-    //constexpr auto ks = 1_V;
-    //constexpr auto kv = 0.8 * 1_V * 1_s / 1_m;
-    //constexpr auto ka = 0.15 * 1_V * 1_s * 1_s / 1_m;
-
-    // Example value only - as above, this must be tuned for your drive!
-    //constexpr double kPFrontLeftVel = 0.5;
-    //constexpr double kPRearLeftVel = 0.5;
-    //constexpr double kPFrontRightVel = 0.5;
-    //constexpr double kPRearRightVel = 0.5;
-
     // Process for reentering values: 0 all values out, line up with stick, all gears face inwards
     // Line up based on side, left or right
     // Record values, enter below, then redeploy
     // All gears should face outwards
 
-#ifdef Mk2
+    #ifdef Mk2
     constexpr double kFrontLeftOffset   = (6.28 - 3.14); //3.142; //6.412;           //3.142;         // 3.14;
     constexpr double kFrontRightOffset  = (6.28 - 1.21); //5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
     constexpr double kRearLeftOffset    = (6.28 - 0.36); //5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
     constexpr double kRearRightOffset   = (6.28 - 5.67); //0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
-#else
+    #else
     //Mk3 swerve module
     //============================================LEAVE THESE ZEROES COMMENTED OUT!!!
     // constexpr double kFrontLeftOffset   = 0.0;
@@ -135,7 +124,7 @@ namespace DriveConstants
     constexpr double kFrontRightOffset  = 195.0;
     constexpr double kRearRightOffset   = 1829.0;
     constexpr double kRearLeftOffset    = 234.0; //362.891; //147.0;
-#endif
+    #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
@@ -144,7 +133,8 @@ namespace DriveConstants
     constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
     constexpr double kPulseWidthToRadians =  Math::kTau / kPulseWidthToZeroOne;
 
-    /// Turn PID Controller for Swerve Modules
+    /// \name Turn PID Controller for Swerve Modules
+    ///@{
 #ifdef Mk2
     constexpr double kTurnP = 0.35; // 0.35 // 0.1
     constexpr double kTurnI = 0; //1e-4;
@@ -154,6 +144,7 @@ namespace DriveConstants
     constexpr double kTurnI = 0.0;   //1e-4;
     constexpr double kTurnD = 1.1;   // 1.85
 #endif
+    ///@}
 
     /// \name Robot Rotation PID Controller
     ///@{
@@ -162,11 +153,14 @@ namespace DriveConstants
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0;
     constexpr double kRotationD = 0.25;
-    ///@}
-
+    /// Rotation PID Controller additional parameters
+    /// Max speed for control
     constexpr double kMaxAbsoluteRotationSpeed = 3.5;
+    /// Speeds higher than value will prevent robot from changing directions for a turn
     constexpr double kMaxAbsoluteTurnableSpeed = 3;
+    /// Maximum tolerance for turning
     constexpr double kAbsoluteRotationTolerance = 0.07;
+    ///@}
 
     constexpr double kMinTurnPrioritySpeed = 0.4;
 
@@ -174,33 +168,36 @@ namespace DriveConstants
 
 namespace ModuleConstants
 {
-#ifdef Mk2
+    #ifdef Mk2
     constexpr int kEncoderCPR = 1024;
-#else
+    #else
     constexpr int kEncoderCPR = 2048;
-#endif
+    #endif
+
     constexpr int kEncoderTicksPerSec = 10;                 //!< TalonFX::GetSelectedSensorVelocity() returns ticks/100ms = 10 ticks/sec
     constexpr double kWheelDiameterMeters = .1016;          //!< 4"
-#ifdef Mk2
+
+    #ifdef Mk2
     constexpr double kDriveGearRatio = 8.31;              //!< MK2 swerve modules 11.9 ft/sec
     constexpr double kTurnMotorRevsPerWheelRev = 18.0;  // 12.8 Mk3
     constexpr double kDriveEncoderDistancePerPulse = (kWheelDiameterMeters * wpi::math::pi) / static_cast<double>(kEncoderCPR);
-#else
+    #else
     constexpr double kDriveGearRatio = 8.16;                //!< MK3 swerve modules w/NEOs 12.1 ft/sec w/Falcon 13.6 ft/sec
     constexpr double kTurnMotorRevsPerWheelRev = 12.8;
     /// Assumes the encoders are directly mounted on the wheel shafts
     // ticks / 100 ms -> ticks / s -> motor rev / s -> wheel rev / s -> m / s
     constexpr double kDriveEncoderMetersPerSec = kEncoderTicksPerSec / static_cast<double>(kEncoderCPR) / kDriveGearRatio * (kWheelDiameterMeters * wpi::math::pi);
-#endif
+    #endif
+
     constexpr double kTurnEncoderCPR = 4096.0 / kTurnMotorRevsPerWheelRev;    // Mag encoder relative output to SparkMax
 
-#ifdef Mk2
+    #ifdef Mk2
     constexpr double kP_ModuleTurningController = 1.1;
-#else
+    #else
     constexpr double kP_ModuleTurningController = 1.1;
-#endif
-    constexpr double kD_ModuleTurningController = 0.03;
+    #endif
 
+    constexpr double kD_ModuleTurningController = 0.03;
     constexpr double kPModuleDriveController = 0.001;
 
     constexpr uint kMotorCurrentLimit = 30;
@@ -249,7 +246,7 @@ namespace IntakeConstants
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
-    constexpr double kIngestHigh = 0.70;
+    constexpr double kIngestHigh = 0.78;
     constexpr double kReleaseLow = -0.3;
     constexpr double kReleaseHigh = -0.70;
 }
@@ -294,7 +291,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0; // 1700
+    constexpr double kIdleRPM = 1700;
 }
 
 // Turret Subsystem Constants
@@ -302,8 +299,8 @@ namespace TurretConstants
 {
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
-    constexpr double kP = 0.38114;
-    constexpr double kI = 0.00065;
+    constexpr double kP = 0.32114;
+    constexpr double kI = 0.00035;
     constexpr double kD = 19.6;
 
     constexpr double kMinOut = 0;
@@ -343,8 +340,8 @@ namespace HoodConstants
     constexpr int kPWMPort = 8;                //!< Hood servo PWM channel
     constexpr double kTestServoSpeed = 0.14;
     // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
-    constexpr double kMax = .85;
-    constexpr double kMin = .0485;
+    constexpr double kMax = .9;
+    constexpr double kMin = .20;
 }
 
 // Cycler Subsystem Constants
@@ -355,6 +352,7 @@ namespace CyclerConstants
 
     constexpr double kFeederSpeed = 0.350;
     constexpr double kTurnTableSpeed = 0.400;
+    constexpr double kTurnTableSpeedHigher = 0.550;
     constexpr double kTurnTableHoneSpeed = 0.200;
     constexpr units::second_t kMaxCyclerTime = 5.0_s;
 
@@ -363,7 +361,7 @@ namespace CyclerConstants
     // Time to go from 0 to full throttle
     constexpr double kTurnTableRampRate = 0.75;
 
-    constexpr double kTimePassed = 0.15;
+    constexpr double kTimePassed = 0.25;
     constexpr double kTimeLaunch = 4.00;
 
     constexpr double kTimeout = 30;
