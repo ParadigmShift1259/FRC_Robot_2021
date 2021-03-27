@@ -45,13 +45,6 @@ void TurretSubsystem::Periodic()
         SmartDashboard::PutNumber("D_T_Output", m_turretmotor.GetMotorOutputPercent());
     }
 
-    // double p = frc::SmartDashboard::GetNumber("T_T_P", kP);
-    // double i = frc::SmartDashboard::GetNumber("T_T_I", kI);
-    // double d = frc::SmartDashboard::GetNumber("T_T_D", kD);
-    // m_turretmotor.Config_kP(0, p, kTimeout);
-    // m_turretmotor.Config_kI(0, i, kTimeout);
-    // m_turretmotor.Config_kD(0, d, kTimeout);
-
     m_turretmotor.Set(ControlMode::Position, DegreesToTicks(m_currentAngle));
 }
 
@@ -92,6 +85,21 @@ void TurretSubsystem::TurnToRelative(double angle)
 bool TurretSubsystem::isAtSetpoint()
 {
     return fabs(m_turretmotor.GetClosedLoopError()) <= DegreesToTicks(kDegreeStopRange);
+}
+
+void TurretSubsystem::SetNewPIDValues()
+{
+    /// CONFIRMED: OVERUNNING THE ENTIRE LOOP
+    /// Bug
+    double p = frc::SmartDashboard::GetNumber("T_T_P", kP);
+    double i = frc::SmartDashboard::GetNumber("T_T_I", kI);
+    double d = frc::SmartDashboard::GetNumber("T_T_D", kD);
+    double max = frc::SmartDashboard::GetNumber("T_T_Max", kMaxOut);
+    m_turretmotor.Config_kP(0, p, kTimeout);
+    m_turretmotor.Config_kI(0, i, kTimeout);
+    m_turretmotor.Config_kD(0, d, kTimeout);
+    m_turretmotor.ConfigPeakOutputForward(max, kTimeout);
+    m_turretmotor.ConfigPeakOutputReverse(max * -1.0, kTimeout);
 }
 
 double TurretSubsystem::TicksToDegrees(double ticks)

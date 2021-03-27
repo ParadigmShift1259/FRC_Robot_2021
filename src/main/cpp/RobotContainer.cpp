@@ -18,7 +18,7 @@
 // Commenting this out removes subsystem CAN errors
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
 //#define SUBSYSTEMS
-
+#include "TestTraj.h"
 #ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
@@ -47,24 +47,17 @@ RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
 
+    m_turretready = false;
+    m_firing = false;
+    m_finished = false;
+
     // Configure the button bindings
     ConfigureButtonBindings();
     SetDefaultCommands();
-
-    m_testNumber = 0;
-    m_testPower = 0;
-
-    SmartDashboard::PutNumber("TEST_R_number", m_testNumber);
-    SmartDashboard::PutNumber("TEST_R_power", m_testPower);
 }
 
 void RobotContainer::Periodic()
 {
-    if (m_lowPrioritySkipCount % 5 == 0)    // 10 per second
-    {
-        m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-        m_testPower = SmartDashboard::GetNumber("TEST_testPower", 0);
-    }
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -152,13 +145,13 @@ void RobotContainer::SetDefaultCommands()
         )
     );
 
-    // m_hood.SetDefaultCommand(
-    //     frc2::RunCommand(
-    //         [this] {
-    //             m_hood.Set(0);
-    //         }, {&m_hood}
-    //     )
-    // );
+    m_hood.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                m_hood.Set(HoodConstants::kMax);
+            }, {&m_hood}
+        )
+    );
     
     // m_climber.SetDefaultCommand(
     //     frc2::RunCommand(
@@ -235,44 +228,44 @@ void RobotContainer::ConfigureButtonBindings()
         std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
     );
 
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
-        frc2::InstantCommand(    
-        [this] {
-            m_drive.ResetRelativeToAbsolute();
-        },
-        {&m_drive}
-        )
-    );
-
-    // Increments / Decrements a test power value for TestCommands()
-    /*frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
-        frc2::InstantCommand(    
-        [this] {
-            m_testPower += 0.05;
-            SmartDashboard::PutNumber("TEST_R_power", m_testPower);
-        },
-        {}
-        )
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kFront))
     );
 
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kX).WhenPressed(
-        frc2::InstantCommand(    
-        [this] {
-            m_testPower -= 0.05;
-            SmartDashboard::PutNumber("TEST_R_power", m_testPower);
-        },
-        {}
-        )
-    );*/
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kLeft))
+    );
+
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kB).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kRight))
+    );
+
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
+        std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kBack))
+    );
+
+    // frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kA).WhenPressed(
+    //     frc2::InstantCommand(    
+    //     [this] {
+    //         m_drive.ResetRelativeToAbsolute();
+    //     },
+    //     {&m_drive}
+    //     )
+    // );
 
     // Triggers Fire sequence
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kY).WhenPressed(
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision)
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision,
+             &m_turretready, &m_firing, &m_finished)
     );
 
     // Runs sequence of tests for motors based on iterator and a power
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kA).WhenHeld(
-        CyclerIntakeAgitation(&m_intake, &m_cycler)   
+        CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed)   
+    );
+
+    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
+        CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeedHigher)   
     );
 
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kA).WhenReleased(
@@ -287,98 +280,15 @@ void RobotContainer::ConfigureButtonBindings()
         IntakeRelease(&m_intake)
     );
 
-    /*
-
-    double c_buttonInputSpeed = 0.5;
-    units::second_t c_buttonInputTime = 1.25_s;
-
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
-        frc2::RunCommand(    
-            [this, c_buttonInputSpeed] {
-                m_drive.Drive(units::meters_per_second_t(c_buttonInputSpeed),
-                        units::meters_per_second_t(0),
-                        units::radians_per_second_t(0),
-                        false);
-            },
-            {&m_drive}
-        ).WithTimeout(c_buttonInputTime));
-    */
+    // frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
+    //     frc2::InstantCommand(    
+    //     [this] {
+    //         m_turret.SetNewPIDValues();
+    //     },
+    //     {&m_turret}
+    //     )
+    // );
 }
-
-frc2::InstantCommand RobotContainer::TestCommands()
-{
-    // printf("%d", (int) SmartDashboard::GetNumber("TEST_testNumber", 0));
-    // m_testNumber = (int) SmartDashboard::GetNumber("TEST_testNumber", 0);
-
-    // switch(m_testNumber) {
-    // case 0:
-    //     printf("case 0");
-    //     return 
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_intake.Set(m_testPower);
-    //         },
-    //         {&m_intake}
-    //     );
-    // case 1:
-    //     printf("case 1");
-    //     return
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_cycler.SetFeeder(m_testPower);
-    //         },
-    //         {&m_cycler}
-    //     );
-    // case 2:
-    //     printf("case 2");
-    //     return 
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_cycler.SetTurnTable(m_testPower);
-    //         },
-    //         {&m_cycler}
-    //     );
-    // case 3:
-    //     printf("case 3");
-    //     return
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_flywheel.SetRPM(m_testPower * 1000.0);
-    //         },
-    //         {&m_flywheel}
-    //     );
-    //     break;
-    // case 4:
-    //     printf("case 4");
-    //     return 
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_hood.Set(m_testPower);
-    //         },
-    //         {&m_hood}
-    //     );
-    //     break;
-    // case 5:
-    //     printf("case 5");
-    //     return
-    //     frc2::InstantCommand(    
-    //         [this] {
-    //             m_climber.Run(m_testPower);
-    //         },
-    //         {&m_climber}
-    //     );
-    // }
-    // printf("Default");
-    return 
-        frc2::InstantCommand(    
-            [this] {
-                // m_intake.Set(m_testPower);
-            },
-             {/*&m_intake*/}
-        );
-}
-
-// frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
@@ -558,6 +468,77 @@ frc2::Command *RobotContainer::GetAutonomousGSCommand()
         std::move(findClosestBall),
         std::move(driveToBall),
         //std::move(rotateToFindNextBall),
+        frc2::InstantCommand(
+            [this]() {
+                m_drive.Drive(units::meters_per_second_t(0.0),
+                              units::meters_per_second_t(0.0),
+                              units::radians_per_second_t(0.0), false);
+            },
+            {}
+        )
+    );
+}
+
+frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
+{
+
+    frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
+    // Add kinematics to ensure max speed is actually obeyed
+    config.SetKinematics(m_drive.kDriveKinematics);
+    frc::Trajectory exampleTrajectory;
+
+    switch (direction)
+    {
+        case kFront:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajFront,
+                config
+            );
+            break;
+        case kLeft:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajLeft,
+                config
+            );
+            break;
+        case kRight:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajRight,
+                config
+            );
+            break;
+        case kBack:
+            exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+                TestTrajBack,
+                config
+            );
+            break;
+    }
+
+    frc::ProfiledPIDController<units::radians> thetaController {
+        AutoConstants::kPThetaController, 0, 0,
+        AutoConstants::kThetaControllerConstraints
+    };
+
+    thetaController.EnableContinuousInput(units::radian_t(-wpi::math::pi), units::radian_t(wpi::math::pi));
+
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> swerveControllerCommand(
+        exampleTrajectory,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        // GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+
+    // Reset odometry to the starting pose of the trajectory
+    m_drive.ResetOdometry(exampleTrajectory.InitialPose());
+
+    return new frc2::SequentialCommandGroup(
+        std::move(swerveControllerCommand),
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),

@@ -11,7 +11,7 @@
 
 class CyclerAgitation : public frc2::CommandHelper<frc2::CommandBase, CyclerAgitation> {
  public:
-  explicit CyclerAgitation(CyclerSubsystem* subsystem);
+  explicit CyclerAgitation(CyclerSubsystem* subsystem, double speed);
 
   void Execute() override;
 
@@ -20,4 +20,5 @@ class CyclerAgitation : public frc2::CommandHelper<frc2::CommandBase, CyclerAgit
  private:
   CyclerSubsystem* m_cycler;
   Timer m_timer;
+  double m_speed;
 };

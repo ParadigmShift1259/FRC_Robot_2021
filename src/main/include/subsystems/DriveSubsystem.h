@@ -25,7 +25,7 @@
 // Uncomment to directly set values to each swerve module
 //#define TUNE_MODULES
 // Uncomment to tune Rotation PID for Drive Subsystem
-#define TUNE_ROTATION
+//#define TUNE_ROTATION
 
 // For each enum here, add a string to c_headerNamesDriveSubsystem
 // and a line like this: 

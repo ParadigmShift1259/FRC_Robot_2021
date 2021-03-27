@@ -149,7 +149,7 @@ namespace DriveConstants
     /// \name Robot Rotation PID Controller
     ///@{
     /// Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
-    constexpr double kRotationP = 4;
+    constexpr double kRotationP = 6;
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0;
     constexpr double kRotationD = 0.25;
@@ -299,12 +299,12 @@ namespace TurretConstants
 {
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
-    constexpr double kP = 0.14114;
-    constexpr double kI = 0.00025;
-    constexpr double kD = 0.1375;
+    constexpr double kP = 0.32114;
+    constexpr double kI = 0.00035;
+    constexpr double kD = 19.6;
 
     constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.200;
+    constexpr double kMaxOut = 0.700;
 
     constexpr double kTimeout = 30;
     constexpr double kInverted = true;
@@ -340,8 +340,8 @@ namespace HoodConstants
     constexpr int kPWMPort = 8;                //!< Hood servo PWM channel
     constexpr double kTestServoSpeed = 0.14;
     // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
-    constexpr double kMax = .85;
-    constexpr double kMin = .0485;
+    constexpr double kMax = .9;
+    constexpr double kMin = .20;
 }
 
 // Cycler Subsystem Constants
@@ -352,6 +352,7 @@ namespace CyclerConstants
 
     constexpr double kFeederSpeed = 0.350;
     constexpr double kTurnTableSpeed = 0.400;
+    constexpr double kTurnTableSpeedHigher = 0.550;
     constexpr double kTurnTableHoneSpeed = 0.200;
     constexpr units::second_t kMaxCyclerTime = 5.0_s;
 
@@ -360,7 +361,7 @@ namespace CyclerConstants
     // Time to go from 0 to full throttle
     constexpr double kTurnTableRampRate = 0.75;
 
-    constexpr double kTimePassed = 0.15;
+    constexpr double kTimePassed = 0.25;
     constexpr double kTimeLaunch = 4.00;
 
     constexpr double kTimeout = 30;

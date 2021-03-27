@@ -130,7 +130,7 @@ void DriveSubsystem::Periodic()
     m_rearRight.Periodic(m_lowPrioritySkipCount);
     m_rearLeft.Periodic(m_lowPrioritySkipCount);
 
-    if (m_lowPrioritySkipCount % 1000 == 0)   // 5 per second
+    if (m_lowPrioritySkipCount % 10 == 0)   // 5 per second
     {
         m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
         m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
@@ -140,6 +140,7 @@ void DriveSubsystem::Periodic()
         //m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
         SmartDashboard::PutNumber("D_D_Rot", GetHeading());
+
     }
 }
 
@@ -206,6 +207,8 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
+    SmartDashboard::PutBoolean("D_D_RotationInput", m_rotationalInput);
+    SmartDashboard::PutNumber("D_D_lastHeading", m_lastHeading);
     if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 && rot.to<double>() == 0)
     {
         Drive(xSpeed, ySpeed, rot, fieldRelative);
@@ -248,9 +251,9 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     kDriveKinematics.NormalizeWheelSpeeds(&states, DriveConstants::kDriveSpeed);
 
-    // Added to force correct slow left side, 3/24/21
-    states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
-    states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
+    // // Added to force correct slow left side, 3/24/21
+    // states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
+    // states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
     
     #ifdef TUNE_MODULES
     states[eFrontLeft].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFL", 0.0)));

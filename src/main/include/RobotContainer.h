@@ -76,6 +76,9 @@ public:
 
     frc2::Command *GetAutonomousGSCommand();
 
+    enum Direction { kFront, kLeft, kRight, kBack };
+    frc2::Command *GetDriveTestCommand(Direction direction);
+
     void ResetLog() { m_drive.ResetLog(); }
 
 private:
@@ -118,12 +121,13 @@ private:
 
     void SetDefaultCommands();
     void ConfigureButtonBindings();
-    frc2::InstantCommand TestCommands();
 
     bool m_fieldRelative = false;
 
-    int m_testNumber;
-    double m_testPower;
+    bool m_turretready = false;
+    bool m_firing = false;
+    bool m_finished = false;
+
     const int& m_lowPrioritySkipCount;
 
     bool m_isRedPath = false;
