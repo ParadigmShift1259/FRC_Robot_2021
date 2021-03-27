@@ -299,3 +299,12 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose)
 {
     m_odometry.ResetPosition(pose, GetHeadingAsRot2d());
 }
+
+void DriveSubsystem::WheelsForward()
+{
+    printf("WheelsForward\n");
+    m_frontLeft.WheelForward();
+    m_frontRight.WheelForward();
+    m_rearRight.WheelForward();
+    m_rearLeft.WheelForward();
+}

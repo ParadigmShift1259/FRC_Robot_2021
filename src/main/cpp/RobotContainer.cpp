@@ -20,6 +20,8 @@
 #include <wpi/Path.h>
 #include <wpi/SmallString.h>
 #include <frc2/command/SwerveControllerCommand.h>
+#include <frc2/command/button/NetworkButton.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #include <iostream>
 
@@ -68,13 +70,15 @@ RobotContainer::RobotContainer(Logger& log)
     ConfigureButtonBindings();
     m_fieldRelative = false;
 
+    SmartDashboard::PutBoolean("WheelsForward", false);
+
     // Set up default drive command
     m_drive.SetDefaultCommand(frc2::RunCommand(
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto xInput = Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto yInput = Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            auto xInput = pow(Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX), 3.0);
+            auto yInput = pow(Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY), 3.0);
             /*
             if (xInput >= 0)
                 xInput = xInput*xInput; // square
@@ -85,7 +89,7 @@ RobotContainer::RobotContainer(Logger& log)
             else
                 yInput = -yInput*yInput; // square
             */
-            auto rotInput = Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+            auto rotInput = pow(Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
             auto xRot = m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
             if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
@@ -117,10 +121,10 @@ RobotContainer::RobotContainer(Logger& log)
         {&m_drive}
     ));
 
-    ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
-    m_inputXentry = tab.Add("X", 0).GetEntry();
-    m_inputYentry = tab.Add("Y", 0).GetEntry();
-    m_inputRotentry = tab.Add("Rot", 0).GetEntry();
+    //ShuffleboardTab& tab = Shuffleboard::GetTab("XboxInput");
+    //m_inputXentry = tab.Add("X", 0).GetEntry();
+    //m_inputYentry = tab.Add("Y", 0).GetEntry();
+    //m_inputRotentry = tab.Add("Rot", 0).GetEntry();
 }
 
 void RobotContainer::ConfigureButtonBindings()
@@ -218,6 +222,10 @@ void RobotContainer::ConfigureButtonBindings()
     );
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kStickRight).WhenPressed(
         FlywheelRamp(&m_flywheel)
+    );
+
+    frc2::NetworkButton("SmartDashboard", "WheelsForward").WhenPressed(
+        frc2::InstantCommand([this] { m_drive.WheelsForward(); SmartDashboard::PutBoolean("WheelsForward", false); }, { &m_drive} )
     );
 }
 
