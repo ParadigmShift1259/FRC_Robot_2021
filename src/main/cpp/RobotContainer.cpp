@@ -215,6 +215,16 @@ void RobotContainer::ConfigureButtonBindings()
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kB).WhenHeld(
         IntakeRelease(&m_intake)
     );
+
+
+    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
+        frc2::InstantCommand(    
+        [this] {
+            m_turret.SetNewPIDValues();
+        },
+        {&m_turret}
+        )
+    );
 }
 
 // frc::Rotation2d RobotContainer::GetDesiredRotation() { return m_drive.GetHeadingAsRot2d(); }

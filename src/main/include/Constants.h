@@ -302,12 +302,12 @@ namespace TurretConstants
 {
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
-    constexpr double kP = 0.14114;
-    constexpr double kI = 0.00025;
-    constexpr double kD = 0.1375;
+    constexpr double kP = 0.38114;
+    constexpr double kI = 0.00065;
+    constexpr double kD = 19.6;
 
     constexpr double kMinOut = 0;
-    constexpr double kMaxOut = 0.200;
+    constexpr double kMaxOut = 0.700;
 
     constexpr double kTimeout = 30;
     constexpr double kInverted = true;

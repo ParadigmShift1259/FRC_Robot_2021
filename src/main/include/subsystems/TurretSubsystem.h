@@ -45,6 +45,8 @@ public:
     /// Returns whether or not the turret is at the desired setpoint
     bool isAtSetpoint();
 
+    void SetNewPIDValues();
+
 protected:
     /// Converts motor ticks into turret rotation, in degrees
     /// \param ticks        Number of ticks to be converted
