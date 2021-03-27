@@ -294,7 +294,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0; // 1700
+    constexpr double kIdleRPM = 1700;
 }
 
 // Turret Subsystem Constants
