@@ -103,9 +103,9 @@ void Load(CANPIDController& turnPIDController)
 
 class DrivePidParams2
 {
-    double m_p = 0.0;
-    double m_i = 0.0;
-    double m_d = 0.0;
+    double m_p = DriveConstants::kDriveP;
+    double m_i = DriveConstants::kDriveI;
+    double m_d = DriveConstants::kDriveD;
     double m_ff = 0.047619;
     double m_max = 1.0;
     double m_min = -1.0;

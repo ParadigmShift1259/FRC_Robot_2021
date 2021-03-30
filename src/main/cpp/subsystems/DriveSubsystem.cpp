@@ -210,7 +210,7 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
     // m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
     // m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
 
-    rot = radians_per_second_t(rot.to<double>() * DriveConstants::kDriveAngularSpeed.to<double>());
+    rot = radians_per_second_t(rot.to<double>() * AutoConstants::kMaxAngularSpeed.to<double>());
 
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)
@@ -220,7 +220,7 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
 
     auto states = kDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
 
-    kDriveKinematics.NormalizeWheelSpeeds(&states, DriveConstants::kDriveSpeed);
+    kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
 
     // // Added to force correct slow left side, 3/24/21
     // states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;

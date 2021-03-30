@@ -427,6 +427,10 @@ frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
     config.SetKinematics(m_drive.kDriveKinematics);
     frc::Trajectory exampleTrajectory;
 
+    m_drive.ZeroHeading();
+    // Reset odometry to the starting pose of the trajectory
+    m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
+
     switch (direction)
     {
         case kFront:

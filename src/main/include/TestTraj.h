@@ -64,17 +64,17 @@ std::vector<frc::Pose2d> TestTrajLeft =
 
 std::vector<frc::Pose2d> TestTrajRight =
 {
-  frc::Pose2d(0_m, 3_m, 0.0_deg),
-  frc::Pose2d(0_m, 2_m, 0.0_deg),
-  frc::Pose2d(0_m, 1_m, 0.0_deg),
-  frc::Pose2d(0_m, 0_m, 0.0_deg)
+  frc::Pose2d(0_m, 0_m, 0.0_deg),
+  frc::Pose2d(0_m, -1_m, 0.0_deg),
+  frc::Pose2d(0_m, -2_m, 0.0_deg),
+  frc::Pose2d(0_m, -3_m, 0.0_deg)
 };
 
 
 std::vector<frc::Pose2d> TestTrajBack =
 {
-  frc::Pose2d(3_m, 0_m, 0.0_deg),
-  frc::Pose2d(2_m, 0_m, 0.0_deg),
-  frc::Pose2d(1_m, 0_m, 0.0_deg),
-  frc::Pose2d(0_m, 0_m, 0.0_deg)
+  frc::Pose2d(0_m, 0_m, 0.0_deg),
+  frc::Pose2d(-1_m, 0_m, 0.0_deg),
+  frc::Pose2d(-2_m, 0_m, 0.0_deg),
+  frc::Pose2d(-3_m, 0_m, 0.0_deg)
 };

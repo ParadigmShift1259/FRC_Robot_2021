@@ -61,7 +61,7 @@ namespace DriveConstants
     ///@}
 
     /// \name Teleop Drive Constraints
-    constexpr auto kDriveSpeed = units::meters_per_second_t(1.5);
+    constexpr auto kDriveSpeed = units::meters_per_second_t(3.0);
     constexpr auto kDriveAngularSpeed = units::radians_per_second_t(wpi::math::pi);
 
     /// \name Canifier PWM channels
@@ -122,8 +122,8 @@ namespace DriveConstants
     //===============================================================================
     constexpr double kFrontLeftOffset   = 2695.0;
     constexpr double kFrontRightOffset  = 195.0;
-    constexpr double kRearRightOffset   = 1829.0;
-    constexpr double kRearLeftOffset    = 234.0; //362.891; //147.0;
+    constexpr double kRearRightOffset   = 1861.0; //1829.0;
+    constexpr double kRearLeftOffset    = 2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -146,13 +146,21 @@ namespace DriveConstants
 #endif
     ///@}
 
+    /// \name Turn PID Controller for Swerve Modules
+    ///@{
+        constexpr double kDriveP = 0.1;
+        constexpr double kDriveI = 0.0000015;
+        constexpr double kDriveD = 0;
+    ///@}
+
+
     /// \name Robot Rotation PID Controller
     ///@{
     /// Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
-    constexpr double kRotationP = 6;
+    constexpr double kRotationP = 2;
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0;
-    constexpr double kRotationD = 0.25;
+    constexpr double kRotationD = 0.085;
     /// Rotation PID Controller additional parameters
     /// Max speed for control
     constexpr double kMaxAbsoluteRotationSpeed = 3.5;
@@ -291,7 +299,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 1700;
+    constexpr double kIdleRPM = 0; //1700;
 }
 
 // Turret Subsystem Constants

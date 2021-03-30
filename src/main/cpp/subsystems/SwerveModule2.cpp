@@ -84,8 +84,8 @@ void SwerveModule2::Periodic()
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 {
     // Retrieving turn PID values from SmartDashboard
-    // m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
-    // m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
+    m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
+    m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
 
     // Find absolute encoder and NEO encoder positions
     //EncoderToRadians();
@@ -113,6 +113,7 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 
 
     SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
+    SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
 }
 
 void SwerveModule2::ResetEncoders()
