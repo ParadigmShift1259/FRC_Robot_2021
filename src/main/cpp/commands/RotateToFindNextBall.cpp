@@ -6,35 +6,31 @@ RotateToFindNextBall::RotateToFindNextBall(DriveSubsystem* subsystem, bool isRed
   , m_isRedPath(isRedPath)
 {
   AddRequirements({subsystem});
-  m_timer.Reset();
+  if (m_isRedPath)
+  {
+    m_heading = (m_drive->GetHeading() + 40.0) * wpi::math::pi / 180.0;
+  }
+  else
+  {
+    m_heading = (m_drive->GetHeading() - 40.0)  * wpi::math::pi / 180.0;
+  }
 }
 
 void RotateToFindNextBall::Execute() {
-    double time = m_timer.Get();
-
-    if (time == 0.0)
-    {
-      if (m_isRedPath)
-      {
-        m_drive->Drive(units::meters_per_second_t(0),
-                    units::meters_per_second_t(0),
-                    units::radians_per_second_t(units::degree_t(40.0) / 1.0_s),
-                    false);
-        m_timer.Start();
-      }
-    }
-    else if (time >= 1.0)
-    {
-      m_bFinished = true;
-    }
+  m_drive->RotationDrive(units::meters_per_second_t(0),
+              units::meters_per_second_t(0),
+              units::radian_t(m_heading),
+              true);
 }
 
 bool RotateToFindNextBall::IsFinished() {
-  return m_bFinished;
+  if (fabs(m_drive->GetHeading() - m_heading) <= 2.0)
+  {
+    return true;
+  }
+  return false;
 }
 
 void RotateToFindNextBall::End(bool interrupted) {
-  m_bFinished = false;
-  m_timer.Stop();
-  m_timer.Reset();
+
 }

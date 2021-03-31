@@ -97,8 +97,6 @@ void DriveSubsystem::Periodic()
                     , m_rearLeft.GetState()
                     , m_rearRight.GetState());
    
-    auto pose = m_odometry.GetPose();
-
     m_frontLeft.Periodic();
     m_frontRight.Periodic();
     m_rearRight.Periodic();

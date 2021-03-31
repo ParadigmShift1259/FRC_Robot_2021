@@ -20,6 +20,5 @@ class RotateToFindNextBall : public frc2::CommandHelper<frc2::CommandBase, Rotat
   DriveSubsystem* m_drive;
   bool m_isRedPath = false;
   int m_callCount = 0;
-  frc::Timer m_timer;
-  bool m_bFinished = false;
+  double m_heading;
 };
