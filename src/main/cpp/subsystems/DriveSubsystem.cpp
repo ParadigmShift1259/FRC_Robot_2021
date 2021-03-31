@@ -102,6 +102,9 @@ void DriveSubsystem::Periodic()
     m_rearRight.Periodic();
     m_rearLeft.Periodic();
 
+    frc::Pose2d position = GetPose();
+    SmartDashboard::PutNumber("Odo_X", position.X().to<double>());
+    SmartDashboard::PutNumber("Odo_Y", position.Y().to<double>());
 
     // m_logData[EDriveSubSystemLogData::eOdoX] = pose.Translation().X().to<double>();
     // m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
@@ -148,6 +151,14 @@ void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
     // Power limiting
     if (abs(desiredTurnRate) > max)
         desiredTurnRate = signbit(desiredTurnRate) ? max * -1.0 : max;
+
+    // printf("error %.3f desiredSet %.3f max %.3f maxTurn %.3f desiredTurnRate %.3f currentTurnRate %.3f\n"
+    //     ,error
+    //     ,desiredSet
+    //     ,max
+    //     ,maxTurn
+    //     ,desiredTurnRate
+    //     ,currentTurnRate);
 
     // if (!m_rotationPIDController.AtSetpoint())
         Drive(xSpeed, ySpeed, radians_per_second_t(desiredTurnRate), fieldRelative);

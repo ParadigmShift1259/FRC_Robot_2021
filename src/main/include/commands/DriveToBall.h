@@ -20,8 +20,10 @@ class DriveToBall : public frc2::CommandHelper<frc2::CommandBase, DriveToBall> {
   DriveSubsystem* m_drive;
   IntakeSubsystem* m_intake;
   double m_heading;
+  double m_desiredHeading;
   double m_xTarget;
   double m_yTarget;
   bool m_bAcceptVisionDist = true;
   bool m_bFinished = false;
+  bool m_targetPointSet = false;
 };

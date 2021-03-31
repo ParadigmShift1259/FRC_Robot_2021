@@ -11,6 +11,7 @@ FindClosestBall::FindClosestBall(DriveSubsystem* subsystem, bool* isRedPath)
 void FindClosestBall::Execute() {
     static bool bPathKnown = false;
     double dist = SmartDashboard::GetNumber("ZDistance", -1.0);
+    printf("Dist %.3f\n", dist);
     if (dist != -1.0)
     {
       if (bPathKnown == false)
@@ -53,4 +54,5 @@ bool FindClosestBall::IsFinished() {
 
 void FindClosestBall::End(bool interrupted) {
     m_bFoundBall = false;
+    printf("FindClosestBall Ended\n");
 }

@@ -9,6 +9,7 @@
 #include "commands/DriveToBall.h"
 #include "commands/FindClosestBall.h"
 #include "commands/RotateToFindNextBall.h"
+#include "commands/DriveToFinishLine.h"
 
 
 // Commenting this out reduces build time by about half
@@ -398,19 +399,29 @@ frc2::Command *RobotContainer::GetAutonomousGSCommand()
 {
     FindClosestBall findClosestBall(&m_drive, &m_isRedPath);
     DriveToBall driveToBall(&m_drive, &m_intake);
-    RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
+    RotateToFindNextBall rotateToFindNextBall(&m_drive, &m_isRedPath);
+    DriveToFinishLine driveToFinishLine(&m_drive);
 
     m_drive.ZeroHeading();
     // Reset odometry to the starting pose of the trajectory
-    m_drive.ResetOdometry(frc::Pose2d(15.0_in, 90.0_in, frc::Rotation2d(0_deg)));
+    m_drive.ResetOdometry(frc::Pose2d(15.0_in, 105.0_in, frc::Rotation2d(0_deg)));
 
     return new frc2::SequentialCommandGroup(
         std::move(findClosestBall),
         std::move(driveToBall),
         std::move(rotateToFindNextBall),
+
         std::move(findClosestBall),
         std::move(driveToBall),
-        std::move(rotateToFindNextBall),
+        // std::move(rotateToFindNextBall),
+
+        // std::move(findClosestBall),
+        // std::move(driveToBall),
+
+        // // Cross finish line
+        // std::move(driveToFinishLine),
+
+        // Stop
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),

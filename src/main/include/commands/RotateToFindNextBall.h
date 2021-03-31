@@ -2,13 +2,12 @@
 
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
-#include <frc/Timer.h>
 
 #include "subsystems/DriveSubsystem.h"
 
 class RotateToFindNextBall : public frc2::CommandHelper<frc2::CommandBase, RotateToFindNextBall> {
  public:
-  explicit RotateToFindNextBall(DriveSubsystem* subsystem, bool isRedPath);
+  explicit RotateToFindNextBall(DriveSubsystem* subsystem, bool *isRedPath);
 
   void Execute() override;
 
@@ -18,7 +17,8 @@ class RotateToFindNextBall : public frc2::CommandHelper<frc2::CommandBase, Rotat
 
  private:
   DriveSubsystem* m_drive;
-  bool m_isRedPath = false;
-  int m_callCount = 0;
+  bool* m_isRedPath = nullptr;
+  bool m_headingSet = false;
+  int m_ballCount = 1;
   double m_heading;
 };
