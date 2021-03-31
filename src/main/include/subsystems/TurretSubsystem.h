@@ -11,6 +11,7 @@ using namespace ctre::phoenix::motorcontrol::can;
 
 #include "Constants.h"
 #include "common/Util.h"
+#include "Gyro.h"
 
 using namespace std;
 using namespace frc;
@@ -18,7 +19,7 @@ using namespace frc;
 class TurretSubsystem : public frc2::SubsystemBase
 {
 public:
-    TurretSubsystem();
+    TurretSubsystem(Gyro *gyro);
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -34,9 +35,8 @@ public:
     void TurnToRobot(double robotAngle);
 
     /// Turns the turret based on an absolute field angle
-    /// \param gyroAngle        Field angle to turn to, must be positive
-    /// \param robotAngle       Current robot angle, must be positive, in degrees
-    void TurnToField(double gyroAngle, double robotAngle);
+    /// \param deisredAngle        Field angle to turn to, must be positive
+    void TurnToField(double desiredAngle);
 
     /// Turns the turret to an angle added to the current robot position
     /// \param angle        Angle that should be added to the robot position and turned to, can be either positive or negative, in degrees
@@ -59,4 +59,5 @@ protected:
 private:    
     TalonSRX m_turretmotor;
     double m_currentAngle;
+    Gyro *m_gyro;
 };

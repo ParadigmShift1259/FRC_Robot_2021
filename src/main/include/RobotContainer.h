@@ -50,6 +50,7 @@
 #include "commands/IntakeRelease.h"
 
 #include "Constants.h"
+#include "Gyro.h"
 
 #include <iostream>
 #include <wpi/Path.h>
@@ -93,6 +94,7 @@ private:
     // The robot's subsystems and commands are defined here...
 
     // The robot's subsystems
+    Gyro m_gyro;
     DriveSubsystem m_drive;
     FlywheelSubsystem m_flywheel;
     TurretSubsystem m_turret;
