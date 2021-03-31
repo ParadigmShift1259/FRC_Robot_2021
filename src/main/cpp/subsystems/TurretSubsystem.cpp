@@ -6,8 +6,9 @@
 
 using namespace TurretConstants;
 
-TurretSubsystem::TurretSubsystem() 
+TurretSubsystem::TurretSubsystem(Gyro *gyro) 
     : m_turretmotor(kMotorPort)
+    , m_gyro(gyro)
 {
     m_turretmotor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeout);
     m_turretmotor.SetNeutralMode(NeutralMode::Brake);
@@ -33,6 +34,7 @@ TurretSubsystem::TurretSubsystem()
     frc::SmartDashboard::PutNumber("T_T_I", kI);
     frc::SmartDashboard::PutNumber("T_T_D", kD);
     frc::SmartDashboard::PutNumber("T_T_Max", kMaxOut);
+
 }
 
 void TurretSubsystem::Periodic()
@@ -59,13 +61,13 @@ void TurretSubsystem::TurnToRobot(double robotAngle)
     TurnTo(Util::ZeroTo360Degs(angle));
 }
 
-void TurretSubsystem::TurnToField(double desiredAngle, double gyroAngle)
+void TurretSubsystem::TurnToField(double desiredAngle)
 {
     // safeguard
     desiredAngle = Util::ZeroTo360Degs(desiredAngle);
-    gyroAngle = Util::ZeroTo360Degs(gyroAngle);
+    double gyroAngle = Util::ZeroTo360Degs(m_gyro->GetHeading());
     // The difference between the field and robot is the desired angle to set relative to the robot
-    double angle = desiredAngle - gyroAngle;
+    double angle = gyroAngle - desiredAngle;
     TurnToRobot(Util::ZeroTo360Degs(angle));
 }
 

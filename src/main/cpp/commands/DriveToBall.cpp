@@ -2,9 +2,10 @@
 #include "Constants.h"
 #include "commands/DriveToBall.h"
 
-DriveToBall::DriveToBall(DriveSubsystem* driveSubsystem, IntakeSubsystem* intakeSubsystem)
+DriveToBall::DriveToBall(DriveSubsystem* driveSubsystem, IntakeSubsystem* intakeSubsystem, Gyro* gyro)
   : m_drive(driveSubsystem)
   , m_intake(intakeSubsystem)
+  , m_gyro(gyro)
 {
   AddRequirements({driveSubsystem});
   AddRequirements({intakeSubsystem});
@@ -25,7 +26,7 @@ void DriveToBall::Execute()
     {
       m_bAcceptVisionDist = false;
       m_intake->Set(IntakeConstants::kIngestHigh);
-      m_heading = m_drive->GetHeading();
+      m_heading = m_gyro->GetHeading();
       double estimateAngle;
       // if (m_heading <= 90)
       // {
