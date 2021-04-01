@@ -280,3 +280,13 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose)
 {
     m_odometry.ResetPosition(pose, GetHeadingAsRot2d());
 }
+
+void DriveSubsystem::WheelsForward()
+{
+    static frc::SwerveModuleState zeroState { 0_mps, 0_deg };
+    m_frontLeft.SetDesiredState(zeroState);
+    m_frontRight.SetDesiredState(zeroState);
+    m_rearRight.SetDesiredState(zeroState);
+    m_rearLeft.SetDesiredState(zeroState);
+}
+

@@ -130,6 +130,9 @@ public:
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
 
+    /// Set all 4 wheels to the zero position
+    void WheelsForward();
+
     /// The log header flag must be reset everyt time the robot is enabled
     void ResetLog()
     { 

@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "RobotContainer.h"
+#include <frc2/command/button/NetworkButton.h>
 
 // Commenting this out reduces build time by about half
 // However, includes are necessary to run trajectory paths
@@ -256,6 +257,11 @@ void RobotContainer::ConfigureButtonBindings()
 
     frc2::JoystickButton(&m_driverController, (int)frc::XboxController::Button::kA).WhenReleased(
         CyclerPrepare(&m_cycler, true)
+    );
+
+    auto entry = nt::NetworkTableInstance::GetDefault().GetTable("NetControl")->GetEntry("WheelsForward");
+    frc2::NetworkButton("NetControl", "WheelsForward").WhenPressed(
+        frc2::InstantCommand([this] { m_drive.WheelsForward(); }, { &m_drive} )        
     );
 
     /*
