@@ -79,19 +79,6 @@ RobotContainer::RobotContainer(Logger& log)
             // left is xbox joystick x pos
             auto xInput = pow(Deadzone(m_driverController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX), 3.0);
             auto yInput = pow(Deadzone(m_driverController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY), 3.0);
-<<<<<<< HEAD
-=======
-            /*
-            if (xInput >= 0)
-                xInput = xInput*xInput; // square
-            else
-                xInput = -xInput*xInput; // square
-            if (yInput >= 0)
-                yInput = yInput*yInput; // square
-            else
-                yInput = -yInput*yInput; // square
-            */
->>>>>>> 04d8d0f8bb38d0f78bf82283cee7ee4e333fd8ff
             auto rotInput = pow(Deadzone(m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
             auto xRot = m_driverController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_driverController.GetX(frc::GenericHID::kRightHand) * -1.0;
