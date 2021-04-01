@@ -53,6 +53,7 @@ RobotContainer::RobotContainer(Logger& log, const int& lowPrioritySkipCount)
 
     SmartDashboard::PutNumber("TEST_R_number", m_testNumber);
     SmartDashboard::PutNumber("TEST_R_power", m_testPower);
+    SmartDashboard::PutBoolean("WheelsForward", false);
 }
 
 void RobotContainer::Periodic()
@@ -259,8 +260,7 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerPrepare(&m_cycler, true)
     );
 
-    auto entry = nt::NetworkTableInstance::GetDefault().GetTable("NetControl")->GetEntry("WheelsForward");
-    frc2::NetworkButton("NetControl", "WheelsForward").WhenPressed(
+    frc2::NetworkButton("SmartDashboard", "WheelsForward").WhenPressed(
         frc2::InstantCommand([this] { m_drive.WheelsForward(); }, { &m_drive} )        
     );
 
