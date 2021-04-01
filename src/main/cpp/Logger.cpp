@@ -25,6 +25,7 @@ Logger::Logger(bool console_echo)
 {
     m_formattedIntData.reserve(500);
     m_formattedDoubleData.reserve(500);
+    m_formattedData.reserve(1000);
 }
 
 void Logger::openLog()

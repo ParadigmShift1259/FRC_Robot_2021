@@ -189,6 +189,8 @@ public:
 
     void Periodic();
 
+    void WheelForward();
+
     void SetDesiredState(frc::SwerveModuleState &state);
 
     void ResetEncoders();

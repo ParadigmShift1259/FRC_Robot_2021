@@ -88,6 +88,10 @@ void SwerveModule::Periodic()
     m_turnPIDController.SetD(D);
     */
 }
+void SwerveModule::WheelForward()
+{
+    m_turnPIDController.SetReference(0.0, rev::ControlType::kPosition);
+}
 
 void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 {

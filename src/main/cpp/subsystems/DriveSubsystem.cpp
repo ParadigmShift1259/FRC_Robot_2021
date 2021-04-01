@@ -114,7 +114,7 @@ void DriveSubsystem::Periodic()
     m_logData[EDriveSubSystemLogData::eOdoY] = pose.Translation().Y().to<double>();
     m_logData[EDriveSubSystemLogData::eOdoRot] = pose.Rotation().Degrees().to<double>();
     m_logData[EDriveSubSystemLogData::eGyroRot] = GetHeading();
-    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
+    m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate() * wpi::math::pi / 180;
     m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
     m_frontLeft.Periodic();
@@ -285,6 +285,7 @@ double DriveSubsystem::GetTurnRate()
 {
     double turnRates [3] = {0, 0, 0};
     m_gyro.GetRawGyro(turnRates) * (kGyroReversed ? -1. : 1.);
+    SmartDashboard::PutNumber("TurnRate", turnRates[2]);
     return turnRates[2]; 
 }
 
@@ -297,4 +298,13 @@ frc::Pose2d DriveSubsystem::GetPose()
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose)
 {
     m_odometry.ResetPosition(pose, GetHeadingAsRot2d());
+}
+
+void DriveSubsystem::WheelsForward()
+{
+    printf("WheelsForward\n");
+    m_frontLeft.WheelForward();
+    m_frontRight.WheelForward();
+    m_rearRight.WheelForward();
+    m_rearLeft.WheelForward();
 }
