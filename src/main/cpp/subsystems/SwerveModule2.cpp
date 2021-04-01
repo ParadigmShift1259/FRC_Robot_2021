@@ -65,7 +65,7 @@ void SwerveModule2::Periodic()
 {
     EncoderToRadians();
 
-    if (m_timer.Get() < 5)
+    if (m_timer.Get() < 2)
     {
         printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
                 fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
@@ -79,6 +79,7 @@ void SwerveModule2::Periodic()
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
     SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
     SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
+    SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)

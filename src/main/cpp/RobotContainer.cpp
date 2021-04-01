@@ -19,6 +19,8 @@
 // Use this on the Mk2 swerve bot chassis that doesn't have any of the subsystems ready
 //#define SUBSYSTEMS
 #include "TestTraj.h"
+#include "AutoCircleTest.h"
+#include "AutoNavBarrel.h"
 #ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
@@ -79,15 +81,18 @@ void RobotContainer::SetDefaultCommands()
             {
                 m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            //units::radians_per_second_t(rotInput),
                             xRot,
                             yRot,
                             m_fieldRelative);
             }
             else 
             {
-                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::radians_per_second_t(rotInput),
+                            // xRot,
+                            // yRot,
                             m_fieldRelative);
             }
 
@@ -98,6 +103,7 @@ void RobotContainer::SetDefaultCommands()
     m_turret.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
+                /* Temporary while running auto testing
                 auto turretXRot = m_secondaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
                 auto turretYRot = m_secondaryController.GetX(frc::GenericHID::kRightHand);
                 if (Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
@@ -112,7 +118,8 @@ void RobotContainer::SetDefaultCommands()
                     double rotPosition = atan2f(turretYRot, turretXRot);
                     rotPosition *= 360.0/Math::kTau; 
                     m_turret.TurnToRobot(rotPosition);
-                } 
+                }
+                */
             }, {&m_turret}
         )
     );
@@ -262,113 +269,10 @@ frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-    //m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
-
-    // Set up config for trajectory
-    frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
-    // Add kinematics to ensure max speed is actually obeyed
-    config.SetKinematics(m_drive.kDriveKinematics);
-
-    wpi::SmallString<64> deployDirectory;
-    frc::filesystem::GetDeployDirectory(deployDirectory);
-    wpi::sys::path::append(deployDirectory, "paths/output"); //Has the projects that are created in meters
-    wpi::sys::path::append(deployDirectory, "AutoNavBarrel.wpilib.json");
-
-    frc::Trajectory exampleTrajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
- 
-    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
-    
-    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    // {
-    //     std::cout << "i " << i;
-    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
-    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
-    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
-    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
-    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
-    // }
-// */
-
- /*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        TestTrajCircle2,
-        config
-    );
-//    std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
-    
-    // Transform2d rot90 = Transform2d(Pose2d(0_m,0_m,0_deg), Pose2d(0_m,0_m,90_deg));
-    // Transform2d rot90 = Transform2d(Translation2d(), 90_deg);
-    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    //     {
-    //     std::cout << "pose " << i << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees();
-    //     exampleTrajectory.States()[i].pose.TransformBy(rot90); 
-    //     std::cout << " modified theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() <<  "\n";        
-    //     }
-        
-// */
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavBarrel,
-        config
-    );
-    // std::cout << "Number of Trajectory States: \n" << exampleTrajectory.States().size();
-    
-    // for (int i = 0; i < exampleTrajectory.States().size(); i++)
-    // {
-    //     std::cout << "i " << i;
-    //     std::cout << " x = " << exampleTrajectory.States()[i].pose.X();
-    //     std::cout << " y = " << exampleTrajectory.States()[i].pose.Y();
-    //     std::cout << " velocity = " << exampleTrajectory.States()[i].velocity;
-    //     std::cout << " acceleration = " << exampleTrajectory.States()[i].acceleration;
-    //     std::cout << " theta = " << exampleTrajectory.States()[i].pose.Rotation().Degrees() << std::endl;
-    // }
-*/
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavBounce,
-        config
-    );
-*/
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        AutoNavSlalom,
-        config
-    );
-*/
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout1Path1,
-        config
-    );
-*/
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout1Path2,
-        config
-    );
-*/
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout2Path1,
-        config
-    );
-*/
-
-/*
-    auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-        GSLayout2Path2,
-        config
-    );
-*/
+    frc::Trajectory exampleTrajectory = convertArrayToTrajectory(BarrelRacing, sizeof BarrelRacing / sizeof BarrelRacing[0]);
 
     frc::ProfiledPIDController<units::radians> thetaController{
-        AutoConstants::kPThetaController, 0, 0,
+        AutoConstants::kPThetaController, 0, AutoConstants::kDThetaController,
         AutoConstants::kThetaControllerConstraints};
 
     thetaController.EnableContinuousInput(units::radian_t(-wpi::math::pi), units::radian_t(wpi::math::pi));
@@ -377,8 +281,8 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
         exampleTrajectory,                                                      // frc::Trajectory
         [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
         m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
-        frc2::PIDController(AutoConstants::kPXController, 0, 0),                // frc2::PIDController
-        frc2::PIDController(AutoConstants::kPYController, 0, 0),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPXController, 0, AutoConstants::kDXController),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, AutoConstants::kDYController),                // frc2::PIDController
         thetaController,                                                        // frc::ProfiledPIDController<units::radians>
         //GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
         [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>

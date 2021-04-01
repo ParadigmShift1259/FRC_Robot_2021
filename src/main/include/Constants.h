@@ -120,10 +120,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.0;
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
-    constexpr double kFrontLeftOffset   = 2695.0;
-    constexpr double kFrontRightOffset  = 195.0;
-    constexpr double kRearRightOffset   = 1861.0; //1829.0;
-    constexpr double kRearLeftOffset    = 2717.0; //486.0; //234.0; //362.891; //147.0;
+    constexpr double kFrontLeftOffset   = 2685.0; //2695.0;
+    constexpr double kFrontRightOffset  = 198.0; //195.0;
+    constexpr double kRearRightOffset   = 1847.0; //1861.0; //1829.0;
+    constexpr double kRearLeftOffset    = 2700.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -215,19 +215,22 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1.5);                 // 1.0   // 5.0
-    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
-    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
-    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
+    constexpr auto kMaxSpeed = units::meters_per_second_t(4.0);                 // 1.0   // 5.0
+    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(3.0);  // 0.1
+    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi * 6.0);
+    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi * 6.0);
 
 #ifdef Mk2
     constexpr double kPXController = 2.0;       // 0.25 
     constexpr double kPYController = 2.0;       // 0.25
     constexpr double kPThetaController = 4.0;   // 2.0
 #else
-    constexpr double kPXController = 2.0;
-    constexpr double kPYController = 2.0;
-    constexpr double kPThetaController = 4.0;
+    constexpr double kPXController = 8.0;
+    constexpr double kDXController = 0.7;
+    constexpr double kPYController = 8.0;
+    constexpr double kDYController = 0.7;
+    constexpr double kPThetaController = 6.0;
+    constexpr double kDThetaController = 0.9;
 #endif
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
