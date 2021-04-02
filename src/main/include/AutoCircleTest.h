@@ -3,6 +3,11 @@
 #include "units/angle.h"
 #include "units/length.h"
 #include "units/time.h"
+// Paths:
+// Ratatouille has Slalom
+// 1 has Bounce
+// Eyes has barrel
+
 
 // t, v, a, X, Y, H
 frc::Trajectory convertArrayToTrajectory(double a[][6], int length)

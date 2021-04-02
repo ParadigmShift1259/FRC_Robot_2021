@@ -102,12 +102,12 @@ void SwerveControllerCommand2<NumModules>::Execute() {
 
   //auto targetChassisSpeeds = m_controller.Calculate(m_pose(), m_desiredState, m_desiredRotation());
   auto targetChassisSpeeds = m_controller.Calculate(m_pose(), m_desiredState, m_desiredState.pose.Rotation());
-  // printf("desired x %.3f y %.3f Rot %.3f time %.3f\n", m_desiredState.pose.X().to<double>(), m_desiredState.pose.Y().to<double>(), m_desiredState.pose.Rotation().Degrees().to<double>(), curTime.to<double>());
+  printf("t=%.3f desired x=%.3f y=%.3f Rot=%.3f ", curTime.to<double>(), m_desiredState.pose.X().to<double>(), m_desiredState.pose.Y().to<double>(), m_desiredState.pose.Rotation().Degrees().to<double>());
   // printf("odometr x %.3f y %.3f Rot %.3f\n", m_pose().X().to<double>(), m_pose().Y().to<double>(), m_pose().Rotation().Degrees().to<double>());
-  // double err_x = m_desiredState.pose.X().to<double>() - m_pose().X().to<double>();
-  // double err_y = m_desiredState.pose.Y().to<double>() - m_pose().Y().to<double>();
-  // double err_theta = m_desiredState.pose.Rotation().Degrees().to<double>() - m_pose().Rotation().Degrees().to<double>();
-  // printf("t=%.3f: speed_cmd=%.3f, x err=%.3f, y err=%.3f, theta err=%.3f\n", curTime.to<double>(), m_desiredState.velocity, err_x, err_y, err_theta);
+  double err_x = m_desiredState.pose.X().to<double>() - m_pose().X().to<double>();
+  double err_y = m_desiredState.pose.Y().to<double>() - m_pose().Y().to<double>();
+  double err_theta = m_desiredState.pose.Rotation().Degrees().to<double>() - m_pose().Rotation().Degrees().to<double>();
+  printf("speed_cmd=%.3f, x err=%.3f, y err=%.3f, theta err=%.3f\n", m_desiredState.velocity, err_x, err_y, err_theta);
 
   auto targetModuleStates = m_kinematics.ToSwerveModuleStates(targetChassisSpeeds);
 

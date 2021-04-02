@@ -67,10 +67,10 @@ void SwerveModule2::Periodic()
 
     if (m_timer.Get() < 2)
     {
-        printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-                m_absAngle, 
-                m_turnRelativeEncoder.GetPosition());
+        // printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+        //         fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+        //         m_absAngle, 
+        //         m_turnRelativeEncoder.GetPosition());
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
 
@@ -132,10 +132,10 @@ void SwerveModule2::EncoderToRadians()
 
 void SwerveModule2::ResetRelativeToAbsolute()
 {
-    printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-                m_absAngle, 
-                m_turnRelativeEncoder.GetPosition());
+    // printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+    //             fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+    //             m_absAngle, 
+    //             m_turnRelativeEncoder.GetPosition());
     m_turnRelativeEncoder.SetPosition(m_absAngle);
 }
 

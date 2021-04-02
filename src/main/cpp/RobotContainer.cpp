@@ -9,7 +9,7 @@
 #include "commands/DriveToBall.h"
 #include "commands/FindClosestBall.h"
 #include "commands/RotateToFindNextBall.h"
-
+#include <frc2/command/button/NetworkButton.h>
 
 // Commenting this out reduces build time by about half
 // However, includes are necessary to run trajectory paths
@@ -21,6 +21,7 @@
 #include "TestTraj.h"
 #include "AutoCircleTest.h"
 #include "AutoNavBarrel.h"
+#include "AutoNavSlalom.h"
 #ifdef PATHS
 #include "AutoNavBarrel.h"
 #include "AutoNavBounce.h"
@@ -55,6 +56,7 @@ RobotContainer::RobotContainer()
     // Configure the button bindings
     ConfigureButtonBindings();
     SetDefaultCommands();
+    SmartDashboard::PutBoolean("WheelsForward", false);
 }
 
 void RobotContainer::Periodic()
@@ -67,9 +69,9 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto xInput = Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto yInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
-            auto rotInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+            auto xInput = pow(Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX), 3.0);
+            auto yInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY), 3.0);
+            auto rotInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
             auto xRot = m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0;
             if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
@@ -88,7 +90,7 @@ void RobotContainer::SetDefaultCommands()
             }
             else 
             {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::radians_per_second_t(rotInput),
                             // xRot,
@@ -263,14 +265,31 @@ void RobotContainer::ConfigureButtonBindings()
     //     {&m_turret}
     //     )
     // );
+
+    frc2::NetworkButton("SmartDashboard", "WheelsForward").WhenPressed(
+        frc2::InstantCommand([this] { m_drive.WheelsForward(); }, { &m_drive} )        
+    );
 }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-    frc::Trajectory exampleTrajectory = convertArrayToTrajectory(BarrelRacing, sizeof BarrelRacing / sizeof BarrelRacing[0]);
+    // // Set up config for trajectory
+    // // frc::TrajectoryConfig config(AutoConstants::kMaxSpeed, AutoConstants::kMaxAcceleration);
+    // frc::TrajectoryConfig config( units::meters_per_second_t (0.9 * AutoConstants::kMaxSpeed), 0.9 * AutoConstants::kMaxAcceleration);
+    // // Add kinematics to ensure max speed is actually obeyed
+    // config.SetKinematics(m_drive.kDriveKinematics);
 
+    frc::Trajectory exampleTrajectory = convertArrayToTrajectory(Slalom, sizeof Slalom / sizeof Slalom[0]);
+    // auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(TestTrajCircle2, config);
+    //auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBarrel, config);
+    // auto exampleTrajectory1 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce1, config);
+    // auto exampleTrajectory2 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce2, config);
+    // auto exampleTrajectory3 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce3, config);
+    // auto exampleTrajectory4 = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavBounce4, config);
+    //auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(AutoNavSlalom, config);
+    
     frc::ProfiledPIDController<units::radians> thetaController{
         AutoConstants::kPThetaController, 0, AutoConstants::kDThetaController,
         AutoConstants::kThetaControllerConstraints};
@@ -403,4 +422,15 @@ frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
             {}
         )
     );
+}
+
+void RobotContainer::PrintTrajectory(frc::Trajectory& trajectory)
+{
+    for (auto &state:trajectory.States())
+    {
+        double time = state.t.to<double>();
+        double x = state.pose.X().to<double>();
+        double y = state.pose.Y().to<double>();
+        printf("%.3f, %.3f, %.3f\n", time, x, y);
+    }
 }
