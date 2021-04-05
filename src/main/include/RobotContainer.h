@@ -109,6 +109,8 @@ private:
 
     void SetDefaultCommands();
     void ConfigureButtonBindings();
+    void PrintTrajectory(frc::Trajectory& trajectory);
+
 
     bool m_fieldRelative = false;
     bool m_turretready = false;
