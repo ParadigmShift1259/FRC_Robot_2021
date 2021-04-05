@@ -21,6 +21,7 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/PIDCommand.h>
 #include <frc2/command/RunCommand.h>
+#include <frc2/command/ConditionalCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/SwerveControllerCommand.h>
@@ -73,7 +74,9 @@ public:
     void Periodic();
 
     frc2::Command *GetAutonomousCommand();
+    enum PathType {kRedA, kBlueA, kRedB, kBlueB};
     frc2::Command *GetAutonomousGSCommand();
+    frc::Trajectory DetectPath(bool& bluePath, bool& finished);
 
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);
