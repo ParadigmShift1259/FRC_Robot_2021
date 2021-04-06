@@ -37,14 +37,24 @@ void HomeTarget::Execute()
     //y\ =\ 1687.747+15.8111x-0.0594079x^{2}+0.00008292342x^{3}
     // Increased flywheel at upper ends 3/18/21
     //y\ =\ 1687.747+15.8111x-0.058079x^{2}+0.00008892342x^{3}
-    double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
+     double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
+    // Increased flywheel at very close ranges 4/5/21
+    //y = 10899.18 - 248.7054*x + 2.871069*x^2 - 0.01559114*x^3 + 0.00004069899*x^4 - 4.109784e-8*x^5
+    //double flywheelspeed = 10899.18 - 248.7054 * distance + 2.871069 * pow(distance, 2) - 0.01559114 * pow(distance, 3) + 0.00004069899 * pow(distance, 4) - 4.109784E-8 * pow(distance, 5);
+    // double flywheelspeed = SmartDashboard::GetNumber("T_F_flywheelRPM", 1700);
+
     if (*m_firing)
         flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
     // Quintic regression calculated 3/27
     // https://mycurvefit.com/
     //y=11.20831-0.2645223*x+0.002584349*x^{2}-0.00001250923*x^{3}+2.986403\cdot10^{-8}*x^{4}-2.81104\cdot10^{-11}*x^{5}
-    double hoodangle = 11.20831 - 0.2645223 * distance + 0.002584349 * pow(distance, 2) - 0.00001250923 * pow(distance, 3) + 2.986403E-8 * pow(distance, 4) - 2.81104E-11 * pow(distance, 5);
-    printf("Hood set %.3f\n", hoodangle);
+     double hoodangle = 11.20831 - 0.2645223 * distance + 0.002584349 * pow(distance, 2) - 0.00001250923 * pow(distance, 3) + 2.986403E-8 * pow(distance, 4) - 2.81104E-11 * pow(distance, 5);
+    // https://planetcalc.com/8735/?license=1
+    // Updated for very close ranges 4/5/21
+    //double hoodangle = 1.8E-11 * pow(distance, 5) - 1.57925E-8 * pow(distance, 4) + 5.0769057E-6 * pow(distance, 3) - 7.004245186E-4 * pow(distance, 2) + 0.0320785123799 * distance + 0.8807995759624;
+    // double hoodangle = SmartDashboard::GetNumber("T_H_SetAngle", kMax);
+
+    // printf("Hood set %.3f\n", hoodangle);
     m_turret->TurnToRelative(m_vision->GetAngle());
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);

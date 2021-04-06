@@ -107,7 +107,7 @@ private:
     void SetDefaultCommands();
     void ConfigureButtonBindings();
 
-    bool m_fieldRelative = false;
+    bool m_fieldRelative = true;
     bool m_turretready = false;
     bool m_firing = false;
     bool m_finished = false;

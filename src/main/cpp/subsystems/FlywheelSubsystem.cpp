@@ -47,6 +47,8 @@ FlywheelSubsystem::FlywheelSubsystem()
     SmartDashboard::PutNumber("T_F_I", kI);
     SmartDashboard::PutNumber("T_F_D", kD);
     //#endif
+
+    SmartDashboard::PutNumber("T_F_flywheelRPM", 0);
 }
 
 #pragma GCC diagnostic pop
@@ -73,6 +75,7 @@ void FlywheelSubsystem::Periodic()
     SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
     SmartDashboard::PutNumber("T_F_Setpoint", m_setpoint);
     SmartDashboard::PutNumber("T_F_At_Target", IsAtRPM());
+
     CalculateRPM();
 }
 
