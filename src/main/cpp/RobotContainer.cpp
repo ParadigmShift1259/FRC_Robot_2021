@@ -9,7 +9,7 @@
 #include "commands/DriveToBall.h"
 #include "commands/FindClosestBall.h"
 #include "commands/RotateToFindNextBall.h"
-
+#include <frc2/command/button/NetworkButton.h>
 
 // Commenting this out reduces build time by about half
 // However, includes are necessary to run trajectory paths
@@ -56,6 +56,7 @@ RobotContainer::RobotContainer()
     // Configure the button bindings
     ConfigureButtonBindings();
     SetDefaultCommands();
+    SmartDashboard::PutBoolean("WheelsForward", false);
 }
 
 void RobotContainer::Periodic()
@@ -68,9 +69,9 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto xInput = pow(Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX), 3);
-            auto yInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY), 3);
-            auto rotInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot), 3);
+            auto xInput = pow(Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX), 3.0);
+            auto yInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY), 3.0);
+            auto rotInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
             auto xRot = m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0;
             if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
@@ -95,7 +96,7 @@ void RobotContainer::SetDefaultCommands()
             }
             else 
             {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::radians_per_second_t(rotInput),
                             // xRot,
@@ -149,7 +150,7 @@ void RobotContainer::SetDefaultCommands()
     m_intake.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
-                m_intake.Set(0);
+                m_intake.Set(0.7);
             }, {&m_intake}
         )
     );
@@ -269,6 +270,10 @@ void RobotContainer::ConfigureButtonBindings()
     //     {&m_turret}
     //     )
     // );
+
+    frc2::NetworkButton("SmartDashboard", "WheelsForward").WhenPressed(
+        frc2::InstantCommand([this] { m_drive.WheelsForward(); }, { &m_drive} )        
+    );
 }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
@@ -313,18 +318,69 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
 frc2::Command *RobotContainer::GetAutonomousGSCommand()
 {
-    FindClosestBall findClosestBall(&m_drive, &m_isRedPath);
-    DriveToBall driveToBall(&m_drive, &m_intake, &m_gyro);
-    // RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
+    frc::Trajectory trajectory;
+    bool bluePath = false;
+    bool finished = false;
 
-    m_gyro.ZeroHeading();
+    frc::ProfiledPIDController<units::radians> thetaController{
+        AutoConstants::kPThetaController, 0, AutoConstants::kDThetaController,
+        AutoConstants::kThetaControllerConstraints};
+
+    thetaController.EnableContinuousInput(units::radian_t(-wpi::math::pi), units::radian_t(wpi::math::pi));
+    //thetaController.EnableContinuousInput(units::radian_t(-AutoConstants::kMaxAngularSpeed), units::radian_t(AutoConstants::kMaxAngularSpeed));
+
+    trajectory = DetectPath(bluePath, finished);
+
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> swerveControllerCommand(
+        trajectory,                                                      // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        frc2::PIDController(AutoConstants::kPXController, 0, AutoConstants::kDXController),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, AutoConstants::kDYController),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        //GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules>* swerveControllerCommandA( 
+        convertArrayToTrajectory(BlueA, sizeof BlueA / sizeof BlueA[0]),                                                     // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        frc2::PIDController(AutoConstants::kPXController, 0, AutoConstants::kDXController),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, AutoConstants::kDYController),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        //GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules>* swerveControllerCommandB( 
+        convertArrayToTrajectory(BlueB, sizeof BlueB / sizeof BlueB[0]),                                                   // frc::Trajectory
+        [this]() { return m_drive.GetPose(); },                                 // std::function<frc::Pose2d()>
+        m_drive.kDriveKinematics,                                               // frc::SwerveDriveKinematics<NumModules>
+        frc2::PIDController(AutoConstants::kPXController, 0, AutoConstants::kDXController),                // frc2::PIDController
+        frc2::PIDController(AutoConstants::kPYController, 0, AutoConstants::kDYController),                // frc2::PIDController
+        thetaController,                                                        // frc::ProfiledPIDController<units::radians>
+        //GetDesiredRotation,                                                     // std::function< frc::Rotation2d()> desiredRotation
+        [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },   // std::function< void(std::array<frc::SwerveModuleState, NumModules>)>
+        {&m_drive}                                                              // std::initializer_list<Subsystem*> requirements
+    );
+    //frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> swerveControllerCommand2;
+
     // Reset odometry to the starting pose of the trajectory
-    m_drive.ResetOdometry(frc::Pose2d(15.0_in, 90.0_in, frc::Rotation2d(0_deg)));
+    m_drive.ResetOdometry(trajectory.InitialPose());
 
     return new frc2::SequentialCommandGroup(
-        std::move(findClosestBall),
-        std::move(driveToBall),
-        //std::move(rotateToFindNextBall),
+        std::move(*swerveControllerCommand),
+        frc2::InstantCommand(
+            [this, bluePath, finished, swerveControllerCommand2, thetaController]() {
+                bool bluePath2 = bluePath;
+                bool finished2 = finished;
+                frc::Trajectory trajectory = DetectPath(bluePath2, finished2);
+                m_drive.ResetOdometry(trajectory.InitialPose());
+            },
+            {}
+        ),
         frc2::InstantCommand(
             [this]() {
                 m_drive.Drive(units::meters_per_second_t(0.0),
@@ -334,6 +390,63 @@ frc2::Command *RobotContainer::GetAutonomousGSCommand()
             {}
         )
     );
+}
+
+frc::Trajectory RobotContainer::DetectPath(bool& bluePath, bool& finished)
+{
+    double angle = SmartDashboard::GetNumber("XAngle", 0);
+    double distance = SmartDashboard::GetNumber("ZDistance", -1.0);
+    PathType pathLayout;
+    frc::Trajectory trajectory;
+
+    printf("Distance: %3f Angle: %3f\n", distance, angle);
+
+    if (finished)
+        return convertArrayToTrajectory(Finished, sizeof Finished / sizeof Finished);
+
+    if (distance != -1.0)
+    {
+        if (angle < 0)
+        {
+            if (bluePath) 
+                pathLayout = kBlueB;
+            else
+                pathLayout = kRedB;
+        }
+            
+        else
+        if (angle > 0)
+        {
+            if (bluePath)
+                pathLayout = kBlueA;
+            else
+                pathLayout = kRedA;
+        }
+        finished = true;
+    }
+    else
+    {
+        bluePath = true;
+        return convertArrayToTrajectory(Blue, sizeof Blue / sizeof Blue[0]);
+    }
+    
+    switch (pathLayout)
+    {
+    case kRedA:
+        trajectory = convertArrayToTrajectory(RedA, sizeof RedA / sizeof RedA[0]);
+        break;
+    case kBlueA:
+        trajectory = convertArrayToTrajectory(BlueA, sizeof BlueA / sizeof BlueA[0]);
+        break;
+    case kRedB:
+        trajectory = convertArrayToTrajectory(RedB, sizeof RedB / sizeof RedB[0]);
+        break;
+    case kBlueB:
+        trajectory = convertArrayToTrajectory(BlueB, sizeof BlueB / sizeof BlueB[0]);
+        break;
+    }
+
+    return trajectory;
 }
 
 frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
@@ -409,4 +522,15 @@ frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
             {}
         )
     );
+}
+
+void RobotContainer::PrintTrajectory(frc::Trajectory& trajectory)
+{
+    for (auto &state:trajectory.States())
+    {
+        double time = state.t.to<double>();
+        double x = state.pose.X().to<double>();
+        double y = state.pose.Y().to<double>();
+        printf("%.3f, %.3f, %.3f\n", time, x, y);
+    }
 }

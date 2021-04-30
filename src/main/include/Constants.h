@@ -225,9 +225,9 @@ namespace AutoConstants
     constexpr double kPYController = 2.0;       // 0.25
     constexpr double kPThetaController = 4.0;   // 2.0
 #else
-    constexpr double kPXController = 8.0;
+    constexpr double kPXController = 7.0;
     constexpr double kDXController = 0.7;
-    constexpr double kPYController = 8.0;
+    constexpr double kPYController = 7.0;
     constexpr double kDYController = 0.7;
     constexpr double kPThetaController = 6.0;
     constexpr double kDThetaController = 0.9;
