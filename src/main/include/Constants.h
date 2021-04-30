@@ -385,6 +385,7 @@ namespace VisionConstants
 {
     // Mounting angle of the limelight, in degrees
     constexpr double kMountingAngle = 18.0;
+    // Permanent X adjustment -0.05
     // Mounting height of the limelight from the ground, in inches
     constexpr double kMountingHeight = 22;
     // Target center height, in inches
