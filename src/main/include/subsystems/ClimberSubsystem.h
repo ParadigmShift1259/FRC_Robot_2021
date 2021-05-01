@@ -2,7 +2,7 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <ctre/phoenix.h>
+#include <frc/Spark.h>
 
 #include "Constants.h"
 #include "SwerveModule.h"
@@ -21,5 +21,5 @@ public:
     void Run(double speed);
 
 private:    
-    //TalonSRX m_motor;
+    frc::Spark m_motor;
 };

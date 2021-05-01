@@ -40,7 +40,7 @@ RobotContainer::RobotContainer()
     , m_intake()
     , m_cycler()
     , m_vision()
-    // , m_climber()
+    , m_climber()
 {
     // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
@@ -249,6 +249,15 @@ void RobotContainer::ConfigureButtonBindings()
     //     {&m_turret}
     //     )
     // );
+
+    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kX).WhenHeld(
+        frc2::InstantCommand(    
+        [this] {
+            m_climber.Run(ClimberConstants::kMotorSpeed);
+        },
+        {&m_climber}
+        )
+    );
 }
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }

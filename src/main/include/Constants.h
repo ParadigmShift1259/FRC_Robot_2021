@@ -250,7 +250,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr double kMotorPort = 9;   // Intake rollers PWM channel (Spark)
+    constexpr int kMotorPort = 9;   // Intake rollers PWM channel (Spark)
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -396,7 +396,8 @@ namespace VisionConstants
 // Climber Subsystem constants
 namespace ClimberConstants
 {
-    constexpr double kMotorPort = 41;   // Climber CAN ID (TalonSRX? not installed)
-    constexpr double kMotorReverseConstant = 1;
+    constexpr int kMotorPort = 7;   // Climber PWM Port
+    constexpr double kMotorReverseConstant = -1.0;
+    constexpr double kMotorSpeed = 0.9;
 
 }

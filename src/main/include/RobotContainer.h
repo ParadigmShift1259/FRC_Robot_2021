@@ -38,7 +38,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/CyclerSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
-// #include "subsystems/ClimberSubsystem.h"
+#include "subsystems/ClimberSubsystem.h"
 
 #include "commands/DriveDefault.h"
 #include "commands/CyclerAgitation.h"
@@ -100,7 +100,7 @@ private:
     IntakeSubsystem m_intake;
     CyclerSubsystem m_cycler;
     VisionSubsystem m_vision;
-    // ClimberSubsystem m_climber;
+    ClimberSubsystem m_climber;
 
     void SetDefaultCommands();
     void ConfigureButtonBindings();
