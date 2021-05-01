@@ -33,9 +33,10 @@
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer()
-    : m_drive()
+    : m_gyro()
+    , m_drive(&m_gyro)
     , m_flywheel()
-    , m_turret()
+    , m_turret(&m_gyro)
     , m_hood()
     , m_intake()
     , m_cycler()
@@ -103,9 +104,15 @@ void RobotContainer::SetDefaultCommands()
                     turretXRot = 0;
                     turretYRot = 0;
                 }
-                double rotPosition = atan2f(turretYRot, turretXRot);
-                rotPosition *= 360.0/Math::kTau; 
-                m_turret.TurnToRobot(rotPosition);
+                if (turretXRot == 0 && turretYRot == 0)
+                {
+                    m_turret.TurnToField(0);
+                }
+                else {
+                    double rotPosition = atan2f(turretYRot, turretXRot);
+                    rotPosition *= 360.0/Math::kTau; 
+                    m_turret.TurnToRobot(rotPosition);
+                } 
             }, {&m_turret}
         )
     );
@@ -178,9 +185,9 @@ void RobotContainer::ConfigureButtonBindings()
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
         frc2::InstantCommand(    
         [this] {
-            m_drive.ZeroHeading();
+            m_gyro.ZeroHeading();
         },
-        {&m_drive}
+        {}
         )
     );
 
@@ -406,10 +413,10 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 frc2::Command *RobotContainer::GetAutonomousGSCommand()
 {
     FindClosestBall findClosestBall(&m_drive, &m_isRedPath);
-    DriveToBall driveToBall(&m_drive, &m_intake);
+    DriveToBall driveToBall(&m_drive, &m_intake, &m_gyro);
     // RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
 
-    m_drive.ZeroHeading();
+    m_gyro.ZeroHeading();
     // Reset odometry to the starting pose of the trajectory
     m_drive.ResetOdometry(frc::Pose2d(15.0_in, 90.0_in, frc::Rotation2d(0_deg)));
 
@@ -436,7 +443,7 @@ frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
     config.SetKinematics(m_drive.kDriveKinematics);
     frc::Trajectory exampleTrajectory;
 
-    m_drive.ZeroHeading();
+    m_gyro.ZeroHeading();
     // Reset odometry to the starting pose of the trajectory
     m_drive.ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)));
 

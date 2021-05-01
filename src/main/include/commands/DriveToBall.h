@@ -8,7 +8,7 @@
 
 class DriveToBall : public frc2::CommandHelper<frc2::CommandBase, DriveToBall> {
  public:
-  explicit DriveToBall(DriveSubsystem* driveSubsystem, IntakeSubsystem* intakeSubsystem);
+  explicit DriveToBall(DriveSubsystem* driveSubsystem, IntakeSubsystem* intakeSubsystem, Gyro* gyro);
 
   void Execute() override;
 
@@ -24,4 +24,5 @@ class DriveToBall : public frc2::CommandHelper<frc2::CommandBase, DriveToBall> {
   double m_yTarget;
   bool m_bAcceptVisionDist = true;
   bool m_bFinished = false;
+  Gyro* m_gyro;
 };

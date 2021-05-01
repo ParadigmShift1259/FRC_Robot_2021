@@ -19,6 +19,7 @@
 #include "Constants.h"
 #include "SwerveModule2.h"
 #include "common/Util.h"
+#include "Gyro.h"
 
 // Uncomment to directly set values to each swerve module
 //#define TUNE_MODULES
@@ -68,7 +69,7 @@ public:
         eRearRight
     };
 
-    DriveSubsystem();
+    DriveSubsystem(Gyro *gyro);
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
@@ -121,18 +122,6 @@ public:
     /// Sets the drive SpeedControllers to a power from -1 to 1.
     void SetModuleStates(SwerveModuleStates desiredStates);
 
-    /// Returns the heading of the robot.
-    /// \return the robot's heading in degrees, from -180 to 180
-    double GetHeading();
-    frc::Rotation2d GetHeadingAsRot2d() { return frc::Rotation2d(degree_t(GetHeading())); }
-
-    /// Zeroes the heading of the robot.
-    void ZeroHeading();
-
-    /// Returns the turn rate of the robot.
-    /// \return The turn rate of the robot, in degrees per second
-    double GetTurnRate();
-
     /// Returns the currently-estimated pose of the robot.
     /// \return The pose.
     frc::Pose2d GetPose();
@@ -182,7 +171,7 @@ private:
     ///@}
 
     CANifier m_canifier;
-    PigeonIMU m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
+    Gyro *m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
 
     /// Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
