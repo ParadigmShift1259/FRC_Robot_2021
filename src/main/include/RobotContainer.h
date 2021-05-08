@@ -76,7 +76,7 @@ public:
     frc2::Command *GetAutonomousCommand();
     enum PathType {kRedA, kBlueA, kRedB, kBlueB};
     frc2::Command *GetAutonomousGSCommand();
-    frc::Trajectory DetectPath(bool& bluePath, bool& finished);
+    // frc::Trajectory DetectPath(bool& bluePath, bool& finished);
 
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);

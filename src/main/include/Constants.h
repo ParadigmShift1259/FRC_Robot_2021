@@ -21,7 +21,7 @@ using namespace ctre::phoenix;
 
 // Uncomment this to use Mk2 swerve drive instead of Mk3 swerve drive
 //#define Mk2
-//#define DualJoysticks
+#define DualJoysticks
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -120,10 +120,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.0;
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
-    constexpr double kFrontLeftOffset   = 2685.0; //2695.0;
-    constexpr double kFrontRightOffset  = 198.0; //195.0;
-    constexpr double kRearRightOffset   = 1847.0; //1861.0; //1829.0;
-    constexpr double kRearLeftOffset    = 2700.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
+    constexpr double kFrontLeftOffset   = 2710.0; //2695.0;
+    constexpr double kFrontRightOffset  = 209.0; //195.0;
+    constexpr double kRearRightOffset   = 1876.0; //1861.0; //1829.0;
+    constexpr double kRearLeftOffset    = 2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V

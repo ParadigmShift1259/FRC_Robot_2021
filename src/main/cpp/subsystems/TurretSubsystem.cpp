@@ -85,6 +85,13 @@ bool TurretSubsystem::isAtSetpoint()
     return fabs(m_turretmotor.GetClosedLoopError()) <= DegreesToTicks(kDegreeStopRange);
 }
 
+void TurretSubsystem::ResetPosition()
+{
+    m_turretmotor.SetSelectedSensorPosition(DegreesToTicks(kStartingPositionDegrees), 0, kTimeout);
+    m_turretmotor.Set(ControlMode::Position, DegreesToTicks(kStartingPositionDegrees));
+    m_currentAngle = kStartingPositionDegrees;
+}
+
 void TurretSubsystem::SetNewPIDValues()
 {
     /// CONFIRMED: OVERUNNING THE ENTIRE LOOP
