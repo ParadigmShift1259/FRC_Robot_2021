@@ -47,7 +47,7 @@ RobotContainer::RobotContainer()
     // , m_climber()
 {
     // Initialize all of your commands and subsystems here
-    m_fieldRelative = true;
+    m_fieldRelative = false;
 
     m_turretready = false;
     m_firing = false;
@@ -81,30 +81,37 @@ void RobotContainer::SetDefaultCommands()
                 yRot = 0;
             }
 
-            if (!m_fieldRelative)
-            {
-                m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            units::radians_per_second_t(rotInput),
-                            // xRot,
-                            // yRot,
-                            m_fieldRelative);
-                // m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                //             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                //             //units::radians_per_second_t(rotInput),
-                //             xRot,
-                //             yRot,
-                //             m_fieldRelative);
-            }
-            else 
-            {
-                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            units::radians_per_second_t(rotInput),
-                            // xRot,
-                            // yRot,
-                            m_fieldRelative);
-            }
+            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            units::radians_per_second_t(rotInput),
+            // xRot,
+            // yRot,
+            m_fieldRelative);
+
+            // if (!m_fieldRelative)
+            // {
+            //     m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //                 units::radians_per_second_t(rotInput),
+            //                 // xRot,
+            //                 // yRot,
+            //                 m_fieldRelative);
+            //     // m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //     //             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //     //             //units::radians_per_second_t(rotInput),
+            //     //             xRot,
+            //     //             yRot,
+            //     //             m_fieldRelative);
+            // }
+            // else 
+            // {
+            //     m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //                 units::radians_per_second_t(rotInput),
+            //                 // xRot,
+            //                 // yRot,
+            //                 m_fieldRelative);
+            // }
 
         },
         {&m_drive}
@@ -185,14 +192,14 @@ void RobotContainer::ConfigureButtonBindings()
     // Triggers field relative driving
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
         frc2::InstantCommand(    
-            [this] { m_fieldRelative = false; },
+            [this] { m_fieldRelative = true; },
             {}
         )
     );
 
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBumperLeft).WhenReleased(
         frc2::InstantCommand(    
-            [this] { m_fieldRelative = true; },
+            [this] { m_fieldRelative = false; },
             {}
         )
     );

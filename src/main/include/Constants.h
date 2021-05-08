@@ -21,7 +21,7 @@ using namespace ctre::phoenix;
 
 // Uncomment this to use Mk2 swerve drive instead of Mk3 swerve drive
 //#define Mk2
-#define DualJoysticks
+//#define DualJoysticks
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -238,8 +238,8 @@ namespace AutoConstants
 
 namespace OIConstants
 {
-    constexpr double kDeadzoneX = 0.10;
-    constexpr double kDeadzoneY = 0.10;
+    constexpr double kDeadzoneX = 0.07;
+    constexpr double kDeadzoneY = 0.07;
     constexpr double kDeadzoneRot = 0.10;
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kPrimaryControllerPort = 0;
@@ -269,12 +269,12 @@ namespace FlywheelConstants
 
     constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
-    constexpr double kAllowedError = 65;
+    constexpr double kAllowedError = 75;//65;
     constexpr double kMaintainPIDError = 300;
 
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
-    constexpr double kFiringRPMMultiplier = 1.035; //1.05;
+    constexpr double kFiringRPMMultiplier = 1.05; //1.035; //1.05;
 
     // Launch PID values, used to first get to setpoint
     constexpr double kP = 0.0002700;
@@ -282,7 +282,7 @@ namespace FlywheelConstants
     constexpr double kD = 0;
 
     // Maintain PID values, used to adjust for error once the robot is shooting
-    constexpr double kMP = 0.001700;
+    constexpr double kMP = 0.002000;//0.001700;
     constexpr double kMI = 0.00000001;
     constexpr double kMD = 0.000001;
 
@@ -302,7 +302,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 2800; //0;
+    constexpr double kIdleRPM = 0; //2800; //0;
 }
 
 // Turret Subsystem Constants
@@ -321,7 +321,7 @@ namespace TurretConstants
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kDegreeStopRange = 0.6; //0.4; //0.5;
+    constexpr double kDegreeStopRange = 0.75; //0.6; //0.4; //0.5;
     constexpr double kDegreePIDStopRange = 0.35; //0.35;
 
     constexpr double kPulley = 2.7305;
