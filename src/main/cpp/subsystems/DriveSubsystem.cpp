@@ -285,3 +285,13 @@ void DriveSubsystem::ResetRelativeToAbsolute()
     m_rearRight.ResetRelativeToAbsolute();
     m_rearLeft.ResetRelativeToAbsolute();
 }
+
+void DriveSubsystem::WheelsForward()
+{
+    static frc::SwerveModuleState zeroState { 0_mps, 0_deg };
+    printf("DriveSubsystem::WheelsForward() called");
+    m_frontLeft.SetDesiredState(zeroState);
+    m_frontRight.SetDesiredState(zeroState);
+    m_rearRight.SetDesiredState(zeroState);
+    m_rearLeft.SetDesiredState(zeroState);
+}

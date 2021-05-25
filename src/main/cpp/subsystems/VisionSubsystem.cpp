@@ -111,6 +111,8 @@ double VisionSubsystem::GetDistance()
     
     m_avgdistance = sum / m_averagedistance.size();
 
+m_avgdistance = 120; // HACK For auto testing w/o target
+
     return m_avgdistance;
 }
 

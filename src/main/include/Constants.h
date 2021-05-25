@@ -120,10 +120,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.0;
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
-    constexpr double kFrontLeftOffset   = 2695.0;
-    constexpr double kFrontRightOffset  = 195.0;
-    constexpr double kRearRightOffset   = 1861.0; //1829.0;
-    constexpr double kRearLeftOffset    = 2717.0; //486.0; //234.0; //362.891; //147.0;
+    constexpr double kFrontLeftOffset   = 2710.0; //2695.0;
+    constexpr double kFrontRightOffset  = 209.0; //195.0;
+    constexpr double kRearRightOffset   = 1876.0; //1861.0; //1829.0;
+    constexpr double kRearLeftOffset    = 2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -149,7 +149,7 @@ namespace DriveConstants
     /// \name Turn PID Controller for Swerve Modules
     ///@{
         constexpr double kDriveP = 0.1;
-        constexpr double kDriveI = 0.0000015;
+        constexpr double kDriveI = 0;//0.0000015;
         constexpr double kDriveD = 0;
     ///@}
 
@@ -157,10 +157,10 @@ namespace DriveConstants
     /// \name Robot Rotation PID Controller
     ///@{
     /// Rotation PID Controller for Rotation Drive, converts between radians angle error to radians per second turn
-    constexpr double kRotationP = 2;
+    constexpr double kRotationP = 0.3;
     constexpr double kRotationI = 0;
     constexpr double kRotationIMaxRange = 0;
-    constexpr double kRotationD = 0.085;
+    constexpr double kRotationD = 0.025;
     /// Rotation PID Controller additional parameters
     /// Max speed for control
     constexpr double kMaxAbsoluteRotationSpeed = 3.5;
@@ -215,19 +215,22 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(1.5);                 // 1.0   // 5.0
-    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(1.0);  // 0.1
-    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi);
-    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi);
+    constexpr auto kMaxSpeed = units::meters_per_second_t(2.0);                 // 1.0   // 5.0
+    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(2.0);  // 0.1
+    constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi * 6.0);
+    constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi * 6.0);
 
 #ifdef Mk2
     constexpr double kPXController = 2.0;       // 0.25 
     constexpr double kPYController = 2.0;       // 0.25
     constexpr double kPThetaController = 4.0;   // 2.0
 #else
-    constexpr double kPXController = 2.0;
-    constexpr double kPYController = 2.0;
-    constexpr double kPThetaController = 4.0;
+    constexpr double kPXController = 7.0;
+    constexpr double kDXController = 0.7;
+    constexpr double kPYController = 7.0;
+    constexpr double kDYController = 0.7;
+    constexpr double kPThetaController = 6.0;
+    constexpr double kDThetaController = 0.9;
 #endif
 
     extern const frc::TrapezoidProfile<units::radians>::Constraints kThetaControllerConstraints;
@@ -235,8 +238,8 @@ namespace AutoConstants
 
 namespace OIConstants
 {
-    constexpr double kDeadzoneX = 0.10;
-    constexpr double kDeadzoneY = 0.10;
+    constexpr double kDeadzoneX = 0.07;
+    constexpr double kDeadzoneY = 0.07;
     constexpr double kDeadzoneRot = 0.10;
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kPrimaryControllerPort = 0;
@@ -266,12 +269,12 @@ namespace FlywheelConstants
 
     constexpr double kRampRate = 1.0;
     // Total error allowed for the flywheel, in RPM
-    constexpr double kAllowedError = 50;
+    constexpr double kAllowedError = 75;//65;
     constexpr double kMaintainPIDError = 300;
 
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
-    constexpr double kFiringRPMMultiplier = 1.05;
+    constexpr double kFiringRPMMultiplier = 1.05; //1.035; //1.05;
 
     // Launch PID values, used to first get to setpoint
     constexpr double kP = 0.0002700;
@@ -279,7 +282,7 @@ namespace FlywheelConstants
     constexpr double kD = 0;
 
     // Maintain PID values, used to adjust for error once the robot is shooting
-    constexpr double kMP = 0.001700;
+    constexpr double kMP = 0.002000;//0.001700;
     constexpr double kMI = 0.00000001;
     constexpr double kMD = 0.000001;
 
@@ -299,7 +302,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0; //1700;
+    constexpr double kIdleRPM = 0; //2800; //0;
 }
 
 // Turret Subsystem Constants
@@ -318,8 +321,8 @@ namespace TurretConstants
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kDegreeStopRange = 0.5;
-    constexpr double kDegreePIDStopRange = 0.35;
+    constexpr double kDegreeStopRange = 0.75; //0.6; //0.4; //0.5;
+    constexpr double kDegreePIDStopRange = 0.35; //0.35;
 
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
@@ -348,7 +351,7 @@ namespace HoodConstants
     constexpr int kPWMPort = 8;                //!< Hood servo PWM channel
     constexpr double kTestServoSpeed = 0.14;
     // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
-    constexpr double kMax = .9;
+    constexpr double kMax = .95;
     constexpr double kMin = .20;
 }
 
@@ -361,7 +364,7 @@ namespace CyclerConstants
     constexpr double kFeederSpeed = 0.350;
     constexpr double kTurnTableSpeed = 0.400;
     constexpr double kTurnTableSpeedHigher = 0.550;
-    constexpr double kTurnTableHoneSpeed = 0.200;
+    constexpr double kTurnTableHoneSpeed = 0.300;
     constexpr units::second_t kMaxCyclerTime = 5.0_s;
 
     constexpr double kSensorInvert = true;
@@ -381,7 +384,8 @@ namespace CyclerConstants
 namespace VisionConstants
 {
     // Mounting angle of the limelight, in degrees
-    constexpr double kMountingAngle = 19.0;
+    constexpr double kMountingAngle = 18.0;
+    // Permanent X adjustment -0.05
     // Mounting height of the limelight from the ground, in inches
     constexpr double kMountingHeight = 22;
     // Target center height, in inches
