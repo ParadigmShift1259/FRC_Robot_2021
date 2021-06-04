@@ -15,6 +15,12 @@ TurretSubsystem::TurretSubsystem(Gyro *gyro)
     m_turretmotor.SetSensorPhase(kSensorPhase);
     m_turretmotor.SetInverted(kInverted);
 
+    //SupplyCurrentLimitConfiguration sclc;
+    //sclc.currentLimit = 2;
+    //sclc.enable = true;
+    //m_turretmotor.ConfigSupplyCurrentLimit(sclc);
+    //m_turretmotor.EnableCurrentLimit(true);
+
     m_turretmotor.Config_kP(0, kP, kTimeout);
     m_turretmotor.Config_kI(0, kI, kTimeout);
     m_turretmotor.Config_kD(0, kD, kTimeout);

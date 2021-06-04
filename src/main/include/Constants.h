@@ -21,7 +21,7 @@ using namespace ctre::phoenix;
 
 // Uncomment this to use Mk2 swerve drive instead of Mk3 swerve drive
 //#define Mk2
-//#define DualJoysticks
+#define DualJoysticks
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -215,8 +215,8 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(3.5);                 // 1.0   // 5.0
-    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(3.0);  // 0.1
+    constexpr auto kMaxSpeed = units::meters_per_second_t(3.75);                 // 1.0   // 5.0
+    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(4.5);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi * 6.0);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi * 6.0);
 
@@ -302,7 +302,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0; //2800; //0;
+    constexpr double kIdleRPM = 2800; //0;
 }
 
 // Turret Subsystem Constants

@@ -69,13 +69,13 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto x = Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto y = Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            auto x = Deadzone(m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneX);
+            auto y = Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneY);
             auto xInput = pow(x, 2.0) * (signbit(x) ? -1.0 : 1.0);
             auto yInput =  pow(y, 2.0) * (signbit(y) ? -1.0 : 1.0);
-            auto rotInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
-            auto xRot = m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
-            auto yRot = m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0;
+            auto rotInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
+            auto xRot = m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0;
+            auto yRot = m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0;
             if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
                 xRot = 0;
                 yRot = 0;
