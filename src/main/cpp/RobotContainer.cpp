@@ -88,47 +88,52 @@ void RobotContainer::SetDefaultCommands()
                 yRot = 0;
             }
 
-            if (m_fieldRelative)
-            {
-                m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            xRot,
-                            yRot,
-                            m_fieldRelative);
-            }
-            else 
-            {
-                m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            units::radians_per_second_t(rotInput),
-                            m_fieldRelative);
-            }
+            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                             units::angular_velocity::radians_per_second_t(rotInput * AutoConstants::kMaxAngularSpeed),
+                             m_fieldRelative);
+
+            // if (m_fieldRelative)
+            // {
+            //     m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //                 xRot,
+            //                 yRot,
+            //                 m_fieldRelative);
+            // }
+            // else 
+            // {
+            //     m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //                 units::radians_per_second_t(rotInput),
+            //                 m_fieldRelative);
+            // }
 
         },
         {&m_drive}
     ));
 
-    m_turret.SetDefaultCommand(
-        frc2::RunCommand(
-            [this] {
-                auto turretXRot = m_secondaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
-                auto turretYRot = m_secondaryController.GetX(frc::GenericHID::kRightHand);
-                if (Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
-                    turretXRot = 0;
-                    turretYRot = 0;
-                }
-                if (turretXRot == 0 && turretYRot == 0)
-                {
-                    m_turret.TurnToField(0);
-                }
-                else {
-                    double rotPosition = atan2f(turretYRot, turretXRot);
-                    rotPosition *= 360.0/Math::kTau; 
-                    m_turret.TurnToRobot(rotPosition);
-                } 
-            }, {&m_turret}
-        )
-    );
+    // m_turret.SetDefaultCommand(
+    //     frc2::RunCommand(
+    //         [this] {
+    //             auto turretXRot = m_secondaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
+    //             auto turretYRot = m_secondaryController.GetX(frc::GenericHID::kRightHand);
+    //             if (Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
+    //                 turretXRot = 0;
+    //                 turretYRot = 0;
+    //             }
+    //             if (turretXRot == 0 && turretYRot == 0)
+    //             {
+    //                 m_turret.TurnToField(0);
+    //             }
+    //             else {
+    //                 double rotPosition = atan2f(turretYRot, turretXRot);
+    //                 rotPosition *= 360.0/Math::kTau; 
+    //                 m_turret.TurnToRobot(rotPosition);
+    //             } 
+    //         }, {&m_turret}
+    //     )
+    // );
 
     m_hood.SetDefaultCommand(
         frc2::RunCommand(
@@ -288,35 +293,91 @@ frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
 frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
 {
-
     switch(path)
     {
         case kLeft3:
-            break;
-        case kLeft8:
-            break;
-        case kMid5:
-            break;
-        case kRight2:
-            break;
-    }
+            return new frc2::SequentialCommandGroup(
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                // CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),
+                std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true)),
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+                frc2::InstantCommand(
+                    [this]() {
+                        m_intake.Set(0);
+                        m_drive.Drive(units::meters_per_second_t(0.0),
+                                    units::meters_per_second_t(0.0),
+                                    units::radians_per_second_t(0.0), false);
+                    },
+                    {}
+                )
+            );
 
-    
-    return new frc2::SequentialCommandGroup(
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
-        CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),
-        std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true)),
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
-        frc2::InstantCommand(
-            [this]() {
-                m_intake.Set(0);
-                m_drive.Drive(units::meters_per_second_t(0.0),
-                              units::meters_per_second_t(0.0),
-                              units::radians_per_second_t(0.0), false);
-            },
-            {}
-        )
-    );
+        case kLeft8:
+            return new frc2::SequentialCommandGroup(
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                // CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),
+                std::move(GetSwerveCommand(left8p1, sizeof(left8p1) / sizeof(left8p1[0]), true)),
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+                std::move(GetSwerveCommand(left8p2, sizeof(left8p2) / sizeof(left8p2[0]), false)),
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+                frc2::InstantCommand(
+                    [this]() {
+                        m_intake.Set(0);
+                        m_drive.Drive(units::meters_per_second_t(0.0),
+                                    units::meters_per_second_t(0.0),
+                                    units::radians_per_second_t(0.0), false);
+                    },
+                    {}
+                )
+            );
+
+        case kMid5:
+            return new frc2::SequentialCommandGroup(
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                // CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),
+                std::move(GetSwerveCommand(mid5, sizeof(mid5) / sizeof(mid5[0]), true)),
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+                frc2::InstantCommand(
+                    [this]() {
+                        m_intake.Set(0);
+                        m_drive.Drive(units::meters_per_second_t(0.0),
+                                    units::meters_per_second_t(0.0),
+                                    units::radians_per_second_t(0.0), false);
+                    },
+                    {}
+                )
+            );
+
+        case kRight2:
+            return new frc2::SequentialCommandGroup(
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                // CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),
+                std::move(GetSwerveCommand(right2, sizeof(right2) / sizeof(right2[0]), true)),
+                // Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+                frc2::InstantCommand(
+                    [this]() {
+                        m_intake.Set(0);
+                        m_drive.Drive(units::meters_per_second_t(0.0),
+                                    units::meters_per_second_t(0.0),
+                                    units::radians_per_second_t(0.0), false);
+                    },
+                    {}
+                )
+            );
+
+        default:
+             return new frc2::SequentialCommandGroup(
+                frc2::InstantCommand(
+                    [this]() {
+                        m_intake.Set(0);
+                        m_drive.Drive(units::meters_per_second_t(0.0),
+                                    units::meters_per_second_t(0.0),
+                                    units::radians_per_second_t(0.0), false);
+                    },
+                    {}
+                )
+            );
+    }
 }
 
 frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> RobotContainer::GetSwerveCommand(double path[][6],  int length, bool primaryPath)
