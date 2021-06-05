@@ -69,13 +69,21 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto x = Deadzone(m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneX);
-            auto y = Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneY);
+#define DRIVE_ON_LEFT
+#ifdef DRIVE_ON_LEFT
+            const frc::GenericHID::JoystickHand driveStick = frc::GenericHID::kLeftHand;
+            const frc::GenericHID::JoystickHand rotStick = frc::GenericHID::kRightHand;
+#else
+            cosnt frc::GenericHID::JoystickHand driveStick = frc::GenericHID::kRightHand;
+            cosnt frc::GenericHID::JoystickHand rotStick = frc::GenericHID::kLeftHand;
+#endif
+            auto x = Deadzone(m_primaryController.GetY(driveStick) * -1.0, OIConstants::kDeadzoneX);
+            auto y = Deadzone(m_primaryController.GetX(driveStick) * -1.0, OIConstants::kDeadzoneY);
             auto xInput = pow(x, 2.0) * (signbit(x) ? -1.0 : 1.0);
             auto yInput =  pow(y, 2.0) * (signbit(y) ? -1.0 : 1.0);
-            auto rotInput = pow(Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneRot), 3.0);
-            auto xRot = m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0;
-            auto yRot = m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0;
+            auto rotInput = pow(Deadzone(m_primaryController.GetX(rotStick) * -1.0, OIConstants::kDeadzoneRot), 3.0);
+            auto xRot = m_primaryController.GetY(rotStick) * -1.0;
+            auto yRot = m_primaryController.GetX(rotStick) * -1.0;
             if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
                 xRot = 0;
                 yRot = 0;
@@ -117,6 +125,8 @@ void RobotContainer::SetDefaultCommands()
         {&m_drive}
     ));
 
+//#define USE_TURRET
+#ifdef USE_TURRET
     m_turret.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
@@ -139,7 +149,7 @@ void RobotContainer::SetDefaultCommands()
             }, {&m_turret}
         )
     );
-
+#endif
     m_hood.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
@@ -215,9 +225,9 @@ void RobotContainer::ConfigureButtonBindings()
     );
 
     // Runs autonomous path in gyro
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhenPressed(
-        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
-    );
+    // frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhenPressed(
+    //     std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    // );
 
     // frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
     //     std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kFront))
