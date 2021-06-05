@@ -120,10 +120,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.0;
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
-    constexpr double kFrontLeftOffset   = 2710.0; //2695.0;
-    constexpr double kFrontRightOffset  = 209.0; //195.0;
-    constexpr double kRearRightOffset   = 1876.0; //1861.0; //1829.0;
-    constexpr double kRearLeftOffset    = 2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
+    constexpr double kFrontLeftOffset   = 2670.0;   //2710.0; //2695.0;
+    constexpr double kFrontRightOffset  = 201.0;    //209.0; //195.0;
+    constexpr double kRearRightOffset   = 1865.0;   //1876.0; //1861.0; //1829.0;
+    constexpr double kRearLeftOffset    = 2823.0;   //2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -215,8 +215,8 @@ namespace AutoConstants
 {
     using radians_per_second_squared_t = units::compound_unit<units::radians, units::inverse<units::squared<units::second>>>;
 
-    constexpr auto kMaxSpeed = units::meters_per_second_t(2.0);                 // 1.0   // 5.0
-    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(2.0);  // 0.1
+    constexpr auto kMaxSpeed = units::meters_per_second_t(3.75);                 // 1.0   // 5.0
+    constexpr auto kMaxAcceleration = units::meters_per_second_squared_t(4.5);  // 0.1
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi * 6.0);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi * 6.0);
 
@@ -229,7 +229,7 @@ namespace AutoConstants
     constexpr double kDXController = 0.7;
     constexpr double kPYController = 7.0;
     constexpr double kDYController = 0.7;
-    constexpr double kPThetaController = 6.0;
+    constexpr double kPThetaController = 10.0;
     constexpr double kDThetaController = 0.9;
 #endif
 
@@ -253,7 +253,7 @@ namespace OIConstants
 // Intake Subsystem constants
 namespace IntakeConstants
 {
-    constexpr int kMotorPort = 9;   // Intake rollers PWM channel (Spark)
+    constexpr double kMotorPort = 9;   // Intake rollers PWM channel (Spark)
     constexpr double kMotorReverseConstant = 1;
 
     constexpr double kIngestLow = 0.3;
@@ -302,7 +302,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0; //2800; //0;
+    constexpr double kIdleRPM = 2800; //0;
 }
 
 // Turret Subsystem Constants
@@ -321,7 +321,7 @@ namespace TurretConstants
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kDegreeStopRange = 0.75; //0.6; //0.4; //0.5;
+    constexpr double kDegreeStopRange = 1.35; //0.6; //0.4; //0.5;
     constexpr double kDegreePIDStopRange = 0.35; //0.35;
 
     constexpr double kPulley = 2.7305;
@@ -400,8 +400,7 @@ namespace VisionConstants
 // Climber Subsystem constants
 namespace ClimberConstants
 {
-    constexpr int kMotorPort = 7;   // Climber PWM Port
-    constexpr double kMotorReverseConstant = -1.0;
+    constexpr double kMotorPort = 41;   // Climber CAN ID (TalonSRX? not installed)
+    constexpr double kMotorReverseConstant = 1;
     constexpr double kMotorSpeed = 0.9;
-
 }

@@ -107,17 +107,11 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
     #else
     m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
     #endif
-if (m_name == "FrontLeft")
-{
-    newPosition = 0;
-}
-else
-{
+
     // Set the angle unless module is coming to a full stop
     if (state.speed.to<double>() != 0.0)
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
 
-}
 
     SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
     SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
