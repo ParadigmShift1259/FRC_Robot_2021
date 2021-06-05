@@ -72,12 +72,15 @@ public:
 
     void Periodic();
 
-    frc2::Command *GetAutonomousCommand();
-    frc2::Command *GetAutonomousGSCommand();
+    enum AutoPath{kLeft3, kLeft8, kMid5, kRight2};
+    frc2::Command *GetAutonomousCommand(AutoPath path);
+    frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> GetSwerveCommand(double path[][6], int length, bool primaryPath);
 
     enum Direction { kFront, kLeft, kRight, kBack };
     frc2::Command *GetDriveTestCommand(Direction direction);
 
+    frc::SendableChooser<AutoPath> m_chooser;
+    
 private:
     double Deadzone(double inputValue, double deadzone)
     {
@@ -103,10 +106,15 @@ private:
     CyclerSubsystem m_cycler;
     VisionSubsystem m_vision;
     ClimberSubsystem m_climber;
+    
+
+
 
     void SetDefaultCommands();
     void ConfigureButtonBindings();
     void PrintTrajectory(frc::Trajectory& trajectory);
+
+    
 
 
     bool m_fieldRelative = true;

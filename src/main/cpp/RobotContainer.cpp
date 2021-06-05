@@ -10,6 +10,7 @@
 #include "commands/FindClosestBall.h"
 #include "commands/RotateToFindNextBall.h"
 #include <frc2/command/button/NetworkButton.h>
+#include "AutoPaths.h"
 
 // Commenting this out reduces build time by about half
 // However, includes are necessary to run trajectory paths
@@ -59,6 +60,12 @@ RobotContainer::RobotContainer()
     ConfigureButtonBindings();
     SetDefaultCommands();
     SmartDashboard::PutBoolean("WheelsForward", false);
+
+    m_chooser.SetDefaultOption("Left 3", AutoPath::kLeft3);
+    m_chooser.AddOption("Left 8", AutoPath::kLeft8);
+    m_chooser.AddOption("Middle 5", AutoPath::kMid5);
+    m_chooser.AddOption("Right 2", AutoPath::kRight2);
+    frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 }
 
 void RobotContainer::Periodic()
@@ -198,9 +205,9 @@ void RobotContainer::ConfigureButtonBindings()
     );
 
     // Runs autonomous path in gyro
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhenPressed(
-        std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
-    );
+    // frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhenPressed(
+    //     std::move(*(frc2::SequentialCommandGroup*)GetAutonomousCommand())
+    // );
 
     frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kY).WhenPressed(
         std::move(*(frc2::SequentialCommandGroup*)GetDriveTestCommand(kFront))
@@ -279,9 +286,42 @@ void RobotContainer::ConfigureButtonBindings()
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
-frc2::Command *RobotContainer::GetAutonomousCommand()
+frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
 {
-    frc::Trajectory exampleTrajectory = convertArrayToTrajectory(RightSideStraightBack, sizeof(RightSideStraightBack) / sizeof(RightSideStraightBack[0]));
+
+    switch(path)
+    {
+        case kLeft3:
+            break;
+        case kLeft8:
+            break;
+        case kMid5:
+            break;
+        case kRight2:
+            break;
+    }
+
+    
+    return new frc2::SequentialCommandGroup(
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+        CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),
+        std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true)),
+        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+        frc2::InstantCommand(
+            [this]() {
+                m_intake.Set(0);
+                m_drive.Drive(units::meters_per_second_t(0.0),
+                              units::meters_per_second_t(0.0),
+                              units::radians_per_second_t(0.0), false);
+            },
+            {}
+        )
+    );
+}
+
+frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> RobotContainer::GetSwerveCommand(double path[][6],  int length, bool primaryPath)
+{
+    frc::Trajectory exampleTrajectory = convertArrayToTrajectory(path, length);
 
     frc::ProfiledPIDController<units::radians> thetaController{
         AutoConstants::kPThetaController, 0, AutoConstants::kDThetaController,
@@ -302,54 +342,12 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
     );
 
     // Reset odometry to the starting pose of the trajectory
-    m_drive.ResetOdometry(exampleTrajectory.InitialPose());
-    
-    return new frc2::SequentialCommandGroup(
-        CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed).WithTimeout(0.1_s),   
-        // frc2::InstantCommand(
-        //     [this]() {
-        //         m_intake.Set(IntakeConstants::kIngestHigh);
-        //     },
-        //     {}
-        // ),
-        std::move(swerveControllerCommand),
-        CyclerPrepare(&m_cycler, true).WithTimeout(CyclerConstants::kMaxCyclerTime),
-        frc2::InstantCommand(
-            [this]() {
-                m_intake.Set(0);
-                m_drive.Drive(units::meters_per_second_t(0.0),
-                              units::meters_per_second_t(0.0),
-                              units::radians_per_second_t(0.0), false);
-            },
-            {}
-        )
-    );
+    if(primaryPath)
+        m_drive.ResetOdometry(exampleTrajectory.InitialPose());
+
+    return swerveControllerCommand;
 }
 
-frc2::Command *RobotContainer::GetAutonomousGSCommand()
-{
-    FindClosestBall findClosestBall(&m_drive, &m_isRedPath);
-    DriveToBall driveToBall(&m_drive, &m_intake, &m_gyro);
-    // RotateToFindNextBall rotateToFindNextBall(&m_drive, m_isRedPath);
-
-    m_gyro.ZeroHeading();
-    // Reset odometry to the starting pose of the trajectory
-    m_drive.ResetOdometry(frc::Pose2d(15.0_in, 90.0_in, frc::Rotation2d(0_deg)));
-
-    return new frc2::SequentialCommandGroup(
-        std::move(findClosestBall),
-        std::move(driveToBall),
-        //std::move(rotateToFindNextBall),
-        frc2::InstantCommand(
-            [this]() {
-                m_drive.Drive(units::meters_per_second_t(0.0),
-                              units::meters_per_second_t(0.0),
-                              units::radians_per_second_t(0.0), false);
-            },
-            {}
-        )
-    );
-}
 
 frc2::Command *RobotContainer::GetDriveTestCommand(Direction direction)
 {
