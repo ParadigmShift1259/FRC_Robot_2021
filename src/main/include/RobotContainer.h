@@ -72,7 +72,7 @@ public:
 
     void Periodic();
 
-    enum AutoPath{kLeft3, kLeft8, kMid5, kRight2};
+    enum AutoPath{kLeft3, kLeft8, kMid0, kMid5, kRight2};
     frc2::Command *GetAutonomousCommand(AutoPath path);
     frc2::SwerveControllerCommand2<DriveConstants::kNumSwerveModules> GetSwerveCommand(double path[][6], int length, bool primaryPath);
 
