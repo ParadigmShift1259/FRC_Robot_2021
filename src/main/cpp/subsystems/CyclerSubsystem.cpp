@@ -14,7 +14,7 @@ CyclerSubsystem::CyclerSubsystem()
     m_turntablemotor.ConfigOpenloopRamp(kTurnTableRampRate, kTimeout);
     m_feedermotor.SetInverted(kFeederInverted);
 
-    m_triggeredsensor = false;
+    m_triggeredsensor = true;
 
     m_sensor.RequestInterrupts(
         [this] (frc::InterruptableSensorBase::WaitResult result) {

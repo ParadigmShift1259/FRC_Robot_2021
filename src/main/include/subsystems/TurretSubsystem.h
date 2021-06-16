@@ -45,6 +45,9 @@ public:
     /// Returns whether or not the turret is at the desired setpoint
     bool isAtSetpoint();
 
+    /// Resets the turret back to the initial default position
+    void ResetPosition();
+
     void SetNewPIDValues();
 
 protected:

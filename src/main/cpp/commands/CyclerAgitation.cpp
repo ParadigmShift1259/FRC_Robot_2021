@@ -39,3 +39,8 @@ void CyclerAgitation::Execute()
         m_timer.Reset();
     }
 }
+
+void CyclerAgitation::End(bool interrupted)
+{
+    m_cycler->SetTurnTable(0);
+}

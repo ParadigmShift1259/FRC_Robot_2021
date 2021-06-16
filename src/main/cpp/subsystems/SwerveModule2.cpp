@@ -67,10 +67,10 @@ void SwerveModule2::Periodic()
 
     if (m_timer.Get() < 5)
     {
-        printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-                m_absAngle, 
-                m_turnRelativeEncoder.GetPosition());
+        // printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+        //         fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+        //         m_absAngle, 
+        //         m_turnRelativeEncoder.GetPosition());
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
 
@@ -79,6 +79,7 @@ void SwerveModule2::Periodic()
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
     SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
     SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
+    SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
@@ -106,17 +107,11 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
     #else
     m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
     #endif
-if (m_name == "FrontLeft")
-{
-    newPosition = 0;
-}
-else
-{
+
     // Set the angle unless module is coming to a full stop
     if (state.speed.to<double>() != 0.0)
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
 
-}
 
     SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
     SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
@@ -137,10 +132,10 @@ void SwerveModule2::EncoderToRadians()
 
 void SwerveModule2::ResetRelativeToAbsolute()
 {
-    printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-                fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-                m_absAngle, 
-                m_turnRelativeEncoder.GetPosition());
+    // printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
+    //             fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
+    //             m_absAngle, 
+    //             m_turnRelativeEncoder.GetPosition());
     m_turnRelativeEncoder.SetPosition(m_absAngle);
 }
 

@@ -135,6 +135,9 @@ public:
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(frc::Pose2d pose);
 
+    /// Set all 4 wheels to the zero position
+    void WheelsForward();
+
     void ResetRelativeToAbsolute();
 
     meter_t kTrackWidth = 23.5_in;

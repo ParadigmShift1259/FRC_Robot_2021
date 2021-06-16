@@ -14,7 +14,7 @@ HoodSubsystem::HoodSubsystem() : m_servo(kPWMPort) {
 
 void HoodSubsystem::Periodic()
 {
-    // SmartDashboard::PutNumber("D_H_Angle", m_servo.GetAngle());
+    SmartDashboard::PutNumber("D_H_Angle", m_servo.Get());
     // double setValue = SmartDashboard::GetNumber("T_H_SetAngle", kMax);
     // Set(setValue);
 }

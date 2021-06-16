@@ -20,8 +20,9 @@ void CyclerPrepare::Execute() {
     m_cycler->SetFeeder(0);
 }
 
+// Set to true immediately because sensor was removed
 bool CyclerPrepare::IsFinished() {
-    return m_cycler->AtPosition();
+    return true; //m_cycler->AtPosition();
 }
 
 void CyclerPrepare::End(bool interrupted) {

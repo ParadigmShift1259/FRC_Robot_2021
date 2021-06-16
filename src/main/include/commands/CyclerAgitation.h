@@ -13,9 +13,11 @@ class CyclerAgitation : public frc2::CommandHelper<frc2::CommandBase, CyclerAgit
  public:
   explicit CyclerAgitation(CyclerSubsystem* subsystem, double speed);
 
-  void Execute() override;
-
   void Initialize() override;
+  void Execute() override;
+  void End(bool interrupted) override;
+ 
+
 
  private:
   CyclerSubsystem* m_cycler;

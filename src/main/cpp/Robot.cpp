@@ -18,6 +18,7 @@ Robot::Robot()
 
 void Robot::RobotInit()
 {
+
 }
 
 /**
@@ -58,8 +59,7 @@ void Robot::AutonomousInit()
     // m_log.openLog();
     // m_log.logMsg(eInfo, __func__, "Starting Autonomous");
 
-    //m_autonomousCommand = m_container.GetAutonomousCommand();
-    m_autonomousCommand = m_container.GetAutonomousGSCommand();
+    m_autonomousCommand = m_container.GetAutonomousCommand(m_container.m_chooser.GetSelected());
 
     if (m_autonomousCommand != nullptr) {
         m_autonomousCommand->Schedule();

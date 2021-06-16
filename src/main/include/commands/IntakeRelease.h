@@ -12,6 +12,7 @@ class IntakeRelease : public frc2::CommandHelper<frc2::CommandBase, IntakeReleas
   explicit IntakeRelease(IntakeSubsystem* subsystem);
 
   void Execute() override;
+  void End(bool interrupted) override;
 
  private:
   IntakeSubsystem* m_intake;

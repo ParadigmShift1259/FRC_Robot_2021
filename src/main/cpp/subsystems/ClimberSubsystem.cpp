@@ -21,6 +21,5 @@ void ClimberSubsystem::Periodic()
 
 void ClimberSubsystem::Run(double speed) 
 {
-    printf("Running climber at %.3f\n", speed * ClimberConstants::kMotorReverseConstant);
     m_motor.Set(speed * ClimberConstants::kMotorReverseConstant);
 }

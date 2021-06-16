@@ -14,3 +14,7 @@ IntakeIngest::IntakeIngest(IntakeSubsystem* subsystem)
 void IntakeIngest::Execute() {
     m_intake->Set(kIngestHigh);
 }
+
+void IntakeIngest::End(bool interrupted) {
+    m_intake->Set(0);
+}
