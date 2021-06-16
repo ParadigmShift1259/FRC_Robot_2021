@@ -1,3 +1,21 @@
+
+// t, v, a, X, Y, H
+frc::Trajectory convertArrayToTrajectory(double a[][6], int length)
+{
+    std::vector<frc::Trajectory::State> states;
+    printf("Converting array...");
+    for (int i = 0; i < length; i++)
+    {
+        printf("looping through timestamps...");
+        states.push_back({
+            a[i][0] * 1_s, a[i][1] * 1_mps, a[i][2] * 1_mps_sq, 
+            frc::Pose2d(a[i][3] * 1_m, a[i][4] * -1.0 * 1_m, a[i][5] * -1.0 * 1_deg), curvature_t(0)
+        });
+    }
+    printf("Finished looping, returning Trajectory");
+    return frc::Trajectory(states);
+}
+
 double left3[][6] = {
         {0,0,0,3.4768,0.7563,-179.9991},
         {0.0202,0.0155,0.7656,3.4772,0.7564,-179.955},
