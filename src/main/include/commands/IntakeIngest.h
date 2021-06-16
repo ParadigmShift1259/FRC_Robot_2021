@@ -12,6 +12,7 @@ class IntakeIngest : public frc2::CommandHelper<frc2::CommandBase, IntakeIngest>
   explicit IntakeIngest(IntakeSubsystem* subsystem);
 
   void Execute() override;
+  void End(bool interrupted) override;
   
 
 
