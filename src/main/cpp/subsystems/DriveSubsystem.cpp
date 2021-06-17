@@ -110,7 +110,7 @@ void DriveSubsystem::Periodic()
     // m_logData[EDriveSubSystemLogData::eGyroRotRate] = GetTurnRate();
     //m_log.logData<EDriveSubSystemLogData>("DriveSubsys", m_logData);
 
-    SmartDashboard::PutNumber("D_D_Rot", m_gyro->GetHeading());
+    // SmartDashboard::PutNumber("D_D_Rot", m_gyro->GetHeading());
 }
 
 void DriveSubsystem::RotationDrive(meters_per_second_t xSpeed
@@ -176,8 +176,8 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
-    SmartDashboard::PutBoolean("D_D_RotationInput", m_rotationalInput);
-    SmartDashboard::PutNumber("D_D_lastHeading", m_lastHeading);
+    // SmartDashboard::PutBoolean("D_D_RotationInput", m_rotationalInput);
+    // SmartDashboard::PutNumber("D_D_lastHeading", m_lastHeading);
     if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 && rot.to<double>() == 0)
     {
         Drive(xSpeed, ySpeed, rot, fieldRelative);
@@ -260,9 +260,9 @@ void DriveSubsystem::ResetEncoders()
 
 frc::Pose2d DriveSubsystem::GetPose()
 {
-    SmartDashboard::PutNumber("T_D_Odo_X", m_odometry.GetPose().X().to<double>());
-    SmartDashboard::PutNumber("T_D_Odo_Y", m_odometry.GetPose().Y().to<double>());
-    SmartDashboard::PutNumber("T_D_Odo_Angle", m_odometry.GetPose().Rotation().Degrees().to<double>());
+    // SmartDashboard::PutNumber("T_D_Odo_X", m_odometry.GetPose().X().to<double>());
+    // SmartDashboard::PutNumber("T_D_Odo_Y", m_odometry.GetPose().Y().to<double>());
+    // SmartDashboard::PutNumber("T_D_Odo_Angle", m_odometry.GetPose().Rotation().Degrees().to<double>());
     return m_odometry.GetPose();
 }
 

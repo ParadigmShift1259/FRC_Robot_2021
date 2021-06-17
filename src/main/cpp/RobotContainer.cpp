@@ -36,7 +36,7 @@ RobotContainer::RobotContainer()
     SmartDashboard::PutBoolean("WheelsForward", false);
 
     m_chooser.SetDefaultOption("Left 3", AutoPath::kLeft3);
-    m_chooser.AddOption("Left 8", AutoPath::kLeft8);
+    m_chooser.AddOption("Left 8 (Experimental)", AutoPath::kLeft8);
     m_chooser.AddOption("Middle 0", AutoPath::kMid0);
     m_chooser.AddOption("Middle 5", AutoPath::kMid5);
     m_chooser.AddOption("Right 2", AutoPath::kRight2);

@@ -29,8 +29,8 @@ CyclerSubsystem::CyclerSubsystem()
 
 void CyclerSubsystem::Periodic()
 {
-    SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
-    SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
+    // SmartDashboard::PutBoolean("D_C_Sensor", kSensorInvert ? !m_sensor.Get() : m_sensor.Get());
+    // SmartDashboard::PutBoolean("D_C_SensorFlag", m_triggeredsensor);
     m_sensor.ClearError();
 }
 

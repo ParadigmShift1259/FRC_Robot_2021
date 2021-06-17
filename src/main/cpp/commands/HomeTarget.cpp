@@ -29,7 +29,7 @@ void HomeTarget::Initialize()
 void HomeTarget::Execute()
 {
     // Homes flywheel, turret, and hood to the right angles through a formula
-    SmartDashboard::PutBoolean("TEST_VIS_ACTIVE", m_vision->GetActive());
+    // SmartDashboard::PutBoolean("TEST_VIS_ACTIVE", m_vision->GetActive());
     if (!m_vision->GetActive())
         return;
 
@@ -44,13 +44,13 @@ void HomeTarget::Execute()
     // https://mycurvefit.com/
     //y=11.20831-0.2645223*x+0.002584349*x^{2}-0.00001250923*x^{3}+2.986403\cdot10^{-8}*x^{4}-2.81104\cdot10^{-11}*x^{5}
     double hoodangle = 11.20831 - 0.2645223 * distance + 0.002584349 * pow(distance, 2) - 0.00001250923 * pow(distance, 3) + 2.986403E-8 * pow(distance, 4) - 2.81104E-11 * pow(distance, 5);
-    printf("Hood set %.3f\n", hoodangle);
+
     m_turret->TurnToRelative(m_vision->GetAngle());
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);
 
-    SmartDashboard::PutBoolean("TEST_AT_RPM", m_flywheel->IsAtRPM());
-    SmartDashboard::PutBoolean("TEST_AT_SET", m_turret->isAtSetpoint());
+    SmartDashboard::PutBoolean("D_FIRE_AT_RPM", m_flywheel->IsAtRPM());
+    SmartDashboard::PutBoolean("D_FIRE_AT_SET", m_turret->isAtSetpoint());
 
     // if at position, set turret ready to true
     if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint()) {
@@ -60,7 +60,7 @@ void HomeTarget::Execute()
 
 bool HomeTarget::IsFinished()
 {
-    SmartDashboard::PutBoolean("TEST_FIRE_FINISIHED", *m_finished);
+    // SmartDashboard::PutBoolean("TEST_FIRE_FINISIHED", *m_finished);
     return *m_finished;
 }
 

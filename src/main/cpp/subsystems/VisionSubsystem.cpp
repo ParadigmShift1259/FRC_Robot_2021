@@ -89,8 +89,8 @@ void VisionSubsystem::Periodic()
     m_averageangle[2] = m_horizontalangle;
 
     SmartDashboard::PutNumber("D_V_Active", m_active);
-    SmartDashboard::PutNumber("D_V_Distance", m_distance);
-    SmartDashboard::PutNumber("D_V_Angle", m_horizontalangle);
+    // SmartDashboard::PutNumber("D_V_Distance", m_distance);
+    // SmartDashboard::PutNumber("D_V_Angle", m_horizontalangle);
     SmartDashboard::PutNumber("D_V_Average Distance", m_avgdistance);
     SmartDashboard::PutNumber("D_V_Average Angle", 
     (m_averageangle[0] + m_averageangle[1] + m_averageangle[2]) / 3);

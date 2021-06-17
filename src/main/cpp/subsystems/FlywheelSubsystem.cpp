@@ -40,15 +40,13 @@ FlywheelSubsystem::FlywheelSubsystem()
     m_setpoint = kIdleRPM;
 
     //#ifdef TUNE_FLYWHEEL
-    SmartDashboard::PutNumber("T_F_S", kS);
-    SmartDashboard::PutNumber("T_F_V", kV);
-    SmartDashboard::PutNumber("T_F_A", kA);
-    SmartDashboard::PutNumber("T_F_P", kP);
-    SmartDashboard::PutNumber("T_F_I", kI);
-    SmartDashboard::PutNumber("T_F_D", kD);
+    // SmartDashboard::PutNumber("T_F_S", kS);
+    // SmartDashboard::PutNumber("T_F_V", kV);
+    // SmartDashboard::PutNumber("T_F_A", kA);
+    // SmartDashboard::PutNumber("T_F_P", kP);
+    // SmartDashboard::PutNumber("T_F_I", kI);
+    // SmartDashboard::PutNumber("T_F_D", kD);
     //#endif
-
-    SmartDashboard::PutNumber("T_F_flywheelRPM", 0);
 }
 
 #pragma GCC diagnostic pop
@@ -70,11 +68,9 @@ void FlywheelSubsystem::Periodic()
     // m_flywheelPID.SetD(d, 0);
     //#endif
 
-    // Temporary for graphing RPM
-    SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
-    SmartDashboard::PutNumber("T_F_RPM", m_flywheelencoder.GetVelocity());
-    SmartDashboard::PutNumber("T_F_Setpoint", m_setpoint);
-    SmartDashboard::PutNumber("T_F_At_Target", IsAtRPM());
+    SmartDashboard::PutNumber("D_F_RPM", m_flywheelencoder.GetVelocity());
+    // SmartDashboard::PutNumber("T_F_Setpoint", m_setpoint);
+    // SmartDashboard::PutNumber("T_F_At_Target", IsAtRPM());
 
     CalculateRPM();
 }
