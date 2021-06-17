@@ -238,8 +238,8 @@ namespace AutoConstants
 
 namespace OIConstants
 {
-    constexpr double kDeadzoneX = 0.07;
-    constexpr double kDeadzoneY = 0.07;
+    constexpr double kDeadzoneX = 0.10;
+    constexpr double kDeadzoneY = 0.10;
     constexpr double kDeadzoneRot = 0.10;
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kPrimaryControllerPort = 0;

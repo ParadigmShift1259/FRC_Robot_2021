@@ -11,7 +11,6 @@ using namespace frc;
 
 ClimberSubsystem::ClimberSubsystem() : m_motor(ClimberConstants::kMotorPort)
 {
-    
 }
 
 void ClimberSubsystem::Periodic()

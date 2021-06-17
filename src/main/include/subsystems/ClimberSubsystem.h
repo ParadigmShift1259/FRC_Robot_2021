@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <frc/SlewRateLimiter.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc/Spark.h>
 

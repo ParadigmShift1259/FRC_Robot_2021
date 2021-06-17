@@ -99,7 +99,7 @@ void RobotContainer::SetDefaultCommands()
                 }
                 if (turretXRot == 0 && turretYRot == 0)
                 {
-                    // m_turret.TurnToField(0);
+                    m_turret.TurnToField(0);
                 }
                 else {
                     double rotPosition = atan2f(turretYRot, turretXRot);
@@ -127,11 +127,14 @@ void RobotContainer::SetDefaultCommands()
     );
 
     m_cycler.SetDefaultCommand(
-        frc2::RunCommand(
-            [this] {
-                m_cycler.SetFeeder(0);
-                m_cycler.SetTurnTable(0);
-            }, {&m_cycler}
+        frc2::ParallelCommandGroup(
+            frc2::RunCommand(
+                [this] {
+                    m_cycler.SetFeeder(0);
+                    // m_cycler.SetTurnTable(0);
+                }, {&m_cycler}
+            ),
+            CyclerAgitation(&m_cycler, CyclerConstants::kTurnTableSpeed)
         )
     );
 }
@@ -235,6 +238,10 @@ void RobotContainer::ConfigureButtonBindings()
 
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
         CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeedHigher)   
+    );
+
+    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+        frc2::InstantCommand([this] { m_turret.ResetPosition(); }, { &m_turret} )
     );
 
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kA).WhenReleased(
@@ -351,7 +358,6 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                     {&m_intake, &m_cycler}
                 ),
                 std::move(GetSwerveCommand(mid5, sizeof(mid5) / sizeof(mid5[0]), true)),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
                 frc2::InstantCommand(
                     [this]() {
                         m_intake.Set(0);
@@ -361,8 +367,8 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                                     units::radians_per_second_t(0.0), false);
                     },
                     {}
-                )
-            );
+                ),
+                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished)            );
 
         case kRight2:
             return new frc2::SequentialCommandGroup(
