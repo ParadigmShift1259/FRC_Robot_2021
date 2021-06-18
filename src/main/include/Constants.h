@@ -277,7 +277,7 @@ namespace FlywheelConstants
     constexpr double kFiringRPMMultiplier = 1.05; //1.035; //1.05;
 
     // Launch PID values, used to first get to setpoint
-    constexpr double kP = 0.0002700;
+    constexpr double kP = 0.0002900;
     constexpr double kI = 0;
     constexpr double kD = 0;
 

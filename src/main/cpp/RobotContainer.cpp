@@ -275,7 +275,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
         case kLeft3:
             return new frc2::SequentialCommandGroup(
                 Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
-                frc2::ParallelCommandGroup(
+                frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true))
                 ),
@@ -293,12 +293,12 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
         case kLeft8:
             return new frc2::SequentialCommandGroup(
                 Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
-                frc2::ParallelCommandGroup(
+                frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left8p1, sizeof(left8p1) / sizeof(left8p1[0]), true))
                 ),
                 Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
-                frc2::ParallelCommandGroup(
+                frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left8p2, sizeof(left8p2) / sizeof(left8p2[0]), false))
                 ),
@@ -329,8 +329,22 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
 
         case kMid5:
             return new frc2::SequentialCommandGroup(
+                // frc2::ParallelCommandGroup(
+                //     frc2::SequentialCommandGroup(
+                //         std::move(GetSwerveCommand(mid5p0, sizeof(mid5p0) / sizeof(mid5p0[0]), true)),
+                //         frc2::InstantCommand(
+                //             [this]() {
+                //                 m_drive.Drive(units::meters_per_second_t(0.0),
+                //                             units::meters_per_second_t(0.0),
+                //                             units::radians_per_second_t(0.0), false);
+                //             },
+                //             {}
+                //         )
+                //     ),
+                //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.0_s)
+                // ),
                 Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
-                frc2::ParallelCommandGroup(
+                frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(mid5, sizeof(mid5) / sizeof(mid5[0]), true))
                 ),
@@ -347,8 +361,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
 
         case kRight2:
             return new frc2::SequentialCommandGroup(
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
-                frc2::ParallelCommandGroup(
+                frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(right2, sizeof(right2) / sizeof(right2[0]), true))
                 ),
