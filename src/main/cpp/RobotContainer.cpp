@@ -40,6 +40,7 @@ RobotContainer::RobotContainer()
     m_chooser.AddOption("Middle 0", AutoPath::kMid0);
     m_chooser.AddOption("Middle 5", AutoPath::kMid5);
     m_chooser.AddOption("Right 2", AutoPath::kRight2);
+    m_chooser.AddOption("Test", AutoPath::kTest);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 }
 
@@ -212,16 +213,16 @@ void RobotContainer::ConfigureButtonBindings()
         )
     );
 
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhileHeld(
-        frc2::InstantCommand(    
-        [this] {
-            m_climber.Run(ClimberConstants::kMotorSpeed);
-        },
-        {&m_climber}
-        )
-    );
+    // frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBack).WhileHeld(
+    //     frc2::InstantCommand(    
+    //     [this] {
+    //         m_climber.Run(ClimberConstants::kMotorSpeed);
+    //     },
+    //     {&m_climber}
+    //     )
+    // );
 
-    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kBack).WhileHeld(
+    frc2::JoystickButton(&m_primaryController, (int)frc::XboxController::Button::kStart).WhileHeld(
         frc2::InstantCommand(    
         [this] {
             m_climber.Run(ClimberConstants::kMotorSpeed * -1.0);
@@ -241,8 +242,8 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed)   
     );
 
-    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperLeft).WhenPressed(
-        CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeedHigher)   
+    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperLeft).WhenHeld(
+        CyclerAgitation(&m_cycler, CyclerConstants::kTurnTableSpeedHigher)   
     );
 
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
@@ -268,13 +269,20 @@ void RobotContainer::ConfigureButtonBindings()
 
 frc::Rotation2d GetDesiredRotation() { return frc::Rotation2d(0_deg); }
 
+void RobotContainer::ZeroDrive()
+{
+    m_drive.Drive(units::meters_per_second_t(0.0),
+                units::meters_per_second_t(0.0),
+                units::radians_per_second_t(0.0), false);
+}
+
 frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
 {
     switch(path)
     {
         case kLeft3:
             return new frc2::SequentialCommandGroup(
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.0_s),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true))
@@ -324,7 +332,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                     },
                     {}
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s)
+                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(8.0_s)
             );
 
         case kMid5:
@@ -343,7 +351,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 //     ),
                 //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.0_s)
                 // ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.5_s),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(mid5, sizeof(mid5) / sizeof(mid5[0]), true))
@@ -380,7 +388,6 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
              return new frc2::SequentialCommandGroup(
                 frc2::InstantCommand(
                     [this]() {
-                        m_intake.Set(0);
                         m_drive.Drive(units::meters_per_second_t(0.0),
                                     units::meters_per_second_t(0.0),
                                     units::radians_per_second_t(0.0), false);
