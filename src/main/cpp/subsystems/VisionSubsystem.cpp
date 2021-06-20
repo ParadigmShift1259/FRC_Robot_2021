@@ -37,7 +37,7 @@ VisionSubsystem::VisionSubsystem()
 void VisionSubsystem::Periodic()
 {
     m_dashboard->PutNumber("cameraFeed", m_camerachoice);
-    m_dashboard->PutNumber("D_V_Averaged Distance", m_avgdistance);
+    // m_dashboard->PutNumber("D_V_Averaged Distance", m_avgdistance);
 
     m_active = m_networktable->GetNumber("tv", 0);
     SmartDashboard::PutBoolean("TEST_VIS_ACTIVE_2", m_active);
@@ -90,7 +90,7 @@ void VisionSubsystem::Periodic()
 
     SmartDashboard::PutNumber("D_V_Active", m_active);
     SmartDashboard::PutNumber("D_V_Distance", m_distance);
-    SmartDashboard::PutNumber("D_V_Angle", m_horizontalangle);
+    // SmartDashboard::PutNumber("D_V_Angle", m_horizontalangle);
     SmartDashboard::PutNumber("D_V_Average Distance", m_avgdistance);
     SmartDashboard::PutNumber("D_V_Average Angle", 
     (m_averageangle[0] + m_averageangle[1] + m_averageangle[2]) / 3);
@@ -111,7 +111,7 @@ double VisionSubsystem::GetDistance()
     
     m_avgdistance = sum / m_averagedistance.size();
 
-m_avgdistance = 120; // HACK For auto testing w/o target
+// m_avgdistance = 120; // HACK For auto testing w/o target
 
     return m_avgdistance;
 }

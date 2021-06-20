@@ -72,6 +72,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    m_container.ZeroDrive();
     // m_container.ResetLog();
     // m_log.openLog();
     // m_log.logMsg(eInfo, __func__, "Starting Teleop");

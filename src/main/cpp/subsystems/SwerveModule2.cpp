@@ -74,19 +74,19 @@ void SwerveModule2::Periodic()
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
 
-    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
-    SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
+    // SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    // SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
     SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
-    SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
-    SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
+    // SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
+    // SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 {
     // Retrieving turn PID values from SmartDashboard
-    m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
-    m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
+    // m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
+    // m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
 
     // Find absolute encoder and NEO encoder positions
     //EncoderToRadians();
@@ -102,11 +102,17 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
     // Set position reference of turnPIDController
     double newPosition = currentPosition + minTurnRads;
 
-    #ifdef DISABLE_DRIVE
-    m_driveMotor.Set(TalonFXControlMode::Velocity, 0.0);
-    #else
-    m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
-    #endif
+    if (state.speed != 0_mps) {
+        #ifdef DISABLE_DRIVE
+        m_driveMotor.Set(TalonFXControlMode::Velocity, 0.0);
+        #else
+        m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
+        #endif
+    }
+    else {
+        m_driveMotor.Set(TalonFXControlMode::PercentOutput, 0.0);
+    }
+
 
     // Set the angle unless module is coming to a full stop
     if (state.speed.to<double>() != 0.0)
@@ -114,7 +120,7 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 
 
     SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
-    SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
+    // SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
 }
 
 void SwerveModule2::ResetEncoders()

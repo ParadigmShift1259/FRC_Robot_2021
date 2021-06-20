@@ -17,7 +17,7 @@ IntakeSubsystem::IntakeSubsystem()
 
 void IntakeSubsystem::Periodic()
 {
-    SmartDashboard::PutNumber("D_I_Motor", m_motor.Get());
+    // SmartDashboard::PutNumber("D_I_Motor", m_motor.Get());
 }
 
 void IntakeSubsystem::Set(double speed) 

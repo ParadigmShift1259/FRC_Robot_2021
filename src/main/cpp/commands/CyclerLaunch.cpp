@@ -46,8 +46,8 @@ void CyclerLaunch::Execute()
     }
 
 
-    SmartDashboard::PutBoolean("TEST_READY_TO_FIRE", *m_turretready);
-    SmartDashboard::PutBoolean("TEST_FIRING", *m_firing);
+    // SmartDashboard::PutBoolean("TEST_READY_TO_FIRE", *m_turretready);
+    // SmartDashboard::PutBoolean("TEST_FIRING", *m_firing);
 }
 
 bool CyclerLaunch::IsFinished() {
@@ -62,5 +62,5 @@ void CyclerLaunch::End(bool interrupted) {
     m_cycler->SetFeeder(0);
     m_cycler->SetTurnTable(0);
 
-    SmartDashboard::PutBoolean("TEST_FIRING", *m_firing);
+    // SmartDashboard::PutBoolean("TEST_FIRING", *m_firing);
 }

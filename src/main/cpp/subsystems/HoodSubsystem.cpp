@@ -9,7 +9,7 @@ using namespace std;
 using namespace frc;
 
 HoodSubsystem::HoodSubsystem() : m_servo(kPWMPort) {
-    SmartDashboard::PutNumber("T_H_SetAngle", kMax);
+    // SmartDashboard::PutNumber("T_H_SetAngle", kMax);
 }
 
 void HoodSubsystem::Periodic()
