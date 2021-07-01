@@ -306,7 +306,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 0; //2950; //0;
+    constexpr double kIdleRPM = 2950; //0;
 }
 
 // Turret Subsystem Constants
@@ -402,6 +402,9 @@ namespace VisionConstants
 
     constexpr double kMinTargetDistance = 70;
     constexpr double kMaxTargetDistance = 380;
+
+    constexpr double kMinHoneDistance = 130;
+    constexpr double kMaxHoneDistance = 260;
 }
 
 // Climber Subsystem constants

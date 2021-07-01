@@ -143,6 +143,21 @@ void RobotContainer::SetDefaultCommands()
             }, {&m_intake}
         )
     );
+
+    m_flywheel.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                //y=1687.747+16.6111x-0.0649x^{2}+0.000091892342x^{3}
+                double distance = m_vision.GetDistance();
+                if (distance > VisionConstants::kMinHoneDistance && distance < VisionConstants::kMaxHoneDistance) {
+                    m_flywheel.SetRPM(1687.747 + 16.6111 * distance - 0.0649 * pow(distance, 2) + 0.000091892342 * pow(distance, 3));
+                }
+                else {
+                    m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+                }
+            }, {&m_flywheel, &m_vision}
+        )
+    );
 }
 
 
