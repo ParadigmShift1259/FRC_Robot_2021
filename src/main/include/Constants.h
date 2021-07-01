@@ -325,6 +325,8 @@ namespace TurretConstants
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
+    constexpr double kMaxOverrideAngle = 10.0;
+
     constexpr double kDegreeStopRange = 1.35; //0.6; //0.4; //0.5;
     constexpr double kDegreePIDStopRange = 0.35; //0.35;
 

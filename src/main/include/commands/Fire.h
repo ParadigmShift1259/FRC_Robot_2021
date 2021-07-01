@@ -1,5 +1,7 @@
 #pragma once
 
+#include <frc/XboxController.h>
+
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/ParallelCommandGroup.h>
 
@@ -18,10 +20,11 @@
 
 class Fire : public frc2::CommandHelper<frc2::ParallelCommandGroup, Fire> {
 public:
-    Fire(   FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
+    Fire(   frc::XboxController* controller, FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
             IntakeSubsystem* intake, CyclerSubsystem* cycler, VisionSubsystem* vision,
             bool* m_turretready, bool* m_firing, bool* m_finished);
 private:
+    frc::XboxController* m_controller;
     bool* m_turretready;
     bool* m_firing;
     bool* m_finished;
