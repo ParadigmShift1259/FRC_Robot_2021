@@ -38,7 +38,7 @@ void HomeTarget::Execute()
     // Increased flywheel at upper ends 3/18/21
     //y\ =\ 1687.747+15.8111x-0.058079x^{2}+0.00008892342x^{3}
     double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
-    flywheelspeed -= 50;
+    flywheelspeed *= FlywheelConstants::kHomingRPMMultiplier;
     if (*m_firing)
         flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
     // Quintic regression calculated 3/27

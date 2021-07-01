@@ -220,6 +220,8 @@ namespace AutoConstants
     constexpr auto kMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi * 6.0);
     constexpr auto kMaxAngularAcceleration = units::unit_t<radians_per_second_squared_t>(wpi::math::pi * 6.0);
 
+    constexpr auto kTeleMaxAngularSpeed = units::radians_per_second_t(wpi::math::pi * 2.0);
+
 #ifdef Mk2
     constexpr double kPXController = 2.0;       // 0.25 
     constexpr double kPYController = 2.0;       // 0.25
@@ -272,9 +274,11 @@ namespace FlywheelConstants
     constexpr double kAllowedError = 75;//65;
     constexpr double kMaintainPIDError = 300;
 
+    // General multiplier added, adjusts for ball conditions and general firing
+    constexpr double kHomingRPMMultiplier = 1.03;
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
-    constexpr double kFiringRPMMultiplier = 1.05; //1.035; //1.05;
+    constexpr double kFiringRPMMultiplier = 1.02; //1.035; //1.05;
 
     // Launch PID values, used to first get to setpoint
     constexpr double kP = 0.0002900;
@@ -302,7 +306,7 @@ namespace FlywheelConstants
     constexpr double kWheelRevPerMotorRev = 1.25;
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
-    constexpr double kIdleRPM = 2800; //0;
+    constexpr double kIdleRPM = 0; //2950; //0;
 }
 
 // Turret Subsystem Constants
@@ -383,15 +387,16 @@ namespace CyclerConstants
 // Vision Subsystem Constants
 namespace VisionConstants
 {
+    // 6/30/21
+    // Limelight X Offset: -0.04
     // Mounting angle of the limelight, in degrees
     constexpr double kMountingAngle = 25.0;
     // Permanent X adjustment -0.05
     // Mounting height of the limelight from the ground, in inches
     constexpr double kMountingHeight = 22;
     // Target center height, in inches
-    constexpr double kTargetHeight = 98.25;
-    // Target width, in inches
-    constexpr double kTargetSize = 15;
+    // 6/30/21 Changed: Target bottom now instead for consistent tracking in worse conditions
+    constexpr double kTargetHeight = 81.25;  //98.25;
 
     constexpr double kMinTargetDistance = 70;
     constexpr double kMaxTargetDistance = 380;

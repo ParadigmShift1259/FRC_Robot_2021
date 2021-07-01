@@ -204,11 +204,7 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
-    // m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
-    // m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
-    // m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
-
-    rot = radians_per_second_t(rot.to<double>() * AutoConstants::kMaxAngularSpeed.to<double>());
+    rot = radians_per_second_t(rot.to<double>() * AutoConstants::kTeleMaxAngularSpeed.to<double>());
 
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)
@@ -219,10 +215,6 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
     auto states = kDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
 
     kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
-
-    // // Added to force correct slow left side, 3/24/21
-    // states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
-    // states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
     
     #ifdef TUNE_MODULES
     states[eFrontLeft].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFL", 0.0)));

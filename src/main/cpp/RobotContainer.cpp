@@ -289,9 +289,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 ),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
@@ -312,9 +310,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 ),
                  frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
@@ -326,9 +322,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 std::move(GetSwerveCommand(mid0, sizeof(mid0) / sizeof(mid0[0]), true)),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
@@ -358,9 +352,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 ),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
@@ -375,9 +367,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 ),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
@@ -388,9 +378,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
              return new frc2::SequentialCommandGroup(
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 )

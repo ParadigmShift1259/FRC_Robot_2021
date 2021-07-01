@@ -84,6 +84,7 @@ public:
     /// \param ySpeed        Speed of the robot in the y direction (sideways).
     /// \param rot           Angular rate of the robot.
     /// \param fieldRelative Whether the provided x and y speeds are relative to the field.
+    /// \param isAuto          Whether the bot is using function for auto or not. False by default. 
     void Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative);
 
     // Drives the robot with the right stick controlling the position angle of the robot
