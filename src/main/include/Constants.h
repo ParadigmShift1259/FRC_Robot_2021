@@ -120,10 +120,10 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.0;
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
-    constexpr double kFrontLeftOffset   = 2670.0;   //2710.0; //2695.0;
-    constexpr double kFrontRightOffset  = 201.0;    //209.0; //195.0;
-    constexpr double kRearRightOffset   = 1865.0;   //1876.0; //1861.0; //1829.0;
-    constexpr double kRearLeftOffset    = 3085.0;   //2823.0;   //2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
+    constexpr double kFrontLeftOffset   = 2689.0; //2670.0;   //2710.0; //2695.0;
+    constexpr double kFrontRightOffset  = 190.0; //201.0;    //209.0; //195.0;
+    constexpr double kRearRightOffset   = 1858.0; //1865.0;   //1876.0; //1861.0; //1829.0;
+    constexpr double kRearLeftOffset    = 3317.0; //3175.0; //3085.0;   //2823.0;   //2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -140,9 +140,9 @@ namespace DriveConstants
     constexpr double kTurnI = 0; //1e-4;
     constexpr double kTurnD = 1.85; // 1.85 // 1
 #else
-    constexpr double kTurnP = 0.35;   //0.35;
+    constexpr double kTurnP = 0.75;   //0.35;   //0.35;
     constexpr double kTurnI = 0.0;   //1e-4;
-    constexpr double kTurnD = 1.1;   // 1.85
+    constexpr double kTurnD = 1;     //1.1;   // 1.85
 #endif
     ///@}
 
