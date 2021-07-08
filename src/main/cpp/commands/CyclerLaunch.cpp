@@ -4,12 +4,13 @@
 using namespace CyclerConstants;
 
 CyclerLaunch::CyclerLaunch(CyclerSubsystem* subsystem, 
-                            bool* turretready, 
-                            bool* firing, bool* finished)
+                            bool* turretready, bool* firing, bool* finished,
+                            double launchtime)
  : m_cycler(subsystem)
  , m_turretready(turretready)
  , m_firing(firing)
  , m_finished(finished)
+ , m_launchtime(launchtime)
 {
   AddRequirements({subsystem});
   *m_turretready = false;
@@ -51,7 +52,7 @@ void CyclerLaunch::Execute()
 }
 
 bool CyclerLaunch::IsFinished() {
-    return m_timer.Get() > kTimeLaunch;
+    return m_timer.Get() > m_launchtime;
 }
 
 void CyclerLaunch::End(bool interrupted) {
