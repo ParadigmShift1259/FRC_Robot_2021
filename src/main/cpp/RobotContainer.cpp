@@ -297,7 +297,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
     {
         case kLeft3:
             return new frc2::SequentialCommandGroup(
-                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 1.5),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 2.0),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true))
@@ -313,7 +313,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
 
         case kLeft8:
             return new frc2::SequentialCommandGroup(
-                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 1.5),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 2.0),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left8p1, sizeof(left8p1) / sizeof(left8p1[0]), true))
@@ -360,7 +360,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 //     ),
                 //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.0_s)
                 // ),
-                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 1.5),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 1.8),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(mid5, sizeof(mid5) / sizeof(mid5[0]), true))

@@ -67,6 +67,7 @@ private:
 
     vector<double> m_averagedistance;
     double m_avgdistance;
-    double m_averageangle[3];
+    vector<double> m_averageangle;
+    
 
 };

@@ -27,9 +27,7 @@ VisionSubsystem::VisionSubsystem()
     m_averagedistance.reserve(3);
     m_avgdistance = 0;
 
-    m_averageangle[0] = 0;
-    m_averageangle[1] = 0;
-    m_averageangle[2] = 0;
+    m_averageangle.reserve(3);
 
     SetLED(true);
 }
@@ -51,9 +49,7 @@ void VisionSubsystem::Periodic()
     if (!m_active)
     {
         m_averagedistance.clear();
-        m_averageangle[0] = 0;
-        m_averageangle[1] = 0;
-        m_averageangle[2] = 0;
+        m_averageangle.clear();
         return;
     }
 
@@ -79,21 +75,20 @@ void VisionSubsystem::Periodic()
     if (m_averagedistance.size() > 3)
         m_averagedistance.erase(m_averagedistance.begin());
 
-    for (int i = 0; i < 2; i++)
-    {
-        m_averageangle[i] = m_averageangle[i + 1];
-    }
+
+    m_averageangle.push_back(m_horizontalangle);
+
+    if (m_averageangle.size() > 3)
+        m_averageangle.erase(m_averageangle.begin());
+
     if ((m_distance < kMinTargetDistance) || (m_distance > kMaxTargetDistance))
         m_active = false;
-
-    m_averageangle[2] = m_horizontalangle;
 
     SmartDashboard::PutNumber("D_V_Active", m_active);
     SmartDashboard::PutNumber("D_V_Distance", m_distance);
     // SmartDashboard::PutNumber("D_V_Angle", m_horizontalangle);
     SmartDashboard::PutNumber("D_V_Average Distance", m_avgdistance);
-    SmartDashboard::PutNumber("D_V_Average Angle", 
-    (m_averageangle[0] + m_averageangle[1] + m_averageangle[2]) / 3);
+    SmartDashboard::PutNumber("D_V_Average Angle", m_horizontalangle);
 }
 
 bool VisionSubsystem::GetActive()
@@ -119,7 +114,12 @@ double VisionSubsystem::GetDistance()
 
 double VisionSubsystem::GetAngle()
 {
-    return m_horizontalangle;
+    double sum = 0.0;
+
+    for(auto a:m_averageangle)
+        sum += a;
+
+    return sum / m_averageangle.size();
 }
 
 VisionSubsystem::BallDirection VisionSubsystem::GetDirection()

@@ -121,7 +121,7 @@ namespace DriveConstants
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
     constexpr double kFrontLeftOffset   = 2689.0; //2670.0;   //2710.0; //2695.0;
-    constexpr double kFrontRightOffset  = 190.0; //201.0;    //209.0; //195.0;
+    constexpr double kFrontRightOffset  = 205.0; //190.0; //201.0;    //209.0; //195.0;
     constexpr double kRearRightOffset   = 1858.0; //1865.0;   //1876.0; //1861.0; //1829.0;
     constexpr double kRearLeftOffset    = 3317.0; //3175.0; //3085.0;   //2823.0;   //2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
@@ -278,7 +278,7 @@ namespace FlywheelConstants
     constexpr double kHomingRPMMultiplier = 1.03;
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
-    constexpr double kFiringRPMMultiplier = 1.02; //1.035; //1.05;
+    constexpr double kFiringRPMMultiplier = 1; //TEMP 1.015; //2; //1.035; //1.05;
 
     // Launch PID values, used to first get to setpoint
     constexpr double kP = 0.0002900;
@@ -314,7 +314,7 @@ namespace TurretConstants
 {
     constexpr double kMotorPort = 11;   //!< Turret CAN ID (TalonSRX)
 
-    constexpr double kP = 0.32114;
+    constexpr double kP = 0.30114;
     constexpr double kI = 0.00035;
     constexpr double kD = 19.6;
 
@@ -325,10 +325,10 @@ namespace TurretConstants
     constexpr double kInverted = true;
     constexpr double kSensorPhase = true;
 
-    constexpr double kMaxOverrideAngle = 10.0;
+    constexpr double kMaxOverrideAngle = 5.0; //10.0;
 
-    constexpr double kDegreeStopRange = 1.35; //0.6; //0.4; //0.5;
-    constexpr double kDegreePIDStopRange = 0.35; //0.35;
+    constexpr double kDegreeStopRange = 0.85; //1; //1.35; //0.6; //0.4; //0.5;
+    constexpr double kDegreePIDStopRange = 0.25; //0.35; //0.35;
 
     constexpr double kPulley = 2.7305;
     constexpr double kSpinner = 29.845;
@@ -367,8 +367,8 @@ namespace CyclerConstants
     constexpr double kFeederPort = 30;      //!< Feeder CAN ID (SparkMAX)
     constexpr double kTurnTablePort = 31;   //!< Turn table CAN ID (TalonSRX)
 
-    constexpr double kFeederSpeed = 0.350;
-    constexpr double kTurnTableSpeed = 0.400;
+    constexpr double kFeederSpeed = 0.4; //TEMP0.350;
+    constexpr double kTurnTableSpeed = 0.55; //6; //TEMP0.400;
     constexpr double kTurnTableSpeedHigher = 0.550;
     constexpr double kTurnTableHoneSpeed = 0.300;
     constexpr units::second_t kMaxCyclerTime = 5.0_s;
