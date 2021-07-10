@@ -178,7 +178,7 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
 {
     // SmartDashboard::PutBoolean("D_D_RotationInput", m_rotationalInput);
     // SmartDashboard::PutNumber("D_D_lastHeading", m_lastHeading);
-    if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 && rot.to<double>() == 0)
+    if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 &&   rot.to<double>() == 0)
     {
         Drive(xSpeed, ySpeed, rot, fieldRelative);
         return;
@@ -193,7 +193,7 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
     if (rot.to<double>() != 0)
         m_rotationalInput = true;
     
-    if (!m_rotationalInput)
+    if (!m_rotationalInput && (xSpeed.to<double>() != 0 || ySpeed.to<double>() != 0))
         RotationDrive(xSpeed, ySpeed, radian_t(m_lastHeading), fieldRelative);
     else
         Drive(xSpeed, ySpeed, rot, fieldRelative);
@@ -204,11 +204,7 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
                         , radians_per_second_t rot
                         , bool fieldRelative)
 {
-    // m_logData[EDriveSubSystemLogData::eInputX] = xSpeed.to<double>();
-    // m_logData[EDriveSubSystemLogData::eInputY] = ySpeed.to<double>();
-    // m_logData[EDriveSubSystemLogData::eInputRot] = rot.to<double>();
-
-    rot = radians_per_second_t(rot.to<double>() * AutoConstants::kMaxAngularSpeed.to<double>());
+    rot = radians_per_second_t(rot.to<double>() * AutoConstants::kTeleMaxAngularSpeed.to<double>());
 
     frc::ChassisSpeeds chassisSpeeds;
     if (fieldRelative)
@@ -219,10 +215,6 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed
     auto states = kDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
 
     kDriveKinematics.NormalizeWheelSpeeds(&states, AutoConstants::kMaxSpeed);
-
-    // // Added to force correct slow left side, 3/24/21
-    // states[eFrontLeft].speed *= DriveConstants::kLeftMultipler;
-    // states[eRearLeft].speed *= DriveConstants::kLeftMultipler;
     
     #ifdef TUNE_MODULES
     states[eFrontLeft].angle = frc::Rotation2d(radian_t(SmartDashboard::GetNumber("T_D_MFL", 0.0)));

@@ -64,26 +64,26 @@ void RobotContainer::SetDefaultCommands()
                 yRot = 0;
             }
 
-            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                             units::angular_velocity::radians_per_second_t(rotInput),
-                             m_fieldRelative);
+            // m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //                 units::angular_velocity::radians_per_second_t(rotInput),
+            //                 m_fieldRelative);
 
-            // if (m_fieldRelative)
-            // {
-            //     m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-            //                 xRot,
-            //                 yRot,
-            //                 m_fieldRelative);
-            // }
-            // else 
-            // {
-            //     m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-            //                 units::radians_per_second_t(rotInput),
-            //                 m_fieldRelative);
-            // }
+
+            if (!m_fieldRelative)
+            {
+            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            units::angular_velocity::radians_per_second_t(rotInput),
+                            false);
+            }
+            else 
+            {
+            m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            units::angular_velocity::radians_per_second_t(rotInput),
+                            true);
+            }
 
         },
         {&m_drive}
@@ -141,6 +141,22 @@ void RobotContainer::SetDefaultCommands()
             [this] {
                 m_intake.Set(0);
             }, {&m_intake}
+        )
+    );
+
+    m_flywheel.SetDefaultCommand(
+        frc2::RunCommand(
+            [this] {
+                //y=1687.747+16.6111x-0.0649x^{2}+0.000091892342x^{3}
+                double distance = m_vision.GetDistance();
+                if (distance > VisionConstants::kMinHoneDistance && distance < VisionConstants::kMaxHoneDistance) {
+                    m_flywheel.SetRPM(1687.747 + 16.6111 * distance - 0.0649 * pow(distance, 2) + 0.000091892342 * pow(distance, 3));
+                }
+                else {
+                    m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+                }
+                // m_flywheel.SetRPM(0);
+            }, {&m_flywheel, &m_vision}
         )
     );
 }
@@ -234,7 +250,7 @@ void RobotContainer::ConfigureButtonBindings()
     // Secondary
     // Triggers Fire sequence
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kY).WhenPressed(
-        Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision,
+        Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision,
              &m_turretready, &m_firing, &m_finished)
     );
 
@@ -282,43 +298,39 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
     {
         case kLeft3:
             return new frc2::SequentialCommandGroup(
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.0_s),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 2.0),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left3, sizeof(left3) / sizeof(left3[0]), true))
                 ),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished)
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 8.0)
             );
 
         case kLeft8:
             return new frc2::SequentialCommandGroup(
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(5.0_s),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 2.0),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left8p1, sizeof(left8p1) / sizeof(left8p1[0]), true))
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 3),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(left8p2, sizeof(left8p2) / sizeof(left8p2[0]), false))
                 ),
                  frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished)
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 8.0)
             );
 
         case kMid0:
@@ -326,13 +338,11 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 std::move(GetSwerveCommand(mid0, sizeof(mid0) / sizeof(mid0[0]), true)),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(8.0_s)
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 8.0)
             );
 
         case kMid5:
@@ -351,20 +361,18 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 //     ),
                 //     Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.0_s)
                 // ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished).WithTimeout(6.5_s),
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 1.8),
                 frc2::ParallelRaceGroup(
                     CyclerIntakeAgitation(&m_intake, &m_cycler, CyclerConstants::kTurnTableSpeed),
                     std::move(GetSwerveCommand(mid5, sizeof(mid5) / sizeof(mid5[0]), true))
                 ),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished)
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 8.0)
             );
 
         case kRight2:
@@ -375,22 +383,18 @@ frc2::Command *RobotContainer::GetAutonomousCommand(AutoPath path)
                 ),
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 ),
-                Fire(&m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished)
+                Fire(&m_secondaryController, &m_flywheel, &m_turret, &m_hood, &m_intake, &m_cycler, &m_vision, &m_turretready, &m_firing, &m_finished, 8.0)
             );
 
         default:
              return new frc2::SequentialCommandGroup(
                 frc2::InstantCommand(
                     [this]() {
-                        m_drive.Drive(units::meters_per_second_t(0.0),
-                                    units::meters_per_second_t(0.0),
-                                    units::radians_per_second_t(0.0), false);
+                        ZeroDrive();
                     },
                     {}
                 )

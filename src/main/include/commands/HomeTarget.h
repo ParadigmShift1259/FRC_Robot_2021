@@ -1,5 +1,7 @@
 #pragma once
 
+#include <frc/XboxController.h>
+
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
 
@@ -12,7 +14,7 @@
 
 class HomeTarget : public frc2::CommandHelper<frc2::CommandBase, HomeTarget> {
 public:
-    explicit HomeTarget(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood, 
+    explicit HomeTarget(frc::XboxController* controller, FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood, 
                         VisionSubsystem* vision, bool* turretready, 
                         bool* firing, bool* finished);
 
@@ -22,6 +24,7 @@ public:
     void End(bool interrupted) override;
 
 private:
+    frc::XboxController* m_controller;
     FlywheelSubsystem* m_flywheel;
     TurretSubsystem* m_turret;
     HoodSubsystem* m_hood;

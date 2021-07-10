@@ -2,10 +2,11 @@
 #include "Constants.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
-HomeTarget::HomeTarget(FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
+HomeTarget::HomeTarget(frc::XboxController* controller, FlywheelSubsystem* flywheel, TurretSubsystem* turret, HoodSubsystem* hood,
                         VisionSubsystem* vision, bool* turretready, 
                         bool* firing, bool* finished)
- : m_flywheel(flywheel)
+ : m_controller(controller)
+ , m_flywheel(flywheel)
  , m_turret(turret)
  , m_hood(hood)
  , m_vision(vision)
@@ -38,7 +39,7 @@ void HomeTarget::Execute()
     // Increased flywheel at upper ends 3/18/21
     //y\ =\ 1687.747+15.8111x-0.058079x^{2}+0.00008892342x^{3}
     double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
-    flywheelspeed -= 50;
+    flywheelspeed *= FlywheelConstants::kHomingRPMMultiplier;
     if (*m_firing)
         flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
     // Quintic regression calculated 3/27
@@ -46,7 +47,13 @@ void HomeTarget::Execute()
     //y=11.20831-0.2645223*x+0.002584349*x^{2}-0.00001250923*x^{3}+2.986403\cdot10^{-8}*x^{4}-2.81104\cdot10^{-11}*x^{5}
     double hoodangle = 11.20831 - 0.2645223 * distance + 0.002584349 * pow(distance, 2) - 0.00001250923 * pow(distance, 3) + 2.986403E-8 * pow(distance, 4) - 2.81104E-11 * pow(distance, 5);
 
-    m_turret->TurnToRelative(m_vision->GetAngle());
+    double rotation = m_controller->GetY(frc::GenericHID::kRightHand) * -1.0;
+    double angleOverride = 0;
+    if (rotation != 0) {
+        angleOverride = rotation * TurretConstants::kMaxOverrideAngle;
+    }
+
+    m_turret->TurnToRelative(m_vision->GetAngle() + angleOverride);
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);
 

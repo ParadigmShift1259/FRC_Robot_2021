@@ -13,5 +13,7 @@
 
 class CyclerFire : public frc2::CommandHelper<frc2::SequentialCommandGroup, CyclerFire> {
 public:
-    CyclerFire(CyclerSubsystem* cycler, bool* turretready, bool* firing, bool* finished);
+    CyclerFire(CyclerSubsystem* cycler, 
+                bool* turretready, bool* firing, bool* finished,
+                double launctime);
 };
