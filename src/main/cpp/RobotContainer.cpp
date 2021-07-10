@@ -64,26 +64,26 @@ void RobotContainer::SetDefaultCommands()
                 yRot = 0;
             }
 
-            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                             units::angular_velocity::radians_per_second_t(rotInput),
-                             m_fieldRelative);
+            // m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+            //                 units::angular_velocity::radians_per_second_t(rotInput),
+            //                 m_fieldRelative);
 
-            // if (m_fieldRelative)
-            // {
-            //     m_drive.RotationDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-            //                 xRot,
-            //                 yRot,
-            //                 m_fieldRelative);
-            // }
-            // else 
-            // {
-            //     m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
-            //                 units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-            //                 units::radians_per_second_t(rotInput),
-            //                 m_fieldRelative);
-            // }
+
+            if (!m_fieldRelative)
+            {
+            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            units::angular_velocity::radians_per_second_t(rotInput),
+                            false);
+            }
+            else 
+            {
+            m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+                            units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
+                            units::angular_velocity::radians_per_second_t(rotInput),
+                            true);
+            }
 
         },
         {&m_drive}
@@ -155,6 +155,7 @@ void RobotContainer::SetDefaultCommands()
                 else {
                     m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
                 }
+                // m_flywheel.SetRPM(0);
             }, {&m_flywheel, &m_vision}
         )
     );

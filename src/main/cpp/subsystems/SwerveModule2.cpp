@@ -74,7 +74,7 @@ void SwerveModule2::Periodic()
         m_turnRelativeEncoder.SetPosition(m_absAngle); // Tell the relative encoder where the absolute encoder is
     }
 
-    // SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
     // SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
     SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
@@ -133,6 +133,7 @@ void SwerveModule2::EncoderToRadians()
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
     m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + Math::kTau, Math::kTau);
     SmartDashboard::PutNumber("D_SM_PW " + m_name, pulseWidth);
+    SmartDashboard::PutNumber("D_SM_AA " + m_name, m_absAngle);
     // Convert CW to CCW? m_absAngle = Math::kTau - m_absAngle;
 }
 

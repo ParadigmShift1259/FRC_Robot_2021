@@ -178,7 +178,7 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
 {
     // SmartDashboard::PutBoolean("D_D_RotationInput", m_rotationalInput);
     // SmartDashboard::PutNumber("D_D_lastHeading", m_lastHeading);
-    if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 && rot.to<double>() == 0)
+    if (xSpeed.to<double>() == 0 && ySpeed.to<double>() == 0 &&   rot.to<double>() == 0)
     {
         Drive(xSpeed, ySpeed, rot, fieldRelative);
         return;
@@ -193,7 +193,7 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
     if (rot.to<double>() != 0)
         m_rotationalInput = true;
     
-    if (!m_rotationalInput)
+    if (!m_rotationalInput && (xSpeed.to<double>() != 0 || ySpeed.to<double>() != 0))
         RotationDrive(xSpeed, ySpeed, radian_t(m_lastHeading), fieldRelative);
     else
         Drive(xSpeed, ySpeed, rot, fieldRelative);
