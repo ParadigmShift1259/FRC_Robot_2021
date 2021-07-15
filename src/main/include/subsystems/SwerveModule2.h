@@ -51,6 +51,7 @@ class TurnPidParams2
     double m_i = DriveConstants::kTurnI;
     double m_d = DriveConstants::kTurnD;
     double m_iz = 0.0;
+    double m_ia = 0.0;
     double m_ff = 0.0;
     double m_max = 1.0;
     double m_min = -1.0;
@@ -62,6 +63,7 @@ void Load(CANPIDController& turnPIDController)
         turnPIDController.SetI(m_i);
         turnPIDController.SetD(m_d);
         turnPIDController.SetIZone(m_iz);
+        turnPIDController.SetIMaxAccum(m_ia);
         turnPIDController.SetFF(m_ff);
         turnPIDController.SetOutputRange(m_min, m_max);
         #ifdef TUNE_MODULE
@@ -69,6 +71,7 @@ void Load(CANPIDController& turnPIDController)
         frc::SmartDashboard::PutNumber("T_SM_TI", m_i);
         frc::SmartDashboard::PutNumber("T_SM_TD", m_d);
         frc::SmartDashboard::PutNumber("T_SM_TIZone", m_iz);
+        frc::SmartDashboard::PutNumber("T_SM_TIAccum", m_ia);
         frc::SmartDashboard::PutNumber("T_SM_TFF", m_ff);
         frc::SmartDashboard::PutNumber("T_SM_TMax", m_max);
         frc::SmartDashboard::PutNumber("T_SM_TMin", m_min);
@@ -81,6 +84,7 @@ void Load(CANPIDController& turnPIDController)
         double i = frc::SmartDashboard::GetNumber("T_SM_TI", 0.0);
         double d = frc::SmartDashboard::GetNumber("T_SM_TD", 0.0);
         double iz = frc::SmartDashboard::GetNumber("T_SM_TIZone", 0.0);
+        double ia = frc::SmartDashboard::GetNumber("T_SM_TIAccum", 0.0);
         double ff = frc::SmartDashboard::GetNumber("T_SM_TFF", 0.0);
         double max = frc::SmartDashboard::GetNumber("T_SM_TMax", 0.0);
         double min = frc::SmartDashboard::GetNumber("T_SM_TMin", 0.0);
@@ -90,6 +94,7 @@ void Load(CANPIDController& turnPIDController)
         if ((i != m_i)) { turnPIDController.SetI(i); m_i = i; }
         if ((d != m_d)) { turnPIDController.SetD(d); m_d = d; }
         if ((iz != m_iz)) { turnPIDController.SetIZone(iz); m_iz = iz; }
+        if ((ia != m_ia)) { turnPIDController.SetIAccum(ia); m_ia = ia; }
         if ((ff != m_ff)) { turnPIDController.SetFF(ff); m_ff = ff; }
         
         if ((max != m_max) || (min != m_min))

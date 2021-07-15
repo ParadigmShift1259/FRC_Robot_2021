@@ -130,6 +130,11 @@ namespace DriveConstants
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
+    // Pulse Width per rotation is not equal for all encoders. Some are 0 - 3865, some are 0 - 4096
+    // FL: 4096
+    // FR: 3970
+    // RL: 4096
+    // RR: 3865
     constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
     constexpr double kPulseWidthToRadians =  Math::kTau / kPulseWidthToZeroOne;
 
@@ -142,7 +147,7 @@ namespace DriveConstants
 #else
     constexpr double kTurnP = 0.75;   //0.35;   //0.35;
     constexpr double kTurnI = 0.0;   //1e-4;
-    constexpr double kTurnD = 1;     //1.1;   // 1.85
+    constexpr double kTurnD = 0.0;     //1.1;   // 1.85
 #endif
     ///@}
 

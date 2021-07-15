@@ -54,8 +54,13 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto xInput = Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto yInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            auto xInput = m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0;
+            auto yInput = m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0;
+            if (Deadzone(sqrt(pow(xInput, 2) + pow(yInput, 2)), OIConstants::kDeadzoneX) == 0) {
+                xInput = 0;
+                yInput = 0;
+            }
+
             auto rotInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
             auto xRot = m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0;
@@ -72,7 +77,7 @@ void RobotContainer::SetDefaultCommands()
 
             if (!m_fieldRelative)
             {
-            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::angular_velocity::radians_per_second_t(rotInput),
                             false);
@@ -98,11 +103,20 @@ void RobotContainer::SetDefaultCommands()
                     turretXRot = 0;
                     turretYRot = 0;
                 }
+
                 if (turretXRot == 0 && turretYRot == 0)
                 {
-                    m_turret.TurnToField(0);
+                    if (!m_vision.GetActive())
+                    {
+                        m_turret.TurnToField(0);
+                    }
+                    else
+                    {
+                        m_turret.TurnToRelative(m_vision.GetAngle());
+                    }
                 }
-                else {
+                else 
+                {
                     double rotPosition = atan2f(turretYRot, turretXRot);
                     rotPosition *= 360.0/Math::kTau; 
                     m_turret.TurnToRobot(rotPosition);
@@ -147,15 +161,15 @@ void RobotContainer::SetDefaultCommands()
     m_flywheel.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
-                //y=1687.747+16.6111x-0.0649x^{2}+0.000091892342x^{3}
-                double distance = m_vision.GetDistance();
-                if (distance > VisionConstants::kMinHoneDistance && distance < VisionConstants::kMaxHoneDistance) {
-                    m_flywheel.SetRPM(1687.747 + 16.6111 * distance - 0.0649 * pow(distance, 2) + 0.000091892342 * pow(distance, 3));
-                }
-                else {
-                    m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
-                }
-                // m_flywheel.SetRPM(0);
+                // //y=1687.747+16.6111x-0.0649x^{2}+0.000091892342x^{3}
+                // double distance = m_vision.GetDistance();
+                // if (distance > VisionConstants::kMinHoneDistance && distance < VisionConstants::kMaxHoneDistance) {
+                //     m_flywheel.SetRPM(1687.747 + 16.6111 * distance - 0.0649 * pow(distance, 2) + 0.000091892342 * pow(distance, 3));
+                // }
+                // else {
+                //     m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+                // }
+                m_flywheel.SetRPM(0);
             }, {&m_flywheel, &m_vision}
         )
     );
