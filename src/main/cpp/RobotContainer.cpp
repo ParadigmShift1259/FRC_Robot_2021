@@ -54,9 +54,9 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto xInput = m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0;
-            auto yInput = m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0;
-            if (Deadzone(sqrt(pow(xInput, 2) + pow(yInput, 2)), OIConstants::kDeadzoneX) == 0) {
+            auto xInput = Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
+            auto yInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            if (Deadzone(sqrt(pow(xInput, 2) + pow(yInput, 2)), OIConstants::kDeadzoneXY) == 0) {
                 xInput = 0;
                 yInput = 0;
             }

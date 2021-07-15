@@ -115,6 +115,9 @@ public:
     /// \param fieldRelative Whether the provided x and y speeds are relative to the field.
     void HeadingDrive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rot, bool fieldRelative);
 
+    /// Updates the last heading set for Heading Drive. Needs to be called if transitioning from other Drive functions to HeadingDrive
+    void UpdateLastHeading();
+
     /// Resets the drive encoders to currently read a position of 0.
     void ResetEncoders();
 
