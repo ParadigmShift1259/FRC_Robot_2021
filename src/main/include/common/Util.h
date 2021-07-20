@@ -18,4 +18,10 @@ public:
 
     // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
     static double NegPiToPiRads(double theta);
+
+    static double Deadzone(double inputValue, double deadzone)
+    {
+        // If the input is small return 0
+        return abs(inputValue) <= deadzone ? 0 : inputValue;
+    }   
 };

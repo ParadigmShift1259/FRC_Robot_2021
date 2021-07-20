@@ -46,6 +46,7 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::Periodic()
 {
+    SmartDashboard::PutNumber("Gyro", m_gyro.GetHeading());
 }
 
 void RobotContainer::SetDefaultCommands()
@@ -54,17 +55,17 @@ void RobotContainer::SetDefaultCommands()
         [this] {
             // up is xbox joystick y pos
             // left is xbox joystick x pos
-            auto xInput = Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
-            auto yInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
-            if (Deadzone(sqrt(pow(xInput, 2) + pow(yInput, 2)), OIConstants::kDeadzoneXY) == 0) {
+            auto xInput = Util::Deadzone(m_primaryController.GetY(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneX);
+            auto yInput = Util::Deadzone(m_primaryController.GetX(frc::GenericHID::kLeftHand) * -1.0, OIConstants::kDeadzoneY);
+            if (Util::Deadzone(sqrt(pow(xInput, 2) + pow(yInput, 2)), OIConstants::kDeadzoneXY) == 0) {
                 xInput = 0;
                 yInput = 0;
             }
 
-            auto rotInput = Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
+            auto rotInput = Util::Deadzone(m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0, OIConstants::kDeadzoneRot);
             auto xRot = m_primaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
             auto yRot = m_primaryController.GetX(frc::GenericHID::kRightHand) * -1.0;
-            if (Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
+            if (Util::Deadzone(sqrt(pow(xRot, 2) + pow(yRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
                 xRot = 0;
                 yRot = 0;
             }
@@ -89,7 +90,6 @@ void RobotContainer::SetDefaultCommands()
                             units::angular_velocity::radians_per_second_t(rotInput),
                             true);
             }
-
         },
         {&m_drive}
     ));
@@ -99,7 +99,7 @@ void RobotContainer::SetDefaultCommands()
             [this] {
                 auto turretXRot = m_secondaryController.GetY(frc::GenericHID::kRightHand) * -1.0;
                 auto turretYRot = m_secondaryController.GetX(frc::GenericHID::kRightHand);
-                if (Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
+                if (Util::Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
                     turretXRot = 0;
                     turretYRot = 0;
                 }
@@ -161,15 +161,16 @@ void RobotContainer::SetDefaultCommands()
     m_flywheel.SetDefaultCommand(
         frc2::RunCommand(
             [this] {
-                // //y=1687.747+16.6111x-0.0649x^{2}+0.000091892342x^{3}
-                // double distance = m_vision.GetDistance();
-                // if (distance > VisionConstants::kMinHoneDistance && distance < VisionConstants::kMaxHoneDistance) {
-                //     m_flywheel.SetRPM(1687.747 + 16.6111 * distance - 0.0649 * pow(distance, 2) + 0.000091892342 * pow(distance, 3));
-                // }
-                // else {
-                //     m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
-                // }
-                m_flywheel.SetRPM(0);
+                //y=1687.747+16.6111x-0.0649x^{2}+0.000091892342x^{3}
+                double distance = m_vision.GetDistance();
+                if (distance > VisionConstants::kMinHoneDistance && distance < VisionConstants::kMaxHoneDistance) {
+                    double flywheelspeed = 1687.747 + 16.6111 * distance - 0.0649 * pow(distance, 2) + 0.000091892342 * pow(distance, 3);
+                    flywheelspeed *= FlywheelConstants::kIdleHomingRPMMultiplier;
+                    m_flywheel.SetRPM(flywheelspeed);
+                }
+                else {
+                    m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
+                }
             }, {&m_flywheel, &m_vision}
         )
     );
@@ -211,9 +212,9 @@ void RobotContainer::ConfigureButtonBindings()
     * Secondary:
     * Y (Press)             -> Shoot
     * A (Hold)              -> Ingest and Agitate
-    * Left Bumper (Hold)    -> Ingest and Agitate harder
+    * Left Bumper (Hold)    -> Agitate harder
     * B (Hold)              -> Release
-    * Back (Hold)           -> Unjam (UNTESTED)
+    * Back (Hold)           -> Emergency Unjam
     * 
     */
 
@@ -276,9 +277,9 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerAgitation(&m_cycler, CyclerConstants::kTurnTableSpeedHigher)   
     );
 
-    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
-        frc2::InstantCommand([this] { m_turret.ResetPosition(); }, { &m_turret} )
-    );
+    // frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+    //     frc2::InstantCommand([this] { m_turret.ResetPosition(); }, { &m_turret} )
+    // );
 
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kA).WhenReleased(
         CyclerPrepare(&m_cycler, true).WithTimeout(CyclerConstants::kMaxCyclerTime)

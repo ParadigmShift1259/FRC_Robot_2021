@@ -5,6 +5,8 @@
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
 
+#include "common/Util.h"
+
 #include "subsystems/FlywheelSubsystem.h"
 #include "subsystems/TurretSubsystem.h"
 #include "subsystems/HoodSubsystem.h"
@@ -24,6 +26,7 @@ public:
     void End(bool interrupted) override;
 
 private:
+
     frc::XboxController* m_controller;
     FlywheelSubsystem* m_flywheel;
     TurretSubsystem* m_turret;

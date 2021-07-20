@@ -282,6 +282,7 @@ namespace FlywheelConstants
 
     // General multiplier added, adjusts for ball conditions and general firing
     constexpr double kHomingRPMMultiplier = 1.03;
+    constexpr double kIdleHomingRPMMultiplier = 1.015;
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
     constexpr double kFiringRPMMultiplier = 1.015; //TEMP 1.015; //2; //1.035; //1.05;
@@ -313,6 +314,8 @@ namespace FlywheelConstants
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
     constexpr double kIdleRPM = 2950; //0;
+    /// The fixed RPM to fire at the trench given very heavy defense
+    constexpr double kTrenchRPM = 3400;
 }
 
 // Turret Subsystem Constants
@@ -365,6 +368,9 @@ namespace HoodConstants
     // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
     constexpr double kMax = .95;
     constexpr double kMin = .20;
+
+    /// The fixed hood to fire in the trench given very heavy defense
+    constexpr double kTrenchPosition = 0.223;
 }
 
 // Cycler Subsystem Constants

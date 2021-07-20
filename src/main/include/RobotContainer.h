@@ -31,6 +31,8 @@
 #include <frc/trajectory/TrajectoryGenerator.h>
 #include <frc/trajectory/TrajectoryUtil.h>
 
+#include "common/Util.h"
+
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/FlywheelSubsystem.h"
 #include "subsystems/TurretSubsystem.h"
@@ -73,11 +75,7 @@ public:
     void ZeroDrive();
     
 private:
-    double Deadzone(double inputValue, double deadzone)
-    {
-        // If the input is small return 0
-        return abs(inputValue) <= deadzone ? 0 : inputValue;
-    }    
+
 
     frc::XboxController m_primaryController{OIConstants::kPrimaryControllerPort};
     frc::XboxController m_secondaryController{OIConstants::kSecondaryControllerPort};
