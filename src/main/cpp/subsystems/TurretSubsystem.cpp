@@ -46,13 +46,17 @@ void TurretSubsystem::Periodic()
     m_turretmotor.Set(ControlMode::Position, DegreesToTicks(m_currentAngle));
 }
 
-void TurretSubsystem::TurnTo(double angle)
+void TurretSubsystem::TurnTo(double angle, double minAngle, double maxAngle)
 {
     // safeguard
     angle = Util::ZeroTo360Degs(angle);
     // Turret is not set if desired angle is within the deadzone area
-    if (angle >= kMinAngle && angle <= kMaxAngle)
+    if (angle >= minAngle && angle <= maxAngle)
         m_currentAngle = angle;
+    // else if (angle <= minAngle)
+    //     m_currentAngle = minAngle;
+    // else if (angle >= maxAngle)
+    //     m_currentAngle = maxAngle;
 }
 
 void TurretSubsystem::TurnToRobot(double robotAngle)
@@ -71,13 +75,13 @@ void TurretSubsystem::TurnToField(double desiredAngle)
     TurnToRobot(Util::ZeroTo360Degs(angle));
 }
 
-void TurretSubsystem::TurnToRelative(double angle)
+void TurretSubsystem::TurnToRelative(double angle, double minAngle, double maxAngle)
 {   
     double desiredAngle = TicksToDegrees(m_turretmotor.GetSelectedSensorPosition());
     angle = Util::ZeroTo360Degs(angle);
     desiredAngle += angle;
     desiredAngle = Util::ZeroTo360Degs(desiredAngle);
-    TurnTo(desiredAngle);
+    TurnTo(desiredAngle, minAngle, maxAngle);
 }
 
 bool TurretSubsystem::isAtSetpoint()

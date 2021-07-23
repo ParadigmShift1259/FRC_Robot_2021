@@ -12,7 +12,7 @@ CyclerSubsystem::CyclerSubsystem()
     m_turntablemotor.SetNeutralMode(NeutralMode::Brake);
     m_turntablemotor.SetInverted(kTurnTableInverted);
     m_turntablemotor.ConfigOpenloopRamp(kTurnTableRampRate, kTimeout);
-    m_feedermotor.SetIdleMode(CANSparkMax::IdleMode::kBrake);
+    m_feedermotor.SetIdleMode(CANSparkMax::IdleMode::kCoast);
     m_feedermotor.SetInverted(kFeederInverted);
 
     m_triggeredsensor = true;

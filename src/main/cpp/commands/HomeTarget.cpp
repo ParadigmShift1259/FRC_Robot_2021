@@ -74,7 +74,7 @@ void HomeTarget::Execute()
     SmartDashboard::PutBoolean("D_FIRE_AT_SET", m_turret->isAtSetpoint());
 
     // if running manual trench fire
-    if (m_controller->GetBumper(GenericHID::JoystickHand::kRightHand)
+    if (m_controller->GetBumper(GenericHID::JoystickHand::kRightHand))
     {
         // if call to launch
         if (m_controller->GetYButtonPressed())

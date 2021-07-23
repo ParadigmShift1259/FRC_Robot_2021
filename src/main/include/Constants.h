@@ -354,6 +354,11 @@ namespace TurretConstants
     // Maximum rotation of the turret relative to the turret, in degrees
     constexpr double kMinAngle = 0;
     constexpr double kMaxAngle = 90;
+    // Range of angle allowed for auto targeting by default
+    constexpr double kMinAutoAngle = 25;
+    constexpr double kMaxAutoAngle = 65;
+    // Maximum relative angle allowed for auto targeting by default
+    constexpr double kMaxAutoRelAngle = 20;
 
     // initial configured angle of the turret relative to the turret, in degrees
     constexpr double kStartingPositionDegrees = 45;

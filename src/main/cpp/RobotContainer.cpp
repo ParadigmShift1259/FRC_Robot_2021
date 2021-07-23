@@ -78,14 +78,14 @@ void RobotContainer::SetDefaultCommands()
 
             if (!m_fieldRelative)
             {
-            m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::angular_velocity::radians_per_second_t(rotInput),
                             false);
             }
             else 
             {
-            m_drive.HeadingDrive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
+            m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
                             units::angular_velocity::radians_per_second_t(rotInput),
                             true);
@@ -106,13 +106,15 @@ void RobotContainer::SetDefaultCommands()
 
                 if (turretXRot == 0 && turretYRot == 0)
                 {
-                    if (!m_vision.GetActive())
+                    // If vision is not active or vision is active but outside of auto targeting range
+                    if (!m_vision.GetActive() || fabs(m_vision.GetAngle()) > TurretConstants::kMaxAutoRelAngle)
                     {
                         m_turret.TurnToField(0);
                     }
+                    // Auto target with smaller auto targeting range
                     else
                     {
-                        m_turret.TurnToRelative(m_vision.GetAngle());
+                        m_turret.TurnToRelative(m_vision.GetAngle(), TurretConstants::kMinAutoAngle, TurretConstants::kMaxAutoAngle);
                     }
                 }
                 else 
