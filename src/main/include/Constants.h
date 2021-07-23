@@ -130,6 +130,11 @@ namespace DriveConstants
     constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
     constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
+    // Pulse Width per rotation is not equal for all encoders. Some are 0 - 3865, some are 0 - 4096
+    // FL: 4096
+    // FR: 3970
+    // RL: 4096
+    // RR: 3865
     constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
     constexpr double kPulseWidthToRadians =  Math::kTau / kPulseWidthToZeroOne;
 
@@ -142,7 +147,7 @@ namespace DriveConstants
 #else
     constexpr double kTurnP = 0.75;   //0.35;   //0.35;
     constexpr double kTurnI = 0.0;   //1e-4;
-    constexpr double kTurnD = 1;     //1.1;   // 1.85
+    constexpr double kTurnD = 0.0;     //1.1;   // 1.85
 #endif
     ///@}
 
@@ -240,8 +245,9 @@ namespace AutoConstants
 
 namespace OIConstants
 {
-    constexpr double kDeadzoneX = 0.10;
-    constexpr double kDeadzoneY = 0.10;
+    constexpr double kDeadzoneX = 0.015;
+    constexpr double kDeadzoneY = 0.015;
+    constexpr double kDeadzoneXY = 0.08;
     constexpr double kDeadzoneRot = 0.10;
     constexpr double kDeadzoneAbsRot = 0.50;
     constexpr int kPrimaryControllerPort = 0;
@@ -276,6 +282,7 @@ namespace FlywheelConstants
 
     // General multiplier added, adjusts for ball conditions and general firing
     constexpr double kHomingRPMMultiplier = 1.03;
+    constexpr double kIdleHomingRPMMultiplier = 1.015;
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
     constexpr double kFiringRPMMultiplier = 1.015; //TEMP 1.015; //2; //1.035; //1.05;
@@ -307,6 +314,8 @@ namespace FlywheelConstants
 
     /// Use MPSPerRPM to determine the ramp rates, current values are just placeholders
     constexpr double kIdleRPM = 2950; //0;
+    /// The fixed RPM to fire at the trench given very heavy defense
+    constexpr double kTrenchRPM = 3400;
 }
 
 // Turret Subsystem Constants
@@ -345,6 +354,11 @@ namespace TurretConstants
     // Maximum rotation of the turret relative to the turret, in degrees
     constexpr double kMinAngle = 0;
     constexpr double kMaxAngle = 90;
+    // Range of angle allowed for auto targeting by default
+    constexpr double kMinAutoAngle = 25;
+    constexpr double kMaxAutoAngle = 65;
+    // Maximum relative angle allowed for auto targeting by default
+    constexpr double kMaxAutoRelAngle = 20;
 
     // initial configured angle of the turret relative to the turret, in degrees
     constexpr double kStartingPositionDegrees = 45;
@@ -359,6 +373,9 @@ namespace HoodConstants
     // Drives from Max to Min, where hood is smallest at 0.85, and greatest at 0.0485
     constexpr double kMax = .95;
     constexpr double kMin = .20;
+
+    /// The fixed hood to fire in the trench given very heavy defense
+    constexpr double kTrenchPosition = 0.223;
 }
 
 // Cycler Subsystem Constants

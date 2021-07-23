@@ -28,7 +28,7 @@ public:
 
     /// Turns the turret to a specified angle on the turret
     /// \param angle        Angle desired to turn to, must be within the boundaries of the turret, must be positive, in degrees
-    void TurnTo(double angle);
+    void TurnTo(double angle, double minAngle=TurretConstants::kMinAngle, double maxAngle=TurretConstants::kMaxAngle);
 
     /// Turns the turret based on the robot angle
     /// \param robotAngle        Robot angle to turn to, must be positive, in degrees
@@ -40,7 +40,7 @@ public:
 
     /// Turns the turret to an angle added to the current robot position
     /// \param angle        Angle that should be added to the robot position and turned to, can be either positive or negative, in degrees
-    void TurnToRelative(double angle);
+    void TurnToRelative(double angle, double minAngle=TurretConstants::kMinAngle, double maxAngle=TurretConstants::kMaxAngle);
 
     /// Returns whether or not the turret is at the desired setpoint
     bool isAtSetpoint();

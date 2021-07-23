@@ -39,31 +39,55 @@ void HomeTarget::Execute()
     // Increased flywheel at upper ends 3/18/21
     //y\ =\ 1687.747+15.8111x-0.058079x^{2}+0.00008892342x^{3}
     double flywheelspeed = 1687.747 + 15.8111 * distance - 0.058079 * pow(distance, 2) + 0.00008892342 * pow(distance, 3);
-    flywheelspeed *= FlywheelConstants::kHomingRPMMultiplier;
-    if (*m_firing)
-        flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
     // Quintic regression calculated 3/27
     // https://mycurvefit.com/
     //y=11.20831-0.2645223*x+0.002584349*x^{2}-0.00001250923*x^{3}+2.986403\cdot10^{-8}*x^{4}-2.81104\cdot10^{-11}*x^{5}
     double hoodangle = 11.20831 - 0.2645223 * distance + 0.002584349 * pow(distance, 2) - 0.00001250923 * pow(distance, 3) + 2.986403E-8 * pow(distance, 4) - 2.81104E-11 * pow(distance, 5);
 
-    double rotation = m_controller->GetY(frc::GenericHID::kRightHand) * -1.0;
     double angleOverride = 0;
-    if (rotation != 0) {
-        angleOverride = rotation * TurretConstants::kMaxOverrideAngle;
+    double turretXRot = m_controller->GetY(frc::GenericHID::kRightHand) * -1.0;
+    double turretYRot = m_controller->GetX(frc::GenericHID::kRightHand);
+    if (m_controller->GetBumperPressed(GenericHID::JoystickHand::kRightHand)) {
+        flywheelspeed = FlywheelConstants::kTrenchRPM;
+        hoodangle = HoodConstants::kTrenchPosition;
+        if (Util::Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
+            turretXRot = 0;
+            turretYRot = 0;
+        }
+        double rotPosition = atan2f(turretYRot, turretXRot);
+        rotPosition *= 360.0/Math::kTau; 
+        m_turret->TurnToRobot(rotPosition);
+    }
+    else {
+        angleOverride = turretXRot * TurretConstants::kMaxOverrideAngle;
+        m_turret->TurnToRelative(m_vision->GetAngle() + angleOverride);
     }
 
-    m_turret->TurnToRelative(m_vision->GetAngle() + angleOverride);
+    flywheelspeed *= FlywheelConstants::kHomingRPMMultiplier;
+    if (*m_firing)
+        flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
+
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);
 
     SmartDashboard::PutBoolean("D_FIRE_AT_RPM", m_flywheel->IsAtRPM());
     SmartDashboard::PutBoolean("D_FIRE_AT_SET", m_turret->isAtSetpoint());
 
+    // if running manual trench fire
+    if (m_controller->GetBumper(GenericHID::JoystickHand::kRightHand))
+    {
+        // if call to launch
+        if (m_controller->GetYButtonPressed())
+        {
+            *m_turretready = true;
+        }
+    }
     // if at position, set turret ready to true
-    if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint()) {
+    else if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint())
+    {
         *m_turretready = true;
     }
+    
 }
 
 bool HomeTarget::IsFinished()

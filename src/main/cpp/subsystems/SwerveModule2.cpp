@@ -78,6 +78,7 @@ void SwerveModule2::Periodic()
     // SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
     SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
+    SmartDashboard::PutNumber("D_SM_IError " + m_name, m_turnPIDController.GetIAccum());
     // SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
     // SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
 }
@@ -86,7 +87,7 @@ void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
 {
     // Retrieving turn PID values from SmartDashboard
     // m_drivePidParams.LoadFromNetworkTable(m_driveMotor);
-    // m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
+    m_turnPidParams.LoadFromNetworkTable(m_turnPIDController);
 
     // Find absolute encoder and NEO encoder positions
     //EncoderToRadians();
@@ -131,6 +132,7 @@ void SwerveModule2::ResetEncoders()
 void SwerveModule2::EncoderToRadians()
 {
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
+    // Pulse Width per rotation is not equal for all encoders. Some are 0 - 3865, some are 0 - 4096
     m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + Math::kTau, Math::kTau);
     SmartDashboard::PutNumber("D_SM_PW " + m_name, pulseWidth);
     SmartDashboard::PutNumber("D_SM_AA " + m_name, m_absAngle);

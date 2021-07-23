@@ -187,7 +187,7 @@ void DriveSubsystem::HeadingDrive(meters_per_second_t xSpeed
     if (rot.to<double>() == 0 && m_rotationalInput)
     {
         m_rotationalInput = false;
-        m_lastHeading = m_gyro->GetHeadingAsRot2d().Radians().to<double>();
+        UpdateLastHeading();
     }
     else
     if (rot.to<double>() != 0)
@@ -240,6 +240,11 @@ void DriveSubsystem::SetModuleStates(SwerveModuleStates desiredStates)
     m_frontRight.SetDesiredState(desiredStates[eFrontRight]);
     m_rearRight.SetDesiredState(desiredStates[eRearRight]);
     m_rearLeft.SetDesiredState(desiredStates[eRearLeft]);
+}
+
+void DriveSubsystem::UpdateLastHeading()
+{
+    m_lastHeading = m_gyro->GetHeadingAsRot2d().Radians().to<double>();
 }
 
 void DriveSubsystem::ResetEncoders()
