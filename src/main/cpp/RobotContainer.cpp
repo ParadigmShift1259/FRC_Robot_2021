@@ -106,16 +106,17 @@ void RobotContainer::SetDefaultCommands()
 
                 if (turretXRot == 0 && turretYRot == 0)
                 {
+                    m_turret.TurnToField(0);
                     // If vision is not active or vision is active but outside of auto targeting range
-                    if (!m_vision.GetActive() || fabs(m_vision.GetAngle()) > TurretConstants::kMaxAutoRelAngle)
-                    {
-                        m_turret.TurnToField(0);
-                    }
-                    // Auto target with smaller auto targeting range
-                    else
-                    {
-                        m_turret.TurnToRelative(m_vision.GetAngle(), TurretConstants::kMinAutoAngle, TurretConstants::kMaxAutoAngle);
-                    }
+                    // if (!m_vision.GetActive() || fabs(m_vision.GetAngle()) > TurretConstants::kMaxAutoRelAngle)
+                    // {
+                    //     m_turret.TurnToField(0);
+                    // }
+                    // // Auto target with smaller auto targeting range
+                    // else
+                    // {
+                    //     m_turret.TurnToRelative(m_vision.GetAngle(), TurretConstants::kMinAutoAngle, TurretConstants::kMaxAutoAngle);
+                    // }
                 }
                 else 
                 {
@@ -173,6 +174,7 @@ void RobotContainer::SetDefaultCommands()
                 else {
                     m_flywheel.SetRPM(FlywheelConstants::kIdleRPM);
                 }
+                // m_flywheel.SetRPM(0);
             }, {&m_flywheel, &m_vision}
         )
     );
@@ -279,9 +281,9 @@ void RobotContainer::ConfigureButtonBindings()
         CyclerAgitation(&m_cycler, CyclerConstants::kTurnTableSpeedHigher)   
     );
 
-    // frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
-    //     frc2::InstantCommand([this] { m_turret.ResetPosition(); }, { &m_turret} )
-    // );
+    frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kBumperRight).WhenPressed(
+        frc2::InstantCommand([this] { m_turret.ResetPosition(); }, { &m_turret} )
+    );
 
     frc2::JoystickButton(&m_secondaryController, (int)frc::XboxController::Button::kA).WhenReleased(
         CyclerPrepare(&m_cycler, true).WithTimeout(CyclerConstants::kMaxCyclerTime)

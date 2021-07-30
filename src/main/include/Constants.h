@@ -123,7 +123,7 @@ namespace DriveConstants
     constexpr double kFrontLeftOffset   = 2689.0; //2670.0;   //2710.0; //2695.0;
     constexpr double kFrontRightOffset  = 205.0; //190.0; //201.0;    //209.0; //195.0;
     constexpr double kRearRightOffset   = 1858.0; //1865.0;   //1876.0; //1861.0; //1829.0;
-    constexpr double kRearLeftOffset    = 1013.0; //3317.0; //3175.0; //3085.0;   //2823.0;   //2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
+    constexpr double kRearLeftOffset    = 983.0; //1013.0; //3317.0; //3175.0; //3085.0;   //2823.0;   //2692.0; //2717.0; //486.0; //234.0; //362.891; //147.0;
     #endif
 
     constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
@@ -281,11 +281,11 @@ namespace FlywheelConstants
     constexpr double kMaintainPIDError = 300;
 
     // General multiplier added, adjusts for ball conditions and general firing
-    constexpr double kHomingRPMMultiplier = 1.03;
-    constexpr double kIdleHomingRPMMultiplier = 1.015;
+    constexpr double kHomingRPMMultiplier = 1.0175;
+    constexpr double kIdleHomingRPMMultiplier = 1.01;
     // Additional multiplier applied to flywheel speed while firing 
     // Ensures all ball trajectories are straight
-    constexpr double kFiringRPMMultiplier = 1.015; //TEMP 1.015; //2; //1.035; //1.05;
+    constexpr double kFiringRPMMultiplier = 1.01; //TEMP 1.015; //2; //1.035; //1.05;
 
     // Launch PID values, used to first get to setpoint
     constexpr double kP = 0.0002900;
