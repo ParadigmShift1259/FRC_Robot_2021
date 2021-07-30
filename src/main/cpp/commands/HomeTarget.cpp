@@ -47,25 +47,29 @@ void HomeTarget::Execute()
     double angleOverride = 0;
     double turretXRot = m_controller->GetY(frc::GenericHID::kRightHand) * -1.0;
     double turretYRot = m_controller->GetX(frc::GenericHID::kRightHand);
-    if (m_controller->GetBumperPressed(GenericHID::JoystickHand::kRightHand)) {
-        flywheelspeed = FlywheelConstants::kTrenchRPM;
-        hoodangle = HoodConstants::kTrenchPosition;
-        if (Util::Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
-            turretXRot = 0;
-            turretYRot = 0;
-        }
-        double rotPosition = atan2f(turretYRot, turretXRot);
-        rotPosition *= 360.0/Math::kTau; 
-        m_turret->TurnToRobot(rotPosition);
-    }
-    else {
+    // if (m_controller->GetBumperPressed(GenericHID::JoystickHand::kRightHand)) {
+    //     flywheelspeed = FlywheelConstants::kTrenchRPM;
+    //     hoodangle = HoodConstants::kTrenchPosition;
+    //     if (Util::Deadzone(sqrt(pow(turretXRot, 2) + pow(turretYRot, 2)), OIConstants::kDeadzoneAbsRot) == 0) {
+    //         turretXRot = 0;
+    //         turretYRot = 0;
+    //     }
+    //     double rotPosition = atan2f(turretYRot, turretXRot);
+    //     rotPosition *= 360.0/Math::kTau; 
+    //     m_turret->TurnToRobot(rotPosition);
+    // }
+    // else {
         angleOverride = turretXRot * TurretConstants::kMaxOverrideAngle;
         m_turret->TurnToRelative(m_vision->GetAngle() + angleOverride);
-    }
+    // }
 
     flywheelspeed *= FlywheelConstants::kHomingRPMMultiplier;
     if (*m_firing)
         flywheelspeed *= FlywheelConstants::kFiringRPMMultiplier;
+    
+    if (distance > 200) {
+        flywheelspeed += 100;
+    }
 
     m_flywheel->SetRPM(flywheelspeed);
     m_hood->Set(hoodangle);
@@ -74,16 +78,17 @@ void HomeTarget::Execute()
     SmartDashboard::PutBoolean("D_FIRE_AT_SET", m_turret->isAtSetpoint());
 
     // if running manual trench fire
-    if (m_controller->GetBumper(GenericHID::JoystickHand::kRightHand))
-    {
-        // if call to launch
-        if (m_controller->GetYButtonPressed())
-        {
-            *m_turretready = true;
-        }
-    }
-    // if at position, set turret ready to true
-    else if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint())
+    // if (m_controller->GetBumper(GenericHID::JoystickHand::kRightHand))
+    // {
+    //     // if call to launch
+    //     if (m_controller->GetYButtonPressed())
+    //     {
+    //         *m_turretready = true;
+    //     }
+    // }
+    // // if at position, set turret ready to true
+    // else 
+    if (m_flywheel->IsAtRPMPositive() && m_turret->isAtSetpoint())
     {
         *m_turretready = true;
     }
