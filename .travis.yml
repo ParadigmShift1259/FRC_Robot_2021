@@ -13,6 +13,7 @@ script:
 # Prevent jekyll from running so that doxygen files starting with _ are still present
 before_deploy:
   - touch docs/.nojekyll
+  - mv logo.png docs
 
 deploy:
   provider: pages
