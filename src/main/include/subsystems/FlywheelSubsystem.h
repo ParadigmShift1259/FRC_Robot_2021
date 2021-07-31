@@ -26,33 +26,36 @@ using namespace frc;
 class FlywheelSubsystem : public frc2::SubsystemBase
 {
 public:
-
     FlywheelSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
 
     /// Sets the flywheel to a desired rpm
+    /// \param rpm         Desired set rpm
     void SetRPM(double rpm);
 
-    /// Returns whether or not the flywheel in the zone to use the alternative "maintain" PID values
+    /// \return Whether or not the flywheel in the zone to use the alternative "maintain" PID values
     bool IsAtMaintainPID();
-    /// Returns whether or not the flywheel is at the desired RPM
+    /// \return Whether or not the flywheel is at the desired RPM
     bool IsAtRPM();
-    /// Returns whether or not the flywheel is at the desired RPM, but only positive side
+    /// \return Whether or not the flywheel is at the desired RPM, but only positive side
     bool IsAtRPMPositive();
 
 protected:
-    /// Calcultes the next desired RPM for the flywheel
+    /// Calculates the next desired RPM for the flywheel
     void CalculateRPM();
 
 private:
+    /// \name Flywheel shooter
+    /// NEO that runs shooter, maintains set RPM with the PID, encoder, and feedforward to convert rpm directly to power
+    ///@{
     CANSparkMax m_flywheelmotor;
     CANPIDController m_flywheelPID;
     CANEncoder m_flywheelencoder;
-
     SimpleMotorFeedforward<units::meters> m_flywheelFF;
+    ///@}
 
-    // Current desired setpoint of the flywheel in RPM
+    /// Current desired setpoint of the flywheel in RPM
     double m_setpoint;
 };

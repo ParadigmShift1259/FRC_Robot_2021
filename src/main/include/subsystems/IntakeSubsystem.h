@@ -19,6 +19,7 @@ public:
     /// \param speed         Desired motor speed to run, ranging from [-1, 1]
     void Set(double speed);
 
-private:    
+private:
+    /// 665 that runs intake
     frc::Spark m_motor;
 };

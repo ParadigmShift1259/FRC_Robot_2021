@@ -21,6 +21,7 @@ public:
     /// \param speed         Desired motor speed to run, ranging from [-1, 1]
     void Run(double speed);
 
-private:    
+private:
+    /// 775 that pulls/releases rope for hooks
     frc::Spark m_motor;
 };

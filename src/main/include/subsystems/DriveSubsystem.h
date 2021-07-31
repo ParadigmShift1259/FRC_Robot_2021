@@ -142,6 +142,7 @@ public:
     /// Set all 4 wheels to the zero position
     void WheelsForward();
 
+    /// Resync all relative NEO turn encoders to the absolute encoders
     void ResetRelativeToAbsolute();
 
     meter_t kTrackWidth = 23.5_in;
@@ -174,12 +175,12 @@ private:
     SwerveModule2 m_frontRight;
     SwerveModule2 m_rearRight;
     SwerveModule2 m_rearLeft;
-
     ///@}
 
+    /// Reads the absolute encoder pulse widths
     CANifier m_canifier;
-    Gyro *m_gyro;                                       //!< Inertial measurement unit; compass + accelerometer
-
+    /// Gyro to determine field relative driving, from @ref RobotContainer
+    Gyro *m_gyro;
     /// Odometry class for tracking robot pose
     frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
 
@@ -189,7 +190,8 @@ private:
         DriveConstants::kRotationI,
         DriveConstants::kRotationD
     };
-
+    /// Last maintained heading, used for @ref HeadingDrive
     double m_lastHeading;
+    /// Whether or not rotation input was provided, used for @ref HeadingDrive
     bool m_rotationalInput;
 };

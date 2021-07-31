@@ -9,7 +9,6 @@
 class HoodSubsystem : public frc2::SubsystemBase
 {
 public:
-
     HoodSubsystem();
 
     /// Will be called periodically whenever the CommandScheduler runs.
@@ -19,6 +18,7 @@ public:
     /// \param position         Servo rotation, ranging from [0, 1]
     void Set(double position);
 
-private:    
+private:
+    /// Servo that moves hood up and down
     frc::Servo m_servo;
 };

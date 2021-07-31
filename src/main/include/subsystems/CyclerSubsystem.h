@@ -41,19 +41,28 @@ public:
     /// \param speed        Speed used in turning, between -1.0 and 1.0 with 0.0 as stopped
     void SetFeeder(double speed);
 
-    /// Begins and stops parallel thread detection of input
-    void StartDetection();
+    /// Begins parallel thread detection of input
+    void StartDetection();\
+    /// Begins parallel thread detection of input
     void EndDetection();
 
     /// Returns whether the cycler is at the launch position
+    /// Sensor was removed on robot, now always returns true
+    /// \return Whether or not the turntable sensor is at position
     bool AtPosition();
     /// Resets the triggered sensor back to false
+    /// Function does nothing, as sensor was removed
     void ResetSensor();
 
-private:    
+private:
+    /// NEO that feeds balls from turntable into shooter
     CANSparkMax m_feedermotor;
+    /// 775 that shuffles balls around in the turntable
     TalonSRX m_turntablemotor;
+    /// Sensor (REMOVED), used for detecting a specific position on the turntable
     DigitalInput m_sensor;
+    /// Whether or not @ref m_sensor has been triggered, stays true until reset
     bool m_triggeredsensor;
+    /// Unused boolean
     bool m_interruptsenabled;
 };

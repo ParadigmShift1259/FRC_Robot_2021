@@ -23,14 +23,12 @@ RobotContainer::RobotContainer()
     , m_vision()
     , m_climber()
 {
-    // Initialize all of your commands and subsystems here
     m_fieldRelative = false;
 
     m_turretready = false;
     m_firing = false;
     m_finished = false;
 
-    // Configure the button bindings
     ConfigureButtonBindings();
     SetDefaultCommands();
     SmartDashboard::PutBoolean("WheelsForward", false);

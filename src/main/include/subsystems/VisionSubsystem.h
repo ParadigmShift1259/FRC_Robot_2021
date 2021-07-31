@@ -28,13 +28,15 @@ public:
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
 
-    /// Determine whether or not the Vision Subsystem is giving accurate values
+    /// Determine valid vision based on returned distance values
+    /// \return         Whether or not the Vision Subsystem is giving accurate values
     bool GetActive();
     /// Retrieves the distance calculation from the target via the limelight
     double GetDistance();
-    /// Retrieves left, right, or default for direction of ball to be used for enumeration
+    /// Determines Ball location based on angle. Currently not used
+    /// \return         left, right, or default for direction of ball to be used for enumeration
     BallDirection GetDirection();
-    /// Retrieves the angle calculation from the target via the limelight
+    /// \return         The angle calculation from the target via the limelight
     double GetAngle();
     /// Turns the limelight LED on or off
     /// \param on        Boolean where true = LED on

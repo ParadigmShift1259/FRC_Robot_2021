@@ -30,6 +30,7 @@
 #include <string>
 
 #include "Constants.h"
+#include "common/Util.h"
 
 #ifndef Mk2
 
@@ -57,7 +58,9 @@ class TurnPidParams2
     double m_min = -1.0;
 
 public:
-void Load(CANPIDController& turnPIDController)
+    /// Loads turn PID controller with values, also sends default PID values to SmartDashboard
+    /// \param turnPIDController        The CANPIDController of the CANSparkMax responsible for turning
+    void Load(CANPIDController& turnPIDController)
     {
         turnPIDController.SetP(m_p);
         turnPIDController.SetI(m_i);
@@ -78,6 +81,8 @@ void Load(CANPIDController& turnPIDController)
         #endif
     }
 
+    /// Loads turn PID controller with on the fly values from SmartDashboard
+    /// \param turnPIDController        The CANPIDController of the CANSparkMax responsible for turning
     void LoadFromNetworkTable(CANPIDController& turnPIDController)
     {
         double p = frc::SmartDashboard::GetNumber("T_SM_TP", 0.0);
@@ -116,7 +121,9 @@ class DrivePidParams2
     double m_min = -1.0;
 
 public:
-   void Load(TalonFX& driveMotor)
+    /// Loads drive PID controller with values, also sends default PID values to SmartDashboard
+    /// \param driveMotor        The TalonFX responsible for driving
+    void Load(TalonFX& driveMotor)
     {
         driveMotor.Config_kP(0, m_p);
         driveMotor.Config_kD(0, m_d);
@@ -133,9 +140,11 @@ public:
         #endif
     }
 
+    /// Loads drive PID controller with on the fly values from SmartDashboard
+    /// \param driveMotor        The TalonFX responsible for driving
     void LoadFromNetworkTable(TalonFX& driveMotor)
     {
-        // Retrieving drive PID values from SmartDashboard
+        /// Retrieving drive PID values from SmartDashboard
         double p = frc::SmartDashboard::GetNumber("T_SM_DP", 0.0);
         double i = frc::SmartDashboard::GetNumber("T_SM_DI", 0.0);
         double d = frc::SmartDashboard::GetNumber("T_SM_DD", 0.0);
@@ -143,7 +152,7 @@ public:
         double max = frc::SmartDashboard::GetNumber("T_SM_DMax", 0.0);
         double min = frc::SmartDashboard::GetNumber("T_SM_DMin", 0.0);
 
-        // if PID coefficients on SmartDashboard have changed, write new values to controller
+        /// if PID coefficients on SmartDashboard have changed, write new values to controller
         if ((p != m_p)) { driveMotor.Config_kP(0, p); m_p = p; }
         if ((i != m_i)) { driveMotor.Config_kI(0, i); m_i = i; }
         if ((d != m_d)) { driveMotor.Config_kD(0, d); m_d = d; }
@@ -172,48 +181,65 @@ public:
                 , double offSet
                 , const std::string& name);
 
-    frc::SwerveModuleState GetState();
-
     void Periodic();
 
+    /// Get the state for the swerve module pod
+    /// \return             The state (vector with speed and angle) representig the current module state
+    /// @todo Currently GetState uses the absolute angle instead of the relative angle that we should be using
+    frc::SwerveModuleState GetState();
+
+    /// Set the desired state for the swerve module pod
+    /// \param state        The state (vector with speed and angle) representing the desired module state
     void SetDesiredState(frc::SwerveModuleState &state);
-
+    /// Resets the drive motor encoders to 0
     void ResetEncoders();
-
+    /// Resync the relative NEO turn encoder to the absolute encoder
     void ResetRelativeToAbsolute();
 
-    // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
-    static double ZeroTo2PiRads(double theta);
-
-    // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
-    static double NegPiToPiRads(double theta);
-
 private:
+    /// Calculate the @ref m_absAngle based on the pulse widths from @ref m_pulseWidthCallback
     void EncoderToRadians();
-
-    // Determine the smallest magnitude delta angle that can be added to initial angle that will 
-    // result in an angle equivalent (but not necessarily equal) to final angle. 
-    // All angles in radians
+    /// Determine the smallest magnitude delta angle that can be added to initial angle that will 
+    /// result in an angle equivalent (but not necessarily equal) to final angle. 
+    /// All angles in radians
+    /// Currently final - init difference is always chosen regardless of angle
     double MinTurnRads(double init, double final, bool& bOutputReverse);
+    /// Calculate the MPS of the drive motor based on its current encoder tick velocity
+    /// \return             Meters per second
     meters_per_second_t CalcMetersPerSec();
+    /// Calculate drive motor encoder ticks based on the MPS
+    /// \param speed        Meters per second
+    /// \return             Encoder ticks
     double CalcTicksPer100Ms(meters_per_second_t speed);
 
+    /// The offset, in pulse widths, for syncing the relative encoder to the absolute encoder
     double m_offset;
+    /// String used to identify each pod, used for SmartDashboard prints
     std::string m_name;
+    /// Absolute angle calculated from the absolute encoder pulse widths
     double m_absAngle = 0.0;
 
+    /// Falon 500 that drives the pod
     TalonFX m_driveMotor;
+    /// \name NEO that turns the pod, controls angle with relative encoder and PID
+    ///@{
     CANSparkMax m_turningMotor;
-
-    DrivePidParams2   m_drivePidParams;
-    TurnPidParams2   m_turnPidParams;
-
     CANEncoder m_turnRelativeEncoder = m_turningMotor.GetAlternateEncoder(CANEncoder::AlternateEncoderType::kQuadrature, 
                                                                           ModuleConstants::kTurnEncoderCPR);
     CANPIDController m_turnPIDController = m_turningMotor.GetPIDController();
+    ///@}
+
+    /// PID param loader for the TalonFX
+    DrivePidParams2   m_drivePidParams;
+    /// PID param loader for the CANSparkMax
+    TurnPidParams2   m_turnPidParams;
+
+    /// Callback used to determine the pulse width
+    /// \param pwmChannel       Channel to decide which absolute encoder's pulse width values are retrieved
     GetPulseWidthCallback m_pulseWidthCallback;
     CANifier::PWMChannel m_pwmChannel;
 
+    /// Timer used to sync absolute and relative encoders on robot turn on
     Timer m_timer;
 };
 

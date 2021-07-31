@@ -24,9 +24,8 @@ public:
     /// Will be called periodically whenever the CommandScheduler runs.
     void Periodic() override;
 
-    // Most calculations currently depend on counter clockwise turning, with 0 as "front"
-
     /// Turns the turret to a specified angle on the turret
+    /// Most calculations currently depend on counter clockwise turning, with 0 as "front"
     /// \param angle        Angle desired to turn to, must be within the boundaries of the turret, must be positive, in degrees
     void TurnTo(double angle, double minAngle=TurretConstants::kMinAngle, double maxAngle=TurretConstants::kMaxAngle);
 
@@ -48,6 +47,7 @@ public:
     /// Resets the turret back to the initial default position
     void ResetPosition();
 
+    /// Set new PID Values for the turret from on the fly SmartDashboard values
     void SetNewPIDValues();
 
 protected:
@@ -59,8 +59,11 @@ protected:
     /// \param degrees      Number of degrees to be converted
     double DegreesToTicks(double degrees);
 
-private:    
+private:
+    /// 775 that rurns the shooting mechanism
     TalonSRX m_turretmotor;
+    /// The current angle of the turret, in degrees
     double m_currentAngle;
+    /// Gyro to determine field relative angles, from @ref RobotContainer
     Gyro *m_gyro;
 };

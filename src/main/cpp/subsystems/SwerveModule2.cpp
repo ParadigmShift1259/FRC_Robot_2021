@@ -55,12 +55,6 @@ SwerveModule2::SwerveModule2(int driveMotorChannel,
     m_timer.Start();
 }
 
-frc::SwerveModuleState SwerveModule2::GetState()
-{
-    EncoderToRadians();
-    return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
-}
-
 void SwerveModule2::Periodic()
 {
     EncoderToRadians();
@@ -81,6 +75,12 @@ void SwerveModule2::Periodic()
     SmartDashboard::PutNumber("D_SM_IError " + m_name, m_turnPIDController.GetIAccum());
     // SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
     // SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
+}
+
+frc::SwerveModuleState SwerveModule2::GetState()
+{
+    EncoderToRadians();
+    return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
 }
 
 void SwerveModule2::SetDesiredState(frc::SwerveModuleState &state)
@@ -148,28 +148,6 @@ void SwerveModule2::ResetRelativeToAbsolute()
     m_turnRelativeEncoder.SetPosition(m_absAngle);
 }
 
-// Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
-double SwerveModule2::ZeroTo2PiRads(double theta)
-{
-    theta = fmod(theta, Math::kTau);
-    if (theta < 0)
-        theta += Math::kTau;
-        
-    return theta;
-}
-
-// Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
-double SwerveModule2::NegPiToPiRads(double theta)
-{
-    theta = ZeroTo2PiRads(theta);
-    if (theta > wpi::math::pi)
-        theta -= Math::kTau;
-    else if (theta < -1.0 * wpi::math::pi)
-        theta += Math::kTau;
-    
-    return theta;
-}
-
 // Determine the smallest magnitude delta angle that can be added to initial angle that will 
 // result in an angle equivalent (but not necessarily equal) to final angle. 
 // All angles in radians
@@ -177,15 +155,15 @@ double SwerveModule2::NegPiToPiRads(double theta)
 // init final   angle1   angle2 
 double SwerveModule2::MinTurnRads(double init, double final, bool& bOutputReverse)
 {
-    init = ZeroTo2PiRads(init);
-    final = ZeroTo2PiRads(final);
+    init = Util::ZeroTo2PiRads(init);
+    final = Util::ZeroTo2PiRads(final);
 
     // The shortest turn angle may be acheived by reversing the motor output direction
     double angle1 = final - init;
     double angle2 = final + wpi::math::pi - init;
 
-    angle1 = NegPiToPiRads(angle1);
-    angle2 = NegPiToPiRads(angle2);
+    angle1 = Util::NegPiToPiRads(angle1);
+    angle2 = Util::NegPiToPiRads(angle2);
 
     // Choose the smallest angle and determine reverse flag
     //TODO: FINISHED ROBOT TUNING
