@@ -1,0 +1,23 @@
+branches:
+  only:
+    - main
+
+addons:
+  apt:
+    packages:
+      - doxygen
+
+script:
+  - doxygen Doxyfile
+
+# Prevent jekyll from running so that doxygen files starting with _ are still present
+before_deploy:
+  - touch docs/.nojekyll
+  - mv logo.png docs
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  token: $GH_REPO_TOKEN
+  on:
+    branch: main

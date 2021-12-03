@@ -1,0 +1,26 @@
+var class_swerve_module2 =
+[
+    [ "radians_per_second_squared_t", "class_swerve_module2.html#a8a85913cd9191609391343e4f829d73d", null ],
+    [ "SwerveModule2", "class_swerve_module2.html#acc64ae9f1977cf2036af7acb8bdc04ec", null ],
+    [ "Periodic", "class_swerve_module2.html#a4a1782b83121c19ad177617b2db5848c", null ],
+    [ "GetState", "class_swerve_module2.html#a60320d43d13dc1408c62a4388aaf1833", null ],
+    [ "SetDesiredState", "class_swerve_module2.html#a19922af8e42fd2f0a69c7e956213088f", null ],
+    [ "ResetEncoders", "class_swerve_module2.html#a7ab437cba0760ede65fe85289f68790e", null ],
+    [ "ResetRelativeToAbsolute", "class_swerve_module2.html#a5fe5b4759f3f0a4c70e4391cfb5621e4", null ],
+    [ "EncoderToRadians", "class_swerve_module2.html#a183cdd40531b842765b0a49bd4c960c0", null ],
+    [ "MinTurnRads", "class_swerve_module2.html#a0e085dcf09b6f4c141d6a7399f504b30", null ],
+    [ "CalcMetersPerSec", "class_swerve_module2.html#a9d9235dbc12d9e0e176a2a7114a949ab", null ],
+    [ "CalcTicksPer100Ms", "class_swerve_module2.html#a592ef088f8b424cabe2ef387a530bba4", null ],
+    [ "m_offset", "class_swerve_module2.html#a21e6acc99e8d28ad548c70bd8ac9d3f1", null ],
+    [ "m_name", "class_swerve_module2.html#a1671b9f71f7127870b5db82c950ddda5", null ],
+    [ "m_absAngle", "class_swerve_module2.html#a6dc6c3e3ebfcfeb9f9b810194dc986ec", null ],
+    [ "m_driveMotor", "class_swerve_module2.html#ab9321d5e99fb18eeb1951abd9c09baaa", null ],
+    [ "m_turningMotor", "class_swerve_module2.html#a45e69f4ab1a8940588f9aa7bf5075786", null ],
+    [ "m_turnRelativeEncoder", "class_swerve_module2.html#afb38184989b8d0fc2a9016c46ea3f47a", null ],
+    [ "m_turnPIDController", "class_swerve_module2.html#a5593b48694e0faf165de82ad9a0d2d6c", null ],
+    [ "m_drivePidParams", "class_swerve_module2.html#ad67858e3e1c4365773d496d35ed471dd", null ],
+    [ "m_turnPidParams", "class_swerve_module2.html#a72a974c4415023bafa90d8171f2acceb", null ],
+    [ "m_pulseWidthCallback", "class_swerve_module2.html#ad5b2f5360b8a4bb403bb02daaf5c488a", null ],
+    [ "m_pwmChannel", "class_swerve_module2.html#a4255aa7bbdbad791574083bb0fd21849", null ],
+    [ "m_timer", "class_swerve_module2.html#aafff1db309ff7a9797a6e648473f2501", null ]
+];
